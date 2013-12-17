@@ -13,3 +13,8 @@ parameters:
 
     locale:            en
     secret:            ThisTokenIsNotSoSecretChangeIt
+
+    vkontakte_id: ~
+    vkontakte_secret: ~
+    facebook_id: ~
+    facebook_secret: ~
