@@ -1,0 +1,7 @@
+parameters:
+#    house_finder_parse.example.class: HouseFinder\ParseBundle\Example
+
+services:
+#    house_finder_parse.example:
+#        class: %house_finder_parse.example.class%
+#        arguments: [@service_id, "plain_value", %parameter%]

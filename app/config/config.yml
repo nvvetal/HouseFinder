@@ -84,6 +84,8 @@ hwi_oauth:
             scope:              "email"
             client_id:           %facebook_id%
             client_secret:       %facebook_secret%
+    http_client:
+        verify_peer: false
 
 fos_user:
     db_driver: orm # other valid values are 'mongodb', 'couchdb' and 'propel'

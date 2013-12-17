@@ -1,0 +1,7 @@
+parameters:
+#    house_finder_auth.example.class: HouseFinder\AuthBundle\Example
+
+services:
+#    house_finder_auth.example:
+#        class: %house_finder_auth.example.class%
+#        arguments: [@service_id, "plain_value", %parameter%]
