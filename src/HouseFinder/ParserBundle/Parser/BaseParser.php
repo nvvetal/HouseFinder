@@ -17,9 +17,10 @@ abstract class BaseParser
     }
 
     /**
+     * @param $content
      * @return mixed
      */
-    abstract protected function parseContent();
+    abstract protected function parseContent($content);
 
     /**
      * @param string|string $raw
@@ -37,7 +38,7 @@ abstract class BaseParser
         $data = $crawler->getUrlData();
         $content = $data->getContent();
         if(empty($content)) throw new \Exception('Empty content!');
-        $rows = $this->parseContent();
+        $rows = $this->parseContent($content);
         if(count($rows) == 0) return NULL;
         $entities = array();
         foreach ($rows as $row)
