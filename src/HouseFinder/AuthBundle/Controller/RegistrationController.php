@@ -10,6 +10,11 @@ class RegistrationController extends BaseController
 {
     public function registerAction(Request $request)
     {
+/*
+        $slando = $this->container->get('housefinder.parser.slando');
+        $slando->getContent();
+        exit;
+*/
         if ($this->container->get('security.context')->isGranted('ROLE_USER')) {
             return new RedirectResponse('/');
         }

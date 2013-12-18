@@ -2,6 +2,7 @@ parameters:
 #    house_finder_parser.example.class: HouseFinder\ParserBundle\Example
 
 services:
-#    house_finder_parser.example:
-#        class: %house_finder_parser.example.class%
-#        arguments: [@service_id, "plain_value", %parameter%]
+
+#  housefinder.parser.slando:
+#    class: HouseFinder\ParserBundle\Service\SlandoService
+#    arguments: [@service_container]
