@@ -2,10 +2,6 @@ house_finder_parser:
     resource: "@HouseFinderParserBundle/Resources/config/routing.yml"
     prefix:   /
 
-house_finder_parse:
-    resource: "@HouseFinderParseBundle/Resources/config/routing.yml"
-    prefix:   /
-
 house_finder_auth:
     resource: "@HouseFinderAuthBundle/Resources/config/routing.yml"
     prefix:   /
