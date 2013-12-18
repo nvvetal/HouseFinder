@@ -1,0 +1,3 @@
+house_finder_parser_homepage:
+    pattern:  /hello/{name}
+    defaults: { _controller: HouseFinderParserBundle:Default:index }
