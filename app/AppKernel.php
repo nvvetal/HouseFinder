@@ -21,7 +21,7 @@ class AppKernel extends Kernel
             new HWI\Bundle\OAuthBundle\HWIOAuthBundle(),
             new HouseFinder\CoreBundle\HouseFinderCoreBundle(),
             new HouseFinder\AuthBundle\HouseFinderAuthBundle(),
-            new HouseFinder\ParseBundle\HouseFinderParseBundle(),
+            new HouseFinder\ParserBundle\HouseFinderParserBundle(),
         );
 
         if (in_array($this->getEnvironment(), array('dev', 'test'))) {
