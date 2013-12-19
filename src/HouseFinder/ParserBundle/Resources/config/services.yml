@@ -3,14 +3,11 @@ parameters:
 
 services:
 
-  housefinder.parser.crawler.slando:
-    class: HouseFinder\ParserBundle\Crawler\SlandoCrawler
+
+  housefinder.parser.service.slando:
+    class: HouseFinder\ParserBundle\Service\SlandoService
     arguments: [@service_container]
 
   housefinder.parser.parser.slando:
     class: HouseFinder\ParserBundle\Parser\SlandoParser
-    arguments: [@service_container]
-
-  housefinder.parser.service.slando:
-    class: HouseFinder\ParserBundle\Service\SlandoService
-    arguments: [@service_container, @housefinder.parser.crawler.slando, @housefinder.parser.parser.slando]
+    arguments: [@service_container, @housefinder.parser.service.slando]

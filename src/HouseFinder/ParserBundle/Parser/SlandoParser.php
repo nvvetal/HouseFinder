@@ -3,41 +3,83 @@ namespace HouseFinder\ParserBundle\Parser;
 
 use HouseFinder\CoreBundle\Entity\Advertisement;
 use HouseFinder\ParserBundle\Parser\BaseParser;
+use HouseFinder\ParserBundle\Service\SlandoService;
+use phpOCR\cOCR;
 use Symfony\Component\DomCrawler\Crawler;
+
 
 class SlandoParser extends BaseParser
 {
     /**
-     * @param $content
-     * @return mixed
+     * @param Crawler $crawler
+     * @return mixed|void
      */
-    protected function parseContent($content)
+    protected function parseListDomCrawler(Crawler $crawler)
     {
-        $domCrawler = new Crawler($content);
-        //var_dump($content);
-        $links = $domCrawler->filter('a.detailsLink')->each(function (Crawler $node, $i) {
-            $text = trim($node->text());
-            $text = str_replace("\n", "", $text);
-            $text = str_replace("\r", "", $text);
-            $text = str_replace("\t", "", $text);
-            $text = str_replace("\0", "", $text);
-            $text = str_replace("\x0B", "", $text);
-            $text = trim($text, chr(0xC2).chr(0xA0));
-            //TODO: how the HELL is exit there???
-            if(empty($text)) return false;
+        $links = $crawler->filter('a.detailsLink')->each(function (Crawler $node, $i) {
+            $text = $node->text();
+            $text = trim($text, " \n\t\r\0\x0B\xC2\xA0");
+            if (empty($text)) return false;
             return array(
-                'text'  => $text,
-                'url'   => $node->attr('href'),
+                'text' => $text,
+                'url' => $node->attr('href'),
+                //TODO: parse (ID7XG8F) from zhitomir.zht.slando.ua/obyavlenie/sdam-svoyu-2-h-komnatnuyu-kvartiru-v-zhitomire-ID7XG8F.html
+                'sourceId' => '',
             );
         });
         $urls = array();
-        foreach ($links as $link){
-            //if(empty($link['text'])) continue;
-            $urls[] = $link;
+        foreach ($links as $key => $link) {
+            if ($link === false) continue;
+            $service = $this->container->get('housefinder.parser.service.slando');
+            $crawlerPage = $service->getPageCrawler($link['url']);
+            $pageData = $this->parsePageDomCrawler($crawlerPage);
+            $urls[$key] = $link;
+            $urls[$key]['data'] = $pageData;
         }
         header('Content-Type: text/html; charset=utf-8');
         echo "<pre>";
-        var_dump($urls);
+        var_dump($links);
+        exit;
+    }
+
+    /**
+     * @param Crawler $crawler
+     * @return array
+     */
+    protected function parsePageDomCrawler(Crawler $crawler)
+    {
+        header('Content-Type: text/html; charset=utf-8');
+        $data = array();
+        $data['params'] = $crawler->filter('div.pding5_10')->each(function (Crawler $node, $i) {
+            $text = $node->text();
+            $text = trim($text, " \n\t\r\0\x0B\xC2\xA0");
+            $data = explode(":", $text, 2);
+            $data[1] = trim($data[1], " \n\t\r\0\x0B\xC2\xA0");
+            return $data;
+        });
+        $data['text'] = $crawler->filter('#textContent p.large')->text();
+        $data['price'] = $crawler->filter("div.pricelabel.tcenter strong")->text();
+        $data['photo'] = $crawler->filter("div.photo-glow img")->extract(array('src'));
+        $data['owner'] = $crawler->filter("p.userdetails span")->eq(0)->text();
+        $phone = $crawler->filter("span[data-rel=phone]")->eq(0)->extract(array('class'))[0];
+        if (preg_match("/\{.*\}/", $phone, $matches)) {
+            $phoneJSON = json_decode(strtr($matches[0], "'", '"'), true);
+            $phoneHash = $phoneJSON['id'];
+            /** @var $service SlandoService */
+            $service = $this->container->get('housefinder.parser.service.slando');
+            $phoneURL = 'http://slando.ua/ajax/misc/contact/phone/' . $phoneHash . '/';
+            sleep(3);
+            $phoneContent = json_decode($service->getPageContent($phoneURL), true);
+            list(, $phoneContent,) = explode('"', $phoneContent);
+            $phoneFile = $service->getFile($phoneContent);
+            $template = cOCR::loadTemplate('slando');
+            $img = cOCR::openImg($phoneFile);
+            cOCR::setInfelicity(5);
+            $data['phone'] = explode(",", preg_replace("/[^\d,]/", "", cOCR::defineImg(cOCR::$img, $template)));
+            unlink($phoneFile);
+        }
+        echo "<pre>";
+        var_dump($data);
         exit;
     }
 
@@ -49,4 +91,5 @@ class SlandoParser extends BaseParser
     {
         // TODO: Implement getEntityByRAW() method.
     }
+
 }

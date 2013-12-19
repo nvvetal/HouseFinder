@@ -4,23 +4,33 @@ namespace HouseFinder\ParserBundle\Parser;
 
 use Buzz\Message\MessageInterface;
 use HouseFinder\CoreBundle\Entity\Advertisement;
-use HouseFinder\ParserBundle\Crawler\BaseCrawler;
+use HouseFinder\ParserBundle\Service\BaseService;
 use Symfony\Component\DependencyInjection\Container;
+use Symfony\Component\DomCrawler\Crawler;
+
 
 abstract class BaseParser
 {
     protected $container;
+    protected $service;
 
-    public function __construct(Container $container)
+    public function __construct(Container $container, BaseService $service)
     {
         $this->container = $container;
+        $this->service = $service;
     }
 
     /**
-     * @param $content
+     * @param Crawler $crawler
      * @return mixed
      */
-    abstract protected function parseContent($content);
+    abstract protected function parseListDomCrawler(Crawler $crawler);
+
+    /**
+     * @param Crawler $crawler
+     * @return array
+     */
+    abstract protected function parsePageDomCrawler(Crawler $crawler);
 
     /**
      * @param string|string $raw
@@ -29,16 +39,12 @@ abstract class BaseParser
     abstract protected function getEntityByRAW($raw);
 
     /**
-     * @param BaseCrawler $crawler
+     * @param Crawler $crawler
      * @return array|null
-     * @throws \Exception
      */
-    public function getEntities(BaseCrawler $crawler)
+    public function getEntities(Crawler $crawler)
     {
-        $data = $crawler->getUrlData();
-        $content = $data->getContent();
-        if(empty($content)) throw new \Exception('Empty content!');
-        $rows = $this->parseContent($content);
+        $rows = $this->parseListDomCrawler($crawler);
         if(count($rows) == 0) return NULL;
         $entities = array();
         foreach ($rows as $row)

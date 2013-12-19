@@ -21,7 +21,10 @@
         "incenteev/composer-parameter-handler": "~2.0",
         "hwi/oauth-bundle": "0.3.0",
         "friendsofsymfony/user-bundle": "2.0.x-dev",
-        "sensio/buzz-bundle": "dev-master"
+        "sensio/buzz-bundle": "dev-master",
+        "fabpot/goutte": "v1.0.3",
+        "guzzle/plugin-cookie": "v3.7.4",
+        "nvvetal/gd2-php-ocr": "*"
     },
     "scripts": {
         "post-install-cmd": [
@@ -42,7 +45,7 @@
     "config": {
         "bin-dir": "bin"
     },
-    "minimum-stability": "stable",
+    "minimum-stability": "dev",
     "extra": {
         "symfony-app-dir": "app",
         "symfony-web-dir": "web",
@@ -52,5 +55,11 @@
         "branch-alias": {
             "dev-master": "2.3-dev"
         }
-    }
+    },
+    "repositories": [
+        {
+            "type": "vcs",
+            "url": "https://github.com/nvvetal/gd2-php-ocr"
+        }
+    ]
 }
