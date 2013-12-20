@@ -12,10 +12,16 @@ use FOS\UserBundle\Model\User as BaseUser;
 use Doctrine\ORM\Mapping as ORM;
 
 /**
+ * @ORM\Table()
  * @ORM\Entity
  */
 class User extends BaseUser
 {
+    const TYPE_PRIVATE = 'private';
+    const TYPE_REALTOR = 'realtor';
+    const TYPE_BUILDER = 'builder';
+    const TYPE_BANK    = 'bank';
+
     /**
      * @ORM\Id
      * @ORM\Column(type="integer")
@@ -23,11 +29,15 @@ class User extends BaseUser
      */
     protected $id;
 
-    /** @ORM\Column(type="string", length=255, nullable=true) */
+    /** @ORM\Column(type="string", nullable=true) */
     protected $vkontakteId;
 
-    /** @ORM\Column(type="string", length=255, nullable=true) */
+    /** @ORM\Column(type="string", nullable=true) */
     protected $facebookId;
+
+    /** @ORM\Column(type="string") */
+    protected $type = self::TYPE_PRIVATE;
+
 
     /**
      * Get id
