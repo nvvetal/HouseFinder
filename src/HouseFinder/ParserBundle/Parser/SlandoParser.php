@@ -27,19 +27,24 @@ class SlandoParser extends BaseParser
                 'sourceId' => '',
             );
         });
-        $urls = array();
+        $pages = array();
         foreach ($links as $key => $link) {
             if ($link === false) continue;
             $service = $this->container->get('housefinder.parser.service.slando');
             $crawlerPage = $service->getPageCrawler($link['url']);
             $pageData = $this->parsePageDomCrawler($crawlerPage);
-            $urls[$key] = $link;
-            $urls[$key]['data'] = $pageData;
+            $pages[$key] = $link;
+            $pages[$key]['data'] = $pageData;
+            //TODO: temporary
+            break;
         }
+
         header('Content-Type: text/html; charset=utf-8');
         echo "<pre>";
-        var_dump($links);
+        var_dump($pages);
         exit;
+
+        return $pages;
     }
 
     /**
@@ -78,9 +83,12 @@ class SlandoParser extends BaseParser
             $data['phone'] = explode(",", preg_replace("/[^\d,]/", "", cOCR::defineImg(cOCR::$img, $template)));
             unlink($phoneFile);
         }
+        /*
         echo "<pre>";
         var_dump($data);
         exit;
+        */
+        return $data;
     }
 
     /**
@@ -89,7 +97,9 @@ class SlandoParser extends BaseParser
      */
     protected function getEntityByRAW($raw)
     {
-        // TODO: Implement getEntityByRAW() method.
+        $entity = new Advertisement();
+
+        return $entity;
     }
 
 }
