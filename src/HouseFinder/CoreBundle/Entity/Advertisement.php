@@ -14,13 +14,13 @@ class Advertisement
     const SOURCE_TYPE_INTERNAL  = 'internal';
     const SOURCE_TYPE_SLANDO    = 'slando';
 
-    const TYPE_SELL = 'sell';
-    const TYPE_BUY = 'buy';
-    const TYPE_RENT = 'rent';
+    const TYPE_SELL     = 'sell';
+    const TYPE_BUY      = 'buy';
+    const TYPE_RENT     = 'rent';
 
-    const RENT_TYPE_HOUR = 'hour';
-    const RENT_TYPE_DAY = 'day';
-    const RENT_TYPE_LONG = 'long';
+    const RENT_TYPE_HOUR    = 'hour';
+    const RENT_TYPE_DAY     = 'day';
+    const RENT_TYPE_LONG    = 'long';
 
     const HOUSE_TYPE_NEW = 'new';
     const HOUSE_TYPE_OLD = 'old';
@@ -30,18 +30,17 @@ class Advertisement
     const CURRENCY_RUB = 'RUB';
     const CURRENCY_UAH = 'UAH';
 
-    //brick, panel, block, monolith, wood
-    const WALL_TYPE_BRICK = 'brick';
-    const WALL_TYPE_PANEL = 'panel';
-    const WALL_TYPE_BLOCK = 'block';
-    const WALL_TYPE_MONOLITH = 'monolith';
-    const WALL_TYPE_WOOD = 'wood';
+    const WALL_TYPE_BRICK       = 'brick';
+    const WALL_TYPE_PANEL       = 'panel';
+    const WALL_TYPE_BLOCK       = 'block';
+    const WALL_TYPE_MONOLITH    = 'monolith';
+    const WALL_TYPE_WOOD        = 'wood';
 
-    const BRICK_TYPE_WHITE = 'white';
-    const BRICK_TYPE_RED = 'red';
+    const BRICK_TYPE_WHITE  = 'white';
+    const BRICK_TYPE_RED    = 'red';
 
-    const HEATING_TYPE_CENTRAL = 'central';
-    const HEATING_TYPE_INDEPENDENT = 'independent';
+    const HEATING_TYPE_CENTRAL      = 'central';
+    const HEATING_TYPE_INDEPENDENT  = 'independent';
 
     /**
      * @ORM\Id

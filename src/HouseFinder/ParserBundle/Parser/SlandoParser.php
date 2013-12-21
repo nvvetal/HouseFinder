@@ -24,7 +24,7 @@ class SlandoParser extends BaseParser
                 'text' => $text,
                 'url' => $node->attr('href'),
                 //TODO: parse (ID7XG8F) from zhitomir.zht.slando.ua/obyavlenie/sdam-svoyu-2-h-komnatnuyu-kvartiru-v-zhitomire-ID7XG8F.html
-                'sourceId' => '',
+                'sourceHash' => '',
             );
         });
         $pages = array();
@@ -65,7 +65,20 @@ class SlandoParser extends BaseParser
         $data['text'] = $crawler->filter('#textContent p.large')->text();
         $data['price'] = $crawler->filter("div.pricelabel.tcenter strong")->text();
         $data['photo'] = $crawler->filter("div.photo-glow img")->extract(array('src'));
-        $data['owner'] = $crawler->filter("p.userdetails span")->eq(0)->text();
+        $data['ownerName'] = $crawler->filter("p.userdetails span")->eq(0)->text();
+        $data['ownerUrl'] = $crawler->filter("#linkUserAds")->extract(array('href'))[0];
+        if(preg_match("/\/user\/(.*)\/$/i", $data['ownerUrl'], $matches)){
+            $data['ownerHash'] = $matches[1];
+            $data['ownerId'] = $matches[1];
+        }
+        $data['createdText'] = $crawler->filter("div.offerheadinner p small span")->text();
+        $data['createdText'] = str_replace('Добавлено: в', '', $data['createdText']);
+        $data['createdText'] = trim($data['createdText'], " \n\t\r\0\x0B\xC2\xA0");
+        //13:07, 21 декабря 2013, номер: 121717607
+        if(preg_match("/(\d+)\:(\d+)\, (\d+) (\w+) (\d+)\, номер\: (\d+)/iu", $data['createdText'], $matches)){
+            $data['sourceID'] = $matches[6];
+            $data['createdDateTime'] = $matches[5].'-'.$this->getMonthByRussianName($matches[4]).'-'.$matches[3].' '.$matches[1].':'.$matches[2].':00';
+        }
         $phone = $crawler->filter("span[data-rel=phone]")->eq(0)->extract(array('class'))[0];
         if (preg_match("/\{.*\}/", $phone, $matches)) {
             $phoneJSON = json_decode(strtr($matches[0], "'", '"'), true);
@@ -83,11 +96,11 @@ class SlandoParser extends BaseParser
             $data['phone'] = explode(",", preg_replace("/[^\d,]/", "", cOCR::defineImg(cOCR::$img, $template)));
             unlink($phoneFile);
         }
-        /*
+
         echo "<pre>";
         var_dump($data);
         exit;
-        */
+
         return $data;
     }
 
@@ -100,6 +113,26 @@ class SlandoParser extends BaseParser
         $entity = new Advertisement();
 
         return $entity;
+    }
+
+    private function getMonthByRussianName($russianName)
+    {
+        $month = array(
+            'января',
+            'февраля',
+            'марта',
+            'апреля',
+            'мая',
+            'июня',
+            'июля',
+            'августа',
+            'сентября',
+            'октября',
+            'ноября',
+            'декабря',
+        );
+        $keys = array_keys($month, $russianName);
+        return sprintf("%02d", $keys[0]);
     }
 
 }

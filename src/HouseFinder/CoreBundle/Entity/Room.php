@@ -11,10 +11,10 @@ use Doctrine\ORM\Mapping as ORM;
  */
 class Room
 {
-    const TYPE_ROOM = 'room';
-    const TYPE_KITCHEN = 'kitchen';
+    const TYPE_ROOM     = 'room';
+    const TYPE_KITCHEN  = 'kitchen';
     const TYPE_BATHROOM = 'bathroom';
-    const TYPE_WC= 'wc';
+    const TYPE_WC       = 'wc';
 
     /**
      * @var integer
