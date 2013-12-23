@@ -14,6 +14,8 @@ use Doctrine\ORM\Mapping as ORM;
 /**
  * @ORM\Table()
  * @ORM\Entity
+ * @ORM\InheritanceType("SINGLE_TABLE")
+ * @ORM\DiscriminatorMap({"base" = "User", "internal" = "InternalUser", "slando" = "SlandoUser"})
  */
 class User extends BaseUser
 {
@@ -37,6 +39,22 @@ class User extends BaseUser
 
     /** @ORM\Column(type="string") */
     protected $type = self::TYPE_PRIVATE;
+
+    /**
+     * @param mixed $type
+     */
+    public function setType($type)
+    {
+        $this->type = $type;
+    }
+
+    /**
+     * @return mixed
+     */
+    public function getType()
+    {
+        return $this->type;
+    }
 
 
     /**

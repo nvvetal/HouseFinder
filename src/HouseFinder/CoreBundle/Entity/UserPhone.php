@@ -29,6 +29,8 @@ class UserPhone
     /** @ORM\Column(type="integer") */
     protected $msisdn;
 
+
+
     /** @ORM\Column(type="boolean") */
     protected $checked = false;
 
@@ -40,5 +42,53 @@ class UserPhone
     public function getId()
     {
         return $this->id;
+    }
+
+    /**
+     * @param mixed $checked
+     */
+    public function setChecked($checked)
+    {
+        $this->checked = $checked;
+    }
+
+    /**
+     * @return mixed
+     */
+    public function getChecked()
+    {
+        return $this->checked;
+    }
+
+    /**
+     * @param mixed $msisdn
+     */
+    public function setMsisdn($msisdn)
+    {
+        $this->msisdn = $msisdn;
+    }
+
+    /**
+     * @return mixed
+     */
+    public function getMsisdn()
+    {
+        return $this->msisdn;
+    }
+
+    /**
+     * @param mixed $user
+     */
+    public function setUser($user)
+    {
+        $this->user = $user;
+    }
+
+    /**
+     * @return mixed
+     */
+    public function getUser()
+    {
+        return $this->user;
     }
 }

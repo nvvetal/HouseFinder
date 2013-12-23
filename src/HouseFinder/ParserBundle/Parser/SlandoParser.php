@@ -1,7 +1,11 @@
 <?php
 namespace HouseFinder\ParserBundle\Parser;
 
+use Doctrine\ORM\EntityManager;
 use HouseFinder\CoreBundle\Entity\Advertisement;
+use HouseFinder\CoreBundle\Entity\SlandoAdvertisement;
+use HouseFinder\CoreBundle\Entity\SlandoUser;
+use HouseFinder\CoreBundle\Entity\UserPhone;
 use HouseFinder\ParserBundle\Parser\BaseParser;
 use HouseFinder\ParserBundle\Service\SlandoService;
 use phpOCR\cOCR;
@@ -20,11 +24,16 @@ class SlandoParser extends BaseParser
             $text = $node->text();
             $text = trim($text, " \n\t\r\0\x0B\xC2\xA0");
             if (empty($text)) return false;
+            $url = $node->attr('href');
+            $sourceHash = '';
+            if(preg_match("/(\w+)\.html$/i", $url, $matches)){
+                $sourceHash = $matches[1];
+            }
             return array(
-                'text' => $text,
-                'url' => $node->attr('href'),
+                'title' => $text,
+                'url' => $url,
                 //TODO: parse (ID7XG8F) from zhitomir.zht.slando.ua/obyavlenie/sdam-svoyu-2-h-komnatnuyu-kvartiru-v-zhitomire-ID7XG8F.html
-                'sourceHash' => '',
+                'sourceHash' => $sourceHash,
             );
         });
         $pages = array();
@@ -38,12 +47,12 @@ class SlandoParser extends BaseParser
             //TODO: temporary
             break;
         }
-
-        header('Content-Type: text/html; charset=utf-8');
-        echo "<pre>";
-        var_dump($pages);
-        exit;
-
+        /*
+                header('Content-Type: text/html; charset=utf-8');
+                echo "<pre>";
+                var_dump($pages);
+                exit;
+        */
         return $pages;
     }
 
@@ -64,6 +73,8 @@ class SlandoParser extends BaseParser
         });
         $data['text'] = $crawler->filter('#textContent p.large')->text();
         $data['price'] = $crawler->filter("div.pricelabel.tcenter strong")->text();
+        $data['address'] = $crawler->filter("div.address p")->text();
+        $data['address'] = trim($data['address'], " \n\t\r\0\x0B\xC2\xA0");
         $data['photo'] = $crawler->filter("div.photo-glow img")->extract(array('src'));
         $data['ownerName'] = $crawler->filter("p.userdetails span")->eq(0)->text();
         $data['ownerUrl'] = $crawler->filter("#linkUserAds")->extract(array('href'))[0];
@@ -96,22 +107,60 @@ class SlandoParser extends BaseParser
             $data['phone'] = explode(",", preg_replace("/[^\d,]/", "", cOCR::defineImg(cOCR::$img, $template)));
             unlink($phoneFile);
         }
-
-        echo "<pre>";
-        var_dump($data);
-        exit;
-
+        /*
+                echo "<pre>";
+                var_dump($data);
+                exit;
+        */
         return $data;
     }
 
     /**
      * @param string|string $raw
-     * @return Advertisement;
+     * @return SlandoAdvertisement;
      */
     protected function getEntityByRAW($raw)
     {
-        $entity = new Advertisement();
+        echo "<pre>";
+        var_dump($raw);
 
+        /** @var $em EntityManager */
+        $em = $this->container->get('Doctrine')->getManager();
+        $slandoUser = $em->getRepository('HouseFinderCoreBundle:SlandoUser')
+            ->findOneBy(array('sourceHash' => $raw['data']['ownerHash']));
+        if(is_null($slandoUser)){
+            $slandoUser = new SlandoUser();
+            $slandoUser->setUsername($raw['data']['ownerName'].'@slando');
+            $slandoUser->setUsernameCanonical($raw['data']['ownerName'].'@slando');
+            $slandoUser->setEmail($raw['data']['ownerName'].'@slando.ua');
+            $slandoUser->setEmailCanonical($raw['data']['ownerName'].'@slando.ua');
+            $slandoUser->setSourceHash($raw['data']['ownerHash']);
+            $slandoUser->setSourceURL($raw['data']['ownerUrl']);
+            $slandoUser->setPassword(md5(time()));
+            $slandoUser->setLocked(true);
+            $slandoUser->setExpired(true);
+            $slandoUser->setRoles(array());
+            $slandoUser->setCredentialsExpired(true);
+            foreach ($raw['data']['phone'] as $MSISDN){
+                $phone = new UserPhone();
+                $phone->setMsisdn($MSISDN);
+                $em->persist($phone);
+            }
+            $em->persist($slandoUser);
+            $em->flush();
+        }
+        //TODO: parse, check and create address
+
+        //TODO: check is advertisement already exists
+        $entity = new SlandoAdvertisement();
+        $entity->setUser($slandoUser);
+        $entity->setName($raw['title']);
+        $entity->setDescription($raw['data']['text']);
+        $entity->setSourceId($raw['data']['sourceID']);
+        $entity->setSourceHash($raw['sourceHash']);
+        $entity->setSourceURL($raw['url']);
+
+        //TODO: photos store and save
         return $entity;
     }
 
