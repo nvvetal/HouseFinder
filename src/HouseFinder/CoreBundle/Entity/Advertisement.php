@@ -8,7 +8,7 @@ use Doctrine\ORM\Mapping as ORM;
 /**
  * @ORM\Table()
  * @ORM\InheritanceType("SINGLE_TABLE")
- * @ORM\DiscriminatorMap({"base" = "Advertisement", "internal" = "InternalAdvertisement", "external" = "ExternalAdvertisement","slando" = "SlandoAdvertisement"})
+ * @ORM\DiscriminatorMap({"base" = "Advertisement", "internal" = "AdvertisementInternal", "external" = "AdvertisementExternal","slando" = "AdvertisementSlando"})
  * @ORM\Entity
  */
 class Advertisement
@@ -61,6 +61,13 @@ class Advertisement
     /** @ORM\Column(type="string") */
     protected $rentType;
 
+    /**
+     * @var \DateTime $rentStartDate
+     * @ORM\Column(type="date")
+     */
+    protected $rentStartDate;
+
+
     /** @ORM\Column(type="string", nullable=true) */
     protected $houseType;
 
@@ -105,7 +112,7 @@ class Advertisement
     protected $brickType;
 
     /**
-     * @ORM\OneToOne(targetEntity="Address")
+     * @ORM\ManyToOne(targetEntity="Address")
      * @ORM\JoinColumn
      */
     protected $address;
@@ -141,192 +148,20 @@ class Advertisement
      */
     protected $contentChanged;
 
-    /**
-     * @param mixed $address
-     */
-    public function setAddress($address)
-    {
-        $this->address = $address;
-    }
 
     /**
-     * @return mixed
+     * Constructor
      */
-    public function getAddress()
+    public function __construct()
     {
-        return $this->address;
+        $this->photos = new \Doctrine\Common\Collections\ArrayCollection();
+        $this->rooms = new \Doctrine\Common\Collections\ArrayCollection();
     }
-
+    
     /**
-     * @param mixed $brickType
-     */
-    public function setBrickType($brickType)
-    {
-        $this->brickType = $brickType;
-    }
-
-    /**
-     * @return mixed
-     */
-    public function getBrickType()
-    {
-        return $this->brickType;
-    }
-
-    /**
-     * @param \HouseFinder\CoreBundle\Entity\datetime $contentChanged
-     */
-    public function setContentChanged($contentChanged)
-    {
-        $this->contentChanged = $contentChanged;
-    }
-
-    /**
-     * @return \HouseFinder\CoreBundle\Entity\datetime
-     */
-    public function getContentChanged()
-    {
-        return $this->contentChanged;
-    }
-
-    /**
-     * @param \HouseFinder\CoreBundle\Entity\datetime $created
-     */
-    public function setCreated($created)
-    {
-        $this->created = $created;
-    }
-
-    /**
-     * @return \HouseFinder\CoreBundle\Entity\datetime
-     */
-    public function getCreated()
-    {
-        return $this->created;
-    }
-
-    /**
-     * @param mixed $currency
-     */
-    public function setCurrency($currency)
-    {
-        $this->currency = $currency;
-    }
-
-    /**
-     * @return mixed
-     */
-    public function getCurrency()
-    {
-        return $this->currency;
-    }
-
-    /**
-     * @param mixed $description
-     */
-    public function setDescription($description)
-    {
-        $this->description = $description;
-    }
-
-    /**
-     * @return mixed
-     */
-    public function getDescription()
-    {
-        return $this->description;
-    }
-
-    /**
-     * @param mixed $fullSpace
-     */
-    public function setFullSpace($fullSpace)
-    {
-        $this->fullSpace = $fullSpace;
-    }
-
-    /**
-     * @return mixed
-     */
-    public function getFullSpace()
-    {
-        return $this->fullSpace;
-    }
-
-    /**
-     * @param mixed $haveGarage
-     */
-    public function setHaveGarage($haveGarage)
-    {
-        $this->haveGarage = $haveGarage;
-    }
-
-    /**
-     * @return mixed
-     */
-    public function getHaveGarage()
-    {
-        return $this->haveGarage;
-    }
-
-    /**
-     * @param mixed $haveVault
-     */
-    public function setHaveVault($haveVault)
-    {
-        $this->haveVault = $haveVault;
-    }
-
-    /**
-     * @return mixed
-     */
-    public function getHaveVault()
-    {
-        return $this->haveVault;
-    }
-
-    /**
-     * @param mixed $heatingType
-     */
-    public function setHeatingType($heatingType)
-    {
-        $this->heatingType = $heatingType;
-    }
-
-    /**
-     * @return mixed
-     */
-    public function getHeatingType()
-    {
-        return $this->heatingType;
-    }
-
-    /**
-     * @param mixed $houseType
-     */
-    public function setHouseType($houseType)
-    {
-        $this->houseType = $houseType;
-    }
-
-    /**
-     * @return mixed
-     */
-    public function getHouseType()
-    {
-        return $this->houseType;
-    }
-
-    /**
-     * @param mixed $id
-     */
-    public function setId($id)
-    {
-        $this->id = $id;
-    }
-
-    /**
-     * @return mixed
+     * Get id
+     *
+     * @return integer 
      */
     public function getId()
     {
@@ -334,143 +169,22 @@ class Advertisement
     }
 
     /**
-     * @param mixed $level
-     */
-    public function setLevel($level)
-    {
-        $this->level = $level;
-    }
-
-    /**
-     * @return mixed
-     */
-    public function getLevel()
-    {
-        return $this->level;
-    }
-
-    /**
-     * @param mixed $livingSpace
-     */
-    public function setLivingSpace($livingSpace)
-    {
-        $this->livingSpace = $livingSpace;
-    }
-
-    /**
-     * @return mixed
-     */
-    public function getLivingSpace()
-    {
-        return $this->livingSpace;
-    }
-
-    /**
-     * @param mixed $maxLevels
-     */
-    public function setMaxLevels($maxLevels)
-    {
-        $this->maxLevels = $maxLevels;
-    }
-
-    /**
-     * @return mixed
-     */
-    public function getMaxLevels()
-    {
-        return $this->maxLevels;
-    }
-
-    /**
-     * @param mixed $name
-     */
-    public function setName($name)
-    {
-        $this->name = $name;
-    }
-
-    /**
-     * @return mixed
-     */
-    public function getName()
-    {
-        return $this->name;
-    }
-
-    /**
-     * @param mixed $photos
-     */
-    public function setPhotos($photos)
-    {
-        $this->photos = $photos;
-    }
-
-    /**
-     * @return mixed
-     */
-    public function getPhotos()
-    {
-        return $this->photos;
-    }
-
-    /**
-     * @param mixed $price
-     */
-    public function setPrice($price)
-    {
-        $this->price = $price;
-    }
-
-    /**
-     * @return mixed
-     */
-    public function getPrice()
-    {
-        return $this->price;
-    }
-
-    /**
-     * @param mixed $rentType
-     */
-    public function setRentType($rentType)
-    {
-        $this->rentType = $rentType;
-    }
-
-    /**
-     * @return mixed
-     */
-    public function getRentType()
-    {
-        return $this->rentType;
-    }
-
-    /**
-     * @param mixed $rooms
-     */
-    public function setRooms($rooms)
-    {
-        $this->rooms = $rooms;
-    }
-
-    /**
-     * @return mixed
-     */
-    public function getRooms()
-    {
-        return $this->rooms;
-    }
-
-    /**
-     * @param mixed $type
+     * Set type
+     *
+     * @param string $type
+     * @return Advertisement
      */
     public function setType($type)
     {
         $this->type = $type;
+    
+        return $this;
     }
 
     /**
-     * @return mixed
+     * Get type
+     *
+     * @return string 
      */
     public function getType()
     {
@@ -478,15 +192,344 @@ class Advertisement
     }
 
     /**
-     * @param \HouseFinder\CoreBundle\Entity\datetime $updated
+     * Set rentType
+     *
+     * @param string $rentType
+     * @return Advertisement
+     */
+    public function setRentType($rentType)
+    {
+        $this->rentType = $rentType;
+    
+        return $this;
+    }
+
+    /**
+     * Get rentType
+     *
+     * @return string 
+     */
+    public function getRentType()
+    {
+        return $this->rentType;
+    }
+
+    /**
+     * Set houseType
+     *
+     * @param string $houseType
+     * @return Advertisement
+     */
+    public function setHouseType($houseType)
+    {
+        $this->houseType = $houseType;
+    
+        return $this;
+    }
+
+    /**
+     * Get houseType
+     *
+     * @return string 
+     */
+    public function getHouseType()
+    {
+        return $this->houseType;
+    }
+
+    /**
+     * Set name
+     *
+     * @param string $name
+     * @return Advertisement
+     */
+    public function setName($name)
+    {
+        $this->name = $name;
+    
+        return $this;
+    }
+
+    /**
+     * Get name
+     *
+     * @return string 
+     */
+    public function getName()
+    {
+        return $this->name;
+    }
+
+    /**
+     * Set description
+     *
+     * @param string $description
+     * @return Advertisement
+     */
+    public function setDescription($description)
+    {
+        $this->description = $description;
+    
+        return $this;
+    }
+
+    /**
+     * Get description
+     *
+     * @return string 
+     */
+    public function getDescription()
+    {
+        return $this->description;
+    }
+
+    /**
+     * Set price
+     *
+     * @param integer $price
+     * @return Advertisement
+     */
+    public function setPrice($price)
+    {
+        $this->price = $price;
+    
+        return $this;
+    }
+
+    /**
+     * Get price
+     *
+     * @return integer 
+     */
+    public function getPrice()
+    {
+        return $this->price;
+    }
+
+    /**
+     * Set currency
+     *
+     * @param string $currency
+     * @return Advertisement
+     */
+    public function setCurrency($currency)
+    {
+        $this->currency = $currency;
+    
+        return $this;
+    }
+
+    /**
+     * Get currency
+     *
+     * @return string 
+     */
+    public function getCurrency()
+    {
+        return $this->currency;
+    }
+
+    /**
+     * Set fullSpace
+     *
+     * @param float $fullSpace
+     * @return Advertisement
+     */
+    public function setFullSpace($fullSpace)
+    {
+        $this->fullSpace = $fullSpace;
+    
+        return $this;
+    }
+
+    /**
+     * Get fullSpace
+     *
+     * @return float 
+     */
+    public function getFullSpace()
+    {
+        return $this->fullSpace;
+    }
+
+    /**
+     * Set livingSpace
+     *
+     * @param float $livingSpace
+     * @return Advertisement
+     */
+    public function setLivingSpace($livingSpace)
+    {
+        $this->livingSpace = $livingSpace;
+    
+        return $this;
+    }
+
+    /**
+     * Get livingSpace
+     *
+     * @return float 
+     */
+    public function getLivingSpace()
+    {
+        return $this->livingSpace;
+    }
+
+    /**
+     * Set level
+     *
+     * @param integer $level
+     * @return Advertisement
+     */
+    public function setLevel($level)
+    {
+        $this->level = $level;
+    
+        return $this;
+    }
+
+    /**
+     * Get level
+     *
+     * @return integer 
+     */
+    public function getLevel()
+    {
+        return $this->level;
+    }
+
+    /**
+     * Set maxLevels
+     *
+     * @param integer $maxLevels
+     * @return Advertisement
+     */
+    public function setMaxLevels($maxLevels)
+    {
+        $this->maxLevels = $maxLevels;
+    
+        return $this;
+    }
+
+    /**
+     * Get maxLevels
+     *
+     * @return integer 
+     */
+    public function getMaxLevels()
+    {
+        return $this->maxLevels;
+    }
+
+    /**
+     * Set wallType
+     *
+     * @param string $wallType
+     * @return Advertisement
+     */
+    public function setWallType($wallType)
+    {
+        $this->wallType = $wallType;
+    
+        return $this;
+    }
+
+    /**
+     * Get wallType
+     *
+     * @return string 
+     */
+    public function getWallType()
+    {
+        return $this->wallType;
+    }
+
+    /**
+     * Set brickType
+     *
+     * @param string $brickType
+     * @return Advertisement
+     */
+    public function setBrickType($brickType)
+    {
+        $this->brickType = $brickType;
+    
+        return $this;
+    }
+
+    /**
+     * Get brickType
+     *
+     * @return string 
+     */
+    public function getBrickType()
+    {
+        return $this->brickType;
+    }
+
+    /**
+     * Set heatingType
+     *
+     * @param string $heatingType
+     * @return Advertisement
+     */
+    public function setHeatingType($heatingType)
+    {
+        $this->heatingType = $heatingType;
+    
+        return $this;
+    }
+
+    /**
+     * Get heatingType
+     *
+     * @return string 
+     */
+    public function getHeatingType()
+    {
+        return $this->heatingType;
+    }
+
+    /**
+     * Set created
+     *
+     * @param \DateTime $created
+     * @return Advertisement
+     */
+    public function setCreated($created)
+    {
+        $this->created = $created;
+    
+        return $this;
+    }
+
+    /**
+     * Get created
+     *
+     * @return \DateTime 
+     */
+    public function getCreated()
+    {
+        return $this->created;
+    }
+
+    /**
+     * Set updated
+     *
+     * @param \DateTime $updated
+     * @return Advertisement
      */
     public function setUpdated($updated)
     {
         $this->updated = $updated;
+    
+        return $this;
     }
 
     /**
-     * @return \HouseFinder\CoreBundle\Entity\datetime
+     * Get updated
+     *
+     * @return \DateTime 
      */
     public function getUpdated()
     {
@@ -494,15 +537,45 @@ class Advertisement
     }
 
     /**
-     * @param mixed $user
+     * Set contentChanged
+     *
+     * @param \DateTime $contentChanged
+     * @return Advertisement
      */
-    public function setUser($user)
+    public function setContentChanged($contentChanged)
     {
-        $this->user = $user;
+        $this->contentChanged = $contentChanged;
+    
+        return $this;
     }
 
     /**
-     * @return mixed
+     * Get contentChanged
+     *
+     * @return \DateTime 
+     */
+    public function getContentChanged()
+    {
+        return $this->contentChanged;
+    }
+
+    /**
+     * Set user
+     *
+     * @param \HouseFinder\CoreBundle\Entity\User $user
+     * @return Advertisement
+     */
+    public function setUser(\HouseFinder\CoreBundle\Entity\User $user = null)
+    {
+        $this->user = $user;
+    
+        return $this;
+    }
+
+    /**
+     * Get user
+     *
+     * @return \HouseFinder\CoreBundle\Entity\User 
      */
     public function getUser()
     {
@@ -510,19 +583,108 @@ class Advertisement
     }
 
     /**
-     * @param mixed $wallType
+     * Add photos
+     *
+     * @param \HouseFinder\CoreBundle\Entity\AdvertisementPhoto $photos
+     * @return Advertisement
      */
-    public function setWallType($wallType)
+    public function addPhoto(\HouseFinder\CoreBundle\Entity\AdvertisementPhoto $photos)
     {
-        $this->wallType = $wallType;
+        $this->photos[] = $photos;
+    
+        return $this;
     }
 
     /**
-     * @return mixed
+     * Remove photos
+     *
+     * @param \HouseFinder\CoreBundle\Entity\AdvertisementPhoto $photos
      */
-    public function getWallType()
+    public function removePhoto(\HouseFinder\CoreBundle\Entity\AdvertisementPhoto $photos)
     {
-        return $this->wallType;
+        $this->photos->removeElement($photos);
+    }
+
+    /**
+     * Get photos
+     *
+     * @return \Doctrine\Common\Collections\Collection 
+     */
+    public function getPhotos()
+    {
+        return $this->photos;
+    }
+
+    /**
+     * Add rooms
+     *
+     * @param \HouseFinder\CoreBundle\Entity\Room $rooms
+     * @return Advertisement
+     */
+    public function addRoom(\HouseFinder\CoreBundle\Entity\Room $rooms)
+    {
+        $this->rooms[] = $rooms;
+    
+        return $this;
+    }
+
+    /**
+     * Remove rooms
+     *
+     * @param \HouseFinder\CoreBundle\Entity\Room $rooms
+     */
+    public function removeRoom(\HouseFinder\CoreBundle\Entity\Room $rooms)
+    {
+        $this->rooms->removeElement($rooms);
+    }
+
+    /**
+     * Get rooms
+     *
+     * @return \Doctrine\Common\Collections\Collection 
+     */
+    public function getRooms()
+    {
+        return $this->rooms;
+    }
+
+    /**
+     * Set address
+     *
+     * @param \HouseFinder\CoreBundle\Entity\Address $address
+     * @return Advertisement
+     */
+    public function setAddress(\HouseFinder\CoreBundle\Entity\Address $address = null)
+    {
+        $this->address = $address;
+    
+        return $this;
+    }
+
+    /**
+     * Get address
+     *
+     * @return \HouseFinder\CoreBundle\Entity\Address 
+     */
+    public function getAddress()
+    {
+        return $this->address;
+    }
+
+    /**
+     * @param \DateTime $rentStartDate
+     */
+    public function setRentStartDate(\DateTime $rentStartDate)
+    {
+        $this->rentStartDate = $rentStartDate;
+    }
+
+    /**
+     * @return \DateTime
+     */
+    public function getRentStartDate()
+    {
+        return $this->rentStartDate;
     }
 
 }

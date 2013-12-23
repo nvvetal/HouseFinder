@@ -1,12 +1,12 @@
 <?php
 namespace HouseFinder\CoreBundle\Entity;
 
-use HouseFinder\CoreBundle\Entity\User;
+use HouseFinder\CoreBundle\Entity\User as User;
 use Doctrine\ORM\Mapping as ORM;
 /**
  * @ORM\Entity
  */
-class SlandoUser extends User
+class UserSlando extends User
 {
     /** @ORM\Column(type="string", nullable=true) */
     protected $sourceHash;
@@ -15,15 +15,22 @@ class SlandoUser extends User
     protected $sourceURL;
 
     /**
-     * @param mixed $sourceHash
+     * Set sourceHash
+     *
+     * @param string $sourceHash
+     * @return UserSlando
      */
     public function setSourceHash($sourceHash)
     {
         $this->sourceHash = $sourceHash;
+    
+        return $this;
     }
 
     /**
-     * @return mixed
+     * Get sourceHash
+     *
+     * @return string 
      */
     public function getSourceHash()
     {
@@ -31,15 +38,22 @@ class SlandoUser extends User
     }
 
     /**
-     * @param mixed $sourceURL
+     * Set sourceURL
+     *
+     * @param string $sourceURL
+     * @return UserSlando
      */
     public function setSourceURL($sourceURL)
     {
         $this->sourceURL = $sourceURL;
+    
+        return $this;
     }
 
     /**
-     * @return mixed
+     * Get sourceURL
+     *
+     * @return string 
      */
     public function getSourceURL()
     {

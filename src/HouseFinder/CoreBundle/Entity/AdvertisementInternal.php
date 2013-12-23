@@ -5,7 +5,7 @@ use Doctrine\ORM\Mapping as ORM;
 /**
  * @ORM\Entity
  */
-class InternalAdvertisement extends Advertisement
+class AdvertisementInternal extends Advertisement
 {
 
 }

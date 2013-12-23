@@ -6,7 +6,7 @@ use Doctrine\ORM\Mapping as ORM;
 /**
  * @ORM\Entity
  */
-class InternalUser extends User
+class UserInternal extends User
 {
 
 }

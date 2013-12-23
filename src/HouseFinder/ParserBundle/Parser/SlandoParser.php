@@ -2,9 +2,12 @@
 namespace HouseFinder\ParserBundle\Parser;
 
 use Doctrine\ORM\EntityManager;
+use HouseFinder\CoreBundle\Entity\Address;
 use HouseFinder\CoreBundle\Entity\Advertisement;
-use HouseFinder\CoreBundle\Entity\SlandoAdvertisement;
-use HouseFinder\CoreBundle\Entity\SlandoUser;
+use HouseFinder\CoreBundle\Entity\AdvertisementPhoto;
+use HouseFinder\CoreBundle\Entity\Room;
+use HouseFinder\CoreBundle\Entity\AdvertisementSlando;
+use HouseFinder\CoreBundle\Entity\UserSlando;
 use HouseFinder\CoreBundle\Entity\UserPhone;
 use HouseFinder\ParserBundle\Parser\BaseParser;
 use HouseFinder\ParserBundle\Service\SlandoService;
@@ -30,10 +33,9 @@ class SlandoParser extends BaseParser
                 $sourceHash = $matches[1];
             }
             return array(
-                'title' => $text,
-                'url' => $url,
-                //TODO: parse (ID7XG8F) from zhitomir.zht.slando.ua/obyavlenie/sdam-svoyu-2-h-komnatnuyu-kvartiru-v-zhitomire-ID7XG8F.html
-                'sourceHash' => $sourceHash,
+                'title'         => $text,
+                'url'           => $url,
+                'sourceHash'    => $sourceHash,
             );
         });
         $pages = array();
@@ -117,51 +119,168 @@ class SlandoParser extends BaseParser
 
     /**
      * @param string|string $raw
-     * @return SlandoAdvertisement;
+     * @return AdvertisementSlando;
      */
     protected function getEntityByRAW($raw)
     {
         echo "<pre>";
         var_dump($raw);
-
-        /** @var $em EntityManager */
-        $em = $this->container->get('Doctrine')->getManager();
-        $slandoUser = $em->getRepository('HouseFinderCoreBundle:SlandoUser')
-            ->findOneBy(array('sourceHash' => $raw['data']['ownerHash']));
-        if(is_null($slandoUser)){
-            $slandoUser = new SlandoUser();
-            $slandoUser->setUsername($raw['data']['ownerName'].'@slando');
-            $slandoUser->setUsernameCanonical($raw['data']['ownerName'].'@slando');
-            $slandoUser->setEmail($raw['data']['ownerName'].'@slando.ua');
-            $slandoUser->setEmailCanonical($raw['data']['ownerName'].'@slando.ua');
-            $slandoUser->setSourceHash($raw['data']['ownerHash']);
-            $slandoUser->setSourceURL($raw['data']['ownerUrl']);
-            $slandoUser->setPassword(md5(time()));
-            $slandoUser->setLocked(true);
-            $slandoUser->setExpired(true);
-            $slandoUser->setRoles(array());
-            $slandoUser->setCredentialsExpired(true);
-            foreach ($raw['data']['phone'] as $MSISDN){
-                $phone = new UserPhone();
-                $phone->setMsisdn($MSISDN);
-                $em->persist($phone);
-            }
-            $em->persist($slandoUser);
-            $em->flush();
-        }
-        //TODO: parse, check and create address
-
-        //TODO: check is advertisement already exists
-        $entity = new SlandoAdvertisement();
-        $entity->setUser($slandoUser);
+        $UserSlando = $this->getUser($raw);
+        $address = $this->getAddress($raw['data']['address']);
+        $entity = new AdvertisementSlando();
+        //TODO: uncomment
+        //$entity->setUser($UserSlando);
+        //$entity->setAddress($address);
         $entity->setName($raw['title']);
         $entity->setDescription($raw['data']['text']);
         $entity->setSourceId($raw['data']['sourceID']);
         $entity->setSourceHash($raw['sourceHash']);
         $entity->setSourceURL($raw['url']);
+        $priceData = $this->getPriceData($raw['data']['price']);
+        $entity->setPrice($priceData['price']);
+        $entity->setCurrency($priceData['currency']);
+        $entity->setType($this->advertisementType);
+        $dt = new \DateTime($raw['data']['createdDateTime']);
+        $entity->setCreated($dt);
+        if($this->advertisementType == Advertisement::TYPE_RENT){
+            $this->fillRent($entity, $raw['data']['params']);
+            $this->fillRentStartDate($entity, $raw['data']['params']);
+        }
+        $this->fillRooms($entity, $raw['data']['params']);
+        $this->fillFullSpace($entity, $raw['data']['params']);
+        $this->fillLevel($entity, $raw['data']['params']);
+        $this->fillMaxLevels($entity, $raw['data']['params']);
+        $this->fillWallType($entity, $raw['data']['params']);
 
-        //TODO: photos store and save
+        //TODO: maybe it post process actions
+        if($entity->getWallType() == '') {
+            $entity->setWallType($this->parseTextWallType($raw['data']['text']));
+        }
+
+        if(isset($raw['data']['photo']) && count($raw['data']['photo']) > 0){
+            foreach($raw['data']['photo'] as $photoData){
+                if(empty($photoData)) continue;
+                $photo = new AdvertisementPhoto();
+                $photo->setUrl($photoData);
+                $entity->addPhoto($photo);
+            }
+        }
         return $entity;
+    }
+
+    private function fillRooms(AdvertisementSlando &$entity, $params)
+    {
+        $roomsCount = $this->searchSlandoParamByName('Количество комнат', $params);
+        if(is_null($roomsCount)) return false;
+        $kitchenSpace = $this->getKitchenSpace($entity, $params);
+        for($i = 0; $i < $roomsCount; $i++){
+            //TODO: fill rooms from text parse somehow
+            $room = new Room();
+            $room->setType(Room::TYPE_ROOM);
+            $entity->addRoom($room);
+        }
+        if($kitchenSpace !== false){
+            $room = new Room();
+            $room->setType(Room::TYPE_KITCHEN);
+            $room->setSpace($kitchenSpace);
+            $entity->addRoom($room);
+        }
+        return true;
+    }
+
+    private function fillFullSpace(AdvertisementSlando &$entity, $params)
+    {
+        $content = $this->searchSlandoParamByName('Жилая площадь', $params);
+        if(is_null($content)) return false;
+        if(preg_match("/^(\d+)/iu", $content, $m)){
+            $entity->setFullSpace($m[1]);
+            return true;
+        }
+        return false;
+    }
+
+    private function getKitchenSpace(AdvertisementSlando &$entity, $params)
+    {
+        $content = $this->searchSlandoParamByName('Площадь кухни', $params);
+        if(is_null($content)) return false;
+        if(preg_match("/^(\d+)/iu", $content, $m)){
+            return $m[1];
+        }
+        return false;
+    }
+
+    private function fillLevel(AdvertisementSlando &$entity, $params)
+    {
+        $level = $this->searchSlandoParamByName('Этаж', $params);
+        if(is_null($level)) return false;
+        $entity->setLevel($level);
+        return false;
+    }
+
+    private function fillMaxLevels(AdvertisementSlando &$entity, $params)
+    {
+        $maxLevels = $this->searchSlandoParamByName('Этажность дома', $params);
+        if(is_null($maxLevels)) return false;
+        $entity->setMaxLevels($maxLevels);
+        return false;
+    }
+
+
+
+    private function fillRent(AdvertisementSlando &$entity, $params)
+    {
+        $content = $this->searchSlandoParamByName('Тип аренды', $params);
+        if(is_null($content)) return false;
+        $rentType = $this->getRentType($content);
+        $entity->setRentType($rentType);
+        return true;
+    }
+
+    private function fillRentStartDate(AdvertisementSlando &$entity, $params)
+    {
+        $content = $this->searchSlandoParamByName('Сдается с', $params);
+        if(is_null($content)) return false;
+        if(preg_match("/^(\d+) (\w+) (\d+)$/iu", $content, $matches)){
+            $month = $this->getMonthByRussianName($matches[2]);
+            $date = new \DateTime($matches[3].'-'.$month.'-'.$matches[1]);
+            $entity->setRentStartDate($date);
+        }
+        return false;
+    }
+
+    private function fillUserType(UserSlando &$entity, $params)
+    {
+        $content = $this->searchSlandoParamByName('Объявление от', $params);
+        if(is_null($content)) return false;
+        switch($content){
+            case "Агентства":
+                $entity->setType(UserSlando::TYPE_REALTOR);
+                break;
+        }
+        return false;
+    }
+
+    private function fillWallType(AdvertisementSlando &$entity, $params)
+    {
+        $content = $this->searchSlandoParamByName('Тип', $params);
+        switch($content){
+            case "Панельный":
+                $entity->setType(AdvertisementSlando::WALL_TYPE_PANEL);
+                break;
+            case "Кирпичный":
+                $entity->setType(AdvertisementSlando::WALL_TYPE_BRICK);
+                break;
+            case "Монолитный":
+                $entity->setType(AdvertisementSlando::WALL_TYPE_MONOLITH);
+                break;
+            case "Блочный":
+                $entity->setType(AdvertisementSlando::WALL_TYPE_BLOCK);
+                break;
+            case "Деревянный":
+                $entity->setType(AdvertisementSlando::WALL_TYPE_WOOD);
+                break;
+        }
+        return false;
     }
 
     private function getMonthByRussianName($russianName)
@@ -181,7 +300,118 @@ class SlandoParser extends BaseParser
             'декабря',
         );
         $keys = array_keys($month, $russianName);
-        return sprintf("%02d", $keys[0]);
+        return sprintf("%02d", $keys[0]+1);
     }
 
+    private function getUser($raw)
+    {
+        /** @var $em EntityManager */
+        $em = $this->container->get('Doctrine')->getManager();
+        $UserSlando = $em->getRepository('HouseFinderCoreBundle:UserSlando')
+            ->findOneBy(array('sourceHash' => $raw['data']['ownerHash']));
+        if(is_null($UserSlando)){
+            $UserSlando = new UserSlando();
+            $UserSlandoName = $raw['data']['ownerName'].'@'.$raw['data']['ownerHash'].'@slando';
+            $UserSlando->setUsername($UserSlandoName);
+            $UserSlando->setUsernameCanonical($UserSlandoName);
+            $UserSlando->setEmail($UserSlandoName);
+            $UserSlando->setEmailCanonical($UserSlandoName);
+            $UserSlando->setSourceHash($raw['data']['ownerHash']);
+            $UserSlando->setSourceURL($raw['data']['ownerUrl']);
+            $UserSlando->setPassword(md5(time()));
+            $UserSlando->setLocked(true);
+            $UserSlando->setExpired(true);
+            $UserSlando->setRoles(array());
+            $UserSlando->setCredentialsExpired(true);
+            $this->fillUserType($UserSlando, $raw['data']['params']);
+            $em->persist($UserSlando);
+            $em->flush();
+            foreach ($raw['data']['phone'] as $MSISDN){
+                $phone = new UserPhone();
+                $phone->setMsisdn($MSISDN);
+                $phone->setUser($UserSlando);
+                $em->persist($phone);
+                $em->flush();
+            }
+        }
+        return $UserSlando;
+    }
+
+    private function getAddress($content)
+    {
+        //TODO: fix address - parse full path
+        /** @var $em EntityManager */
+        $em = $this->container->get('Doctrine')->getManager();
+        $address = $em->getRepository('HouseFinderCoreBundle:Address')->findOneBy(array('address'=>$content));
+        if(is_null($address)){
+            $address = new Address();
+            $address->setAddress($content);
+            $em->persist($address);
+            $em->flush();
+        }
+        return $address;
+    }
+
+    private function getPriceData($content)
+    {
+        $priceData = array(
+            'price' => 0,
+            'currency' => Advertisement::CURRENCY_UAH
+        );
+        if(preg_match("/(.*) (\w+)\./iu", $content, $matches)){
+            $priceData = array(
+                'price'     => str_replace(" ", '', $matches[1]),
+                'currency'  => $this->getCurrencyBySlando($matches[2]),
+            );
+        }
+        return $priceData;
+    }
+
+    private function getCurrencyBySlando($slandoCurrency)
+    {
+        $slandoCurrency = strtolower($slandoCurrency);
+        $currency = '';
+        switch($slandoCurrency)
+        {
+            case "грн":
+                $currency = Advertisement::CURRENCY_UAH;
+                break;
+            case "$":
+                $currency = Advertisement::CURRENCY_USD;
+                break;
+            case "€":
+                $currency = Advertisement::CURRENCY_EUR;
+                break;
+        }
+        return $currency;
+    }
+
+    private function getRentType($content)
+    {
+        $rentType = '';
+        $content = mb_strtolower($content, 'UTF-8');
+        switch($content){
+            case "долгосрочная аренда квартир":
+                $rentType = Advertisement::RENT_TYPE_LONG;
+                break;
+
+            case "квартиры посуточно":
+                $rentType = Advertisement::RENT_TYPE_DAY;
+                break;
+
+            case "квартиры с почасовой оплатой":
+                $rentType = Advertisement::RENT_TYPE_HOUR;
+                break;
+        }
+        return $rentType;
+    }
+
+
+    private function searchSlandoParamByName($name, $params)
+    {
+        foreach ($params as $data) {
+            if($data[0] == $name) return $data[1];
+        }
+        return NULL;
+    }
 }

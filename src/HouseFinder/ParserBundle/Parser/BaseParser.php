@@ -13,6 +13,7 @@ abstract class BaseParser
 {
     protected $container;
     protected $service;
+    protected $advertisementType;
 
     public function __construct(Container $container, BaseService $service)
     {
@@ -40,10 +41,12 @@ abstract class BaseParser
 
     /**
      * @param Crawler $crawler
+     * @param $type
      * @return array|null
      */
-    public function getEntities(Crawler $crawler)
+    public function getEntities(Crawler $crawler, $type = Advertisement::TYPE_RENT )
     {
+        $this->advertisementType = $type;
         $rows = $this->parseListDomCrawler($crawler);
         if(count($rows) == 0) return NULL;
         $entities = array();
@@ -55,6 +58,14 @@ abstract class BaseParser
         echo "<pre>";
         var_dump($entities);
         exit;
+        $this->advertisementType = NULL;
         return $entities;
+    }
+
+    public function parseTextWallType($text)
+    {
+        if(mb_strpos($text, 'кирпич', 0, 'UTF-8') !== false) return Advertisement::WALL_TYPE_BRICK;
+        if(mb_strpos($text, 'панель', 0, 'UTF-8') !== false) return Advertisement::WALL_TYPE_PANEL;
+        return '';
     }
 }

@@ -23,7 +23,7 @@ class Room
      * @ORM\Id
      * @ORM\GeneratedValue(strategy="AUTO")
      */
-    private $id;
+    protected $id;
 
     /**
      * @ORM\ManyToOne(targetEntity="Advertisement")
@@ -37,6 +37,8 @@ class Room
     /** @ORM\Column(type="float") */
     protected $space;
 
+
+
     /**
      * Get id
      *
@@ -45,5 +47,74 @@ class Room
     public function getId()
     {
         return $this->id;
+    }
+
+    /**
+     * Set type
+     *
+     * @param string $type
+     * @return Room
+     */
+    public function setType($type)
+    {
+        $this->type = $type;
+    
+        return $this;
+    }
+
+    /**
+     * Get type
+     *
+     * @return string 
+     */
+    public function getType()
+    {
+        return $this->type;
+    }
+
+    /**
+     * Set space
+     *
+     * @param float $space
+     * @return Room
+     */
+    public function setSpace($space)
+    {
+        $this->space = $space;
+    
+        return $this;
+    }
+
+    /**
+     * Get space
+     *
+     * @return float 
+     */
+    public function getSpace()
+    {
+        return $this->space;
+    }
+
+    /**
+     * Set advertisement
+     *
+     * @param \HouseFinder\CoreBundle\Entity\Advertisement $advertisement
+     * @return Room
+     */
+    public function setAdvertisement(\HouseFinder\CoreBundle\Entity\Advertisement $advertisement = null)
+    {
+        $this->advertisement = $advertisement;
+    
+        return $this;
+    }
+
+    /**
+     * Get advertisement
+     *
+     * @return \HouseFinder\CoreBundle\Entity\Advertisement 
+     */
+    public function getAdvertisement()
+    {
+        return $this->advertisement;
     }
 }

@@ -18,7 +18,7 @@ class UserPhone
      * @ORM\Id
      * @ORM\GeneratedValue(strategy="AUTO")
      */
-    private $id;
+    protected $id;
 
     /**
      * @ORM\ManyToOne(targetEntity="User")
@@ -26,13 +26,15 @@ class UserPhone
      */
     protected $user;
 
-    /** @ORM\Column(type="integer") */
+    /** @ORM\Column(type="string") */
     protected $msisdn;
 
 
 
     /** @ORM\Column(type="boolean") */
     protected $checked = false;
+
+
 
     /**
      * Get id
@@ -45,31 +47,22 @@ class UserPhone
     }
 
     /**
-     * @param mixed $checked
-     */
-    public function setChecked($checked)
-    {
-        $this->checked = $checked;
-    }
-
-    /**
-     * @return mixed
-     */
-    public function getChecked()
-    {
-        return $this->checked;
-    }
-
-    /**
-     * @param mixed $msisdn
+     * Set msisdn
+     *
+     * @param integer $msisdn
+     * @return UserPhone
      */
     public function setMsisdn($msisdn)
     {
         $this->msisdn = $msisdn;
+    
+        return $this;
     }
 
     /**
-     * @return mixed
+     * Get msisdn
+     *
+     * @return string
      */
     public function getMsisdn()
     {
@@ -77,15 +70,45 @@ class UserPhone
     }
 
     /**
-     * @param mixed $user
+     * Set checked
+     *
+     * @param boolean $checked
+     * @return UserPhone
      */
-    public function setUser($user)
+    public function setChecked($checked)
     {
-        $this->user = $user;
+        $this->checked = $checked;
+    
+        return $this;
     }
 
     /**
-     * @return mixed
+     * Get checked
+     *
+     * @return boolean 
+     */
+    public function getChecked()
+    {
+        return $this->checked;
+    }
+
+    /**
+     * Set user
+     *
+     * @param \HouseFinder\CoreBundle\Entity\User $user
+     * @return UserPhone
+     */
+    public function setUser(\HouseFinder\CoreBundle\Entity\User $user = null)
+    {
+        $this->user = $user;
+    
+        return $this;
+    }
+
+    /**
+     * Get user
+     *
+     * @return \HouseFinder\CoreBundle\Entity\User 
      */
     public function getUser()
     {
