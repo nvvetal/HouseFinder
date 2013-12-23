@@ -34,7 +34,7 @@ class Room
     /** @ORM\Column(type="string") */
     protected $type = self::TYPE_ROOM;
 
-    /** @ORM\Column(type="float") */
+    /** @ORM\Column(type="float", nullable=true) */
     protected $space;
 
 

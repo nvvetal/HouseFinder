@@ -47,7 +47,7 @@ class SlandoParser extends BaseParser
             $pages[$key] = $link;
             $pages[$key]['data'] = $pageData;
             //TODO: temporary
-            break;
+            //break;
         }
         /*
                 header('Content-Type: text/html; charset=utf-8');
@@ -125,18 +125,18 @@ class SlandoParser extends BaseParser
     {
         echo "<pre>";
         var_dump($raw);
-        $UserSlando = $this->getUser($raw);
+        $userSlando = $this->getUser($raw);
         $address = $this->getAddress($raw['data']['address']);
         $entity = new AdvertisementSlando();
-        //TODO: uncomment
-        //$entity->setUser($UserSlando);
-        //$entity->setAddress($address);
+        $entity->setUser($userSlando);
+        $entity->setAddress($address);
         $entity->setName($raw['title']);
         $entity->setDescription($raw['data']['text']);
         $entity->setSourceId($raw['data']['sourceID']);
         $entity->setSourceHash($raw['sourceHash']);
         $entity->setSourceURL($raw['url']);
         $priceData = $this->getPriceData($raw['data']['price']);
+        var_dump($priceData);
         $entity->setPrice($priceData['price']);
         $entity->setCurrency($priceData['currency']);
         $entity->setType($this->advertisementType);
@@ -152,16 +152,12 @@ class SlandoParser extends BaseParser
         $this->fillMaxLevels($entity, $raw['data']['params']);
         $this->fillWallType($entity, $raw['data']['params']);
 
-        //TODO: maybe it post process actions
-        if($entity->getWallType() == '') {
-            $entity->setWallType($this->parseTextWallType($raw['data']['text']));
-        }
-
         if(isset($raw['data']['photo']) && count($raw['data']['photo']) > 0){
             foreach($raw['data']['photo'] as $photoData){
                 if(empty($photoData)) continue;
                 $photo = new AdvertisementPhoto();
                 $photo->setUrl($photoData);
+                $photo->setAdvertisement($entity);
                 $entity->addPhoto($photo);
             }
         }
@@ -177,12 +173,14 @@ class SlandoParser extends BaseParser
             //TODO: fill rooms from text parse somehow
             $room = new Room();
             $room->setType(Room::TYPE_ROOM);
+            $room->setAdvertisement($entity);
             $entity->addRoom($room);
         }
         if($kitchenSpace !== false){
             $room = new Room();
             $room->setType(Room::TYPE_KITCHEN);
             $room->setSpace($kitchenSpace);
+            $room->setAdvertisement($entity);
             $entity->addRoom($room);
         }
         return true;
@@ -369,7 +367,7 @@ class SlandoParser extends BaseParser
 
     private function getCurrencyBySlando($slandoCurrency)
     {
-        $slandoCurrency = strtolower($slandoCurrency);
+        $slandoCurrency = mb_strtolower($slandoCurrency, 'UTF-8');
         $currency = '';
         switch($slandoCurrency)
         {
@@ -413,5 +411,12 @@ class SlandoParser extends BaseParser
             if($data[0] == $name) return $data[1];
         }
         return NULL;
+    }
+
+    public function postParseText(Advertisement &$entity)
+    {
+        if($entity->getWallType() == '') {
+            $entity->setWallType($this->parseTextWallType($entity->getDescription()));
+        }
     }
 }

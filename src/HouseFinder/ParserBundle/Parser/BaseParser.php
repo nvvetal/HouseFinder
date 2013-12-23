@@ -52,15 +52,21 @@ abstract class BaseParser
         $entities = array();
         foreach ($rows as $row)
         {
-            $entities[] = $this->getEntityByRAW($row);
+            $entity = $this->getEntityByRAW($row);
+            $this->postParseText($entity);
+            $entities[] = $entity;
         }
+        /*
         header('Content-Type: text/html; charset=utf-8');
         echo "<pre>";
         var_dump($entities);
         exit;
+        */
         $this->advertisementType = NULL;
         return $entities;
     }
+
+    abstract public function postParseText(Advertisement &$entity);
 
     public function parseTextWallType($text)
     {

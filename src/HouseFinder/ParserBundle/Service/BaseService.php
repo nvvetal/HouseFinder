@@ -2,6 +2,7 @@
 
 namespace HouseFinder\ParserBundle\Service;
 
+use Doctrine\ORM\EntityManager;
 use HouseFinder\CoreBundle\Entity\Advertisement;
 use HouseFinder\ParserBundle\Parser\BaseParser;
 use HouseFinder\ParserBundle\Parser\SlandoParser;
@@ -44,9 +45,16 @@ abstract class BaseService
         /** @var $parser SlandoParser */
         $parser = $this->container->get('housefinder.parser.parser.slando');
         $entities = $parser->getEntities($domCrawler, $type);
-
+        /** @var $em EntityManager */
+        $em = $this->container->get('Doctrine')->getManager();
+/*
         echo "<pre>";
         var_dump($entities);
+*/
+        foreach ($entities as $entity){
+            $em->persist($entity);
+        }
+        $em->flush();
         exit;
     }
 

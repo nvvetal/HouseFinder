@@ -30,7 +30,7 @@ class AdvertisementPhoto
     /** @ORM\Column(type="text") */
     protected $url;
 
-    /** @ORM\Column(type="string") */
+    /** @ORM\Column(type="string", nullable=true) */
     protected $path;
 
     /**

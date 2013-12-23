@@ -84,25 +84,25 @@ class Advertisement
     protected $currency;
 
     /**
-     * @ORM\OneToMany(targetEntity="AdvertisementPhoto", mappedBy="advertisement")
+     * @ORM\OneToMany(targetEntity="AdvertisementPhoto", mappedBy="advertisement", cascade={"all"})
      */
     protected $photos;
 
     /**
-     * @ORM\OneToMany(targetEntity="Room", mappedBy="advertisement")
+     * @ORM\OneToMany(targetEntity="Room", mappedBy="advertisement", cascade={"all"})
      */
     protected $rooms;
 
-    /** @ORM\Column(type="float") */
+    /** @ORM\Column(type="float", nullable=true) */
     protected $fullSpace;
 
-    /** @ORM\Column(type="float") */
+    /** @ORM\Column(type="float", nullable=true) */
     protected $livingSpace;
 
-    /** @ORM\Column(type="smallint") */
+    /** @ORM\Column(type="smallint", nullable=true) */
     protected $level;
 
-    /** @ORM\Column(type="smallint") */
+    /** @ORM\Column(type="smallint", nullable=true) */
     protected $maxLevels; //only if not house
 
     /** @ORM\Column(type="string", nullable=true) */
@@ -136,7 +136,7 @@ class Advertisement
      * @var datetime $updated
      *
      * @Gedmo\Timestampable(on="update")
-     * @ORM\Column(type="datetime")
+     * @ORM\Column(type="datetime", nullable=true)
      */
     protected $updated;
 
