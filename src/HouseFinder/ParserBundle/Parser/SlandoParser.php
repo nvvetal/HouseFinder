@@ -153,6 +153,7 @@ class SlandoParser extends BaseParser
         $this->fillLevel($entity, $raw['data']['params']);
         $this->fillMaxLevels($entity, $raw['data']['params']);
         $this->fillWallType($entity, $raw['data']['params']);
+        $this->fillHouseType($entity, $raw['data']['params']);
 
         if(isset($raw['data']['photo']) && count($raw['data']['photo']) > 0){
             foreach($raw['data']['photo'] as $photoData){
@@ -233,6 +234,22 @@ class SlandoParser extends BaseParser
         if(is_null($content)) return false;
         $rentType = $this->getRentType($content);
         $entity->setRentType($rentType);
+        return true;
+    }
+
+    private function fillHouseType(AdvertisementSlando &$entity, $params)
+    {
+        $content = $this->searchSlandoParamByName('Тип квартиры', $params);
+        if(is_null($content)) return false;
+        switch($content)
+        {
+            case "Вторичный рынок":
+                $entity->setHouseType(AdvertisementSlando::HOUSE_TYPE_OLD);
+                break;
+            case "Новостройки":
+                $entity->setHouseType(AdvertisementSlando::HOUSE_TYPE_NEW);
+                break;
+        }
         return true;
     }
 
