@@ -2,6 +2,10 @@
 
 namespace HouseFinder\CoreBundle\Controller;
 
+use Geocoder\HttpAdapter\CurlHttpAdapter;
+use Ivory\GoogleMap\Services\Geocoding\Geocoder;
+use Ivory\GoogleMap\Services\Geocoding\GeocoderProvider;
+use Ivory\GoogleMap\Services\Geocoding\GeocoderRequest;
 use Symfony\Bundle\FrameworkBundle\Controller\Controller;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Route;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Template;
@@ -24,6 +28,16 @@ class DefaultController extends Controller
      */
     public function routeAction($fromName, $toName)
     {
+//        $geocoder = new Geocoder();
+//        $provider = new GeocoderProvider(new CurlHttpAdapter());
+//        $geocoder->registerProvider($provider);
+//        $request = new GeocoderRequest();
+//        $request->setLanguage("ru");
+//        $request->setAddress("Жукова 7, житомир");
+//        $ret = $geocoder->geocode($request);
+//        var_dump($ret);
+//        exit;
+
         /**
          * @var \Ivory\GoogleMap\Services\Directions\Directions $directions
          */
