@@ -24,8 +24,11 @@
         "sensio/buzz-bundle": "dev-master",
         "fabpot/goutte": "v1.0.3",
         "guzzle/plugin-cookie": "v3.7.4",
-        "nvvetal/gd2-php-ocr": "*",
-        "gedmo/doctrine-extensions": "2.3.8"
+        "nvvetal/gd2-php-ocr": "*@dev",
+        "gedmo/doctrine-extensions": "2.3.8",
+        "egeloen/google-map-bundle": "*",
+        "willdurand/geocoder": "*",
+        "widop/http-adapter-bundle": "1.1.*"
     },
     "scripts": {
         "post-install-cmd": [
@@ -46,7 +49,6 @@
     "config": {
         "bin-dir": "bin"
     },
-    "minimum-stability": "dev",
     "extra": {
         "symfony-app-dir": "app",
         "symfony-web-dir": "web",

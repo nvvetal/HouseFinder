@@ -91,3 +91,10 @@ fos_user:
     db_driver: orm # other valid values are 'mongodb', 'couchdb' and 'propel'
     firewall_name: main
     user_class: HouseFinder\CoreBundle\Entity\User
+
+ivory_google_map:
+    directions_request:
+        travel_mode: "TRANSIT"
+        unit_system: "METRIC"
+        sensor: false
+        #provide_route_alternatives: true
