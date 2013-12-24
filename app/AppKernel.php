@@ -22,6 +22,8 @@ class AppKernel extends Kernel
             new HouseFinder\CoreBundle\HouseFinderCoreBundle(),
             new HouseFinder\AuthBundle\HouseFinderAuthBundle(),
             new HouseFinder\ParserBundle\HouseFinderParserBundle(),
+            new Widop\HttpAdapterBundle\WidopHttpAdapterBundle(),
+            new Ivory\GoogleMapBundle\IvoryGoogleMapBundle(),
         );
 
         if (in_array($this->getEnvironment(), array('dev', 'test'))) {
