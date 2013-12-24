@@ -64,7 +64,7 @@ class SlandoParser extends BaseParser
      */
     protected function parsePageDomCrawler(Crawler $crawler)
     {
-        header('Content-Type: text/html; charset=utf-8');
+        //header('Content-Type: text/html; charset=utf-8');
         $data = array();
         $data['params'] = $crawler->filter('div.pding5_10')->each(function (Crawler $node, $i) {
             $text = $node->text();
@@ -79,7 +79,9 @@ class SlandoParser extends BaseParser
         $data['address'] = trim($data['address'], " \n\t\r\0\x0B\xC2\xA0");
         $data['photo'] = $crawler->filter("div.photo-glow img")->extract(array('src'));
         $data['ownerName'] = $crawler->filter("p.userdetails span")->eq(0)->text();
-        $data['ownerUrl'] = $crawler->filter("#linkUserAds")->extract(array('href'))[0];
+        $data['ownerUrl'] = '';
+        $ownerURLs = $crawler->filter("#linkUserAds")->extract(array('href'));
+        if(isset($ownerURLs[0])) $data['ownerUrl'] = $ownerURLs[0];
         if(preg_match("/\/user\/(.*)\/$/i", $data['ownerUrl'], $matches)){
             $data['ownerHash'] = $matches[1];
             $data['ownerId'] = $matches[1];
@@ -123,8 +125,8 @@ class SlandoParser extends BaseParser
      */
     protected function getEntityByRAW($raw)
     {
-        echo "<pre>";
-        var_dump($raw);
+        //echo "<pre>";
+        //var_dump($raw);
         $userSlando = $this->getUser($raw);
         $address = $this->getAddress($raw['data']['address']);
         $entity = new AdvertisementSlando();
@@ -136,7 +138,7 @@ class SlandoParser extends BaseParser
         $entity->setSourceHash($raw['sourceHash']);
         $entity->setSourceURL($raw['url']);
         $priceData = $this->getPriceData($raw['data']['price']);
-        var_dump($priceData);
+        //var_dump($priceData);
         $entity->setPrice($priceData['price']);
         $entity->setCurrency($priceData['currency']);
         $entity->setType($this->advertisementType);
@@ -263,19 +265,19 @@ class SlandoParser extends BaseParser
         $content = $this->searchSlandoParamByName('Тип', $params);
         switch($content){
             case "Панельный":
-                $entity->setType(AdvertisementSlando::WALL_TYPE_PANEL);
+                $entity->setWallType(AdvertisementSlando::WALL_TYPE_PANEL);
                 break;
             case "Кирпичный":
-                $entity->setType(AdvertisementSlando::WALL_TYPE_BRICK);
+                $entity->setWallType(AdvertisementSlando::WALL_TYPE_BRICK);
                 break;
             case "Монолитный":
-                $entity->setType(AdvertisementSlando::WALL_TYPE_MONOLITH);
+                $entity->setWallType(AdvertisementSlando::WALL_TYPE_MONOLITH);
                 break;
             case "Блочный":
-                $entity->setType(AdvertisementSlando::WALL_TYPE_BLOCK);
+                $entity->setWallType(AdvertisementSlando::WALL_TYPE_BLOCK);
                 break;
             case "Деревянный":
-                $entity->setType(AdvertisementSlando::WALL_TYPE_WOOD);
+                $entity->setWallType(AdvertisementSlando::WALL_TYPE_WOOD);
                 break;
         }
         return false;
