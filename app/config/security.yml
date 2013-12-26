@@ -18,7 +18,7 @@ security:
         main:
             pattern: ^/
             anonymous: true
-            logout: true
+            logout: ~
             form_login:
                 provider: fos_userbundle
                 login_path: /login
