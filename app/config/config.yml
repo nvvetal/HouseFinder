@@ -72,7 +72,8 @@ hwi_oauth:
         properties:
             vkontakte: vkontakteId
             facebook: facebookId
-    connect: ~
+    connect:
+        account_connector: my_user_provider
     firewall_name: main
     resource_owners:
         vkontakte:

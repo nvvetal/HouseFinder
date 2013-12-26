@@ -6,15 +6,20 @@
 
     <parameters>
         <parameter key="my_user_provider.class">HouseFinder\CoreBundle\Security\Core\User\FOSUBUserProvider</parameter>
+        <parameter key="my_user_manager_service.class">HouseFinder\CoreBundle\Service\UserManagerService</parameter>
     </parameters>
 
     <services>
+        <service id="my_user_manager_service" class="%my_user_manager_service.class%">
+            <argument type="service" id="doctrine.orm.entity_manager" />
+        </service>
         <service id="my_user_provider" class="%my_user_provider.class%">
             <argument type="service" id="fos_user.user_manager" />
             <argument type="collection">
                 <argument key="vkontakte">vkontakteId</argument>
                 <argument key="facebook">facebookId</argument>
             </argument>
+            <argument type="service" id="my_user_manager_service" />
         </service>
     </services>
 </container>
