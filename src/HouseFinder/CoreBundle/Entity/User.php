@@ -16,6 +16,7 @@ use Doctrine\ORM\Mapping as ORM;
  * @ORM\Entity(repositoryClass="HouseFinder\CoreBundle\Entity\UserRepository")
  * @ORM\InheritanceType("SINGLE_TABLE")
  * @ORM\DiscriminatorMap({"base" = "User", "internal" = "UserInternal", "slando" = "UserSlando"})
+ * @ORM\HasLifecycleCallbacks
  */
 class User extends BaseUser
 {
@@ -40,6 +41,9 @@ class User extends BaseUser
     /** @ORM\Column(type="string") */
     protected $type = self::TYPE_PRIVATE;
 
+    /** @ORM\Column(type="array") */
+    protected $associatedEmails = array();
+
     /**
      * @param mixed $type
      */
@@ -60,7 +64,7 @@ class User extends BaseUser
     /**
      * Get id
      *
-     * @return integer 
+     * @return integer
      */
     public function getId()
     {
@@ -76,14 +80,14 @@ class User extends BaseUser
     public function setVkontakteId($vkontakteId)
     {
         $this->vkontakteId = $vkontakteId;
-    
+
         return $this;
     }
 
     /**
      * Get vkontakteId
      *
-     * @return string 
+     * @return string
      */
     public function getVkontakteId()
     {
@@ -99,17 +103,73 @@ class User extends BaseUser
     public function setFacebookId($facebookId)
     {
         $this->facebookId = $facebookId;
-    
+
         return $this;
     }
 
     /**
      * Get facebookId
      *
-     * @return string 
+     * @return string
      */
     public function getFacebookId()
     {
         return $this->facebookId;
+    }
+
+    /**
+     * Add email
+     *
+     * @param string $email
+     * @return User
+     */
+    public function addAssociatedEmail($email)
+    {
+        if (!in_array($email, $this->associatedEmails)) {
+            $this->associatedEmails[] = $email;
+        }
+
+        return $this;
+    }
+
+    /**
+     * Remove email
+     *
+     * @param string $email
+     * @return User
+     */
+    public function removeAssociatedEmail($email)
+    {
+        $this->associatedEmails = array_filter(
+            $this->associatedEmails,
+            function ($item) use ($email) {
+                if ($item == $email) {
+                    return false;
+                }
+
+                return true;
+            }
+        );
+
+        return $this;
+    }
+
+    /**
+     * Get emails
+     *
+     * @return array
+     */
+    public function getAssociatedEmails()
+    {
+        return $this->associatedEmails;
+    }
+
+    /**
+     * @ORM\PrePersist()
+     * @ORM\PreUpdate()
+     */
+    public function updateAssociatedEmails()
+    {
+        $this->addAssociatedEmail($this->getEmail());
     }
 }
