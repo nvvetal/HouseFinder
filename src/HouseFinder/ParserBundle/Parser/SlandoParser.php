@@ -96,6 +96,7 @@ class SlandoParser extends BaseParser
         }
         $phone = $crawler->filter("span[data-rel=phone]")->eq(0)->extract(array('class'))[0];
         if (preg_match("/\{.*\}/", $phone, $matches)) {
+            //var_dump($matches);
             $phoneJSON = json_decode(strtr($matches[0], "'", '"'), true);
             $phoneHash = $phoneJSON['id'];
             /** @var $service SlandoService */
@@ -324,17 +325,35 @@ class SlandoParser extends BaseParser
     {
         /** @var $em EntityManager */
         $em = $this->container->get('Doctrine')->getManager();
-        $UserSlando = $em->getRepository('HouseFinderCoreBundle:UserSlando')
-            ->findOneBy(array('sourceHash' => $raw['data']['ownerHash']));
+        $userHash = isset($raw['data']['ownerHash']) ? $raw['data']['ownerHash'] : '';
+        $userURL = isset($raw['data']['ownerUrl']) ? $raw['data']['ownerUrl'] : '';
+        $UserSlando = null;
+        if(!empty($userHash)){
+            $UserSlando = $em->getRepository('HouseFinderCoreBundle:UserSlando')
+                ->findOneBy(array('sourceHash' => $userHash));
+        }elseif(count($raw['data']['phone']) > 0){
+            $UserSlandoPhone = null;
+            foreach ($raw['data']['phone'] as $msisdn){
+                $UserSlandoPhone = $em->getRepository('HouseFinderCoreBundle:UserPhone')
+                    ->findOneBy(array('msisdn' => $msisdn));
+                if(!is_null($UserSlandoPhone)) break;
+            }
+            if(is_null($UserSlandoPhone)){
+                $userHash = 'byPhone:'.$msisdn;
+            }else{
+                $UserSlando = $UserSlandoPhone->getUser();
+            }
+        }
+
         if(is_null($UserSlando)){
             $UserSlando = new UserSlando();
-            $UserSlandoName = $raw['data']['ownerName'].'@'.$raw['data']['ownerHash'].'@slando';
+            $UserSlandoName = $raw['data']['ownerName'].'@'.$userHash.'@slando';
             $UserSlando->setUsername($UserSlandoName);
             $UserSlando->setUsernameCanonical($UserSlandoName);
             $UserSlando->setEmail($UserSlandoName);
             $UserSlando->setEmailCanonical($UserSlandoName);
-            $UserSlando->setSourceHash($raw['data']['ownerHash']);
-            $UserSlando->setSourceURL($raw['data']['ownerUrl']);
+            $UserSlando->setSourceHash($userHash);
+            $UserSlando->setSourceURL($userURL);
             $UserSlando->setPassword(md5(time()));
             $UserSlando->setLocked(true);
             $UserSlando->setExpired(true);
@@ -343,9 +362,9 @@ class SlandoParser extends BaseParser
             $this->fillUserType($UserSlando, $raw['data']['params']);
             $em->persist($UserSlando);
             $em->flush();
-            foreach ($raw['data']['phone'] as $MSISDN){
+            foreach ($raw['data']['phone'] as $msisdn){
                 $phone = new UserPhone();
-                $phone->setMsisdn($MSISDN);
+                $phone->setMsisdn($msisdn);
                 $phone->setUser($UserSlando);
                 $em->persist($phone);
                 $em->flush();
