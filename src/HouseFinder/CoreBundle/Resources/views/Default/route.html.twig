@@ -1,23 +1,28 @@
-<body>
-<h1>Status:{{ status }}</h1>
-<ul>
-    {% for route in routes %}
-        <li>
-            Route {{ loop.index }}<br>
-            {% for leg in route.legs %}
-                Leg {{ loop.index }}<br>
-                {% for step in leg.steps %}
-                    Step {{ loop.index }}<br>
-                    <ul>
-                        <li>Distance: {{ step.distance.text }}</li>
-                        <li>Duration: {{ step.duration.text }}</li>
-                        <li>Instructions: {{ step.instructions }}</li>
-                        <li>Distance: {{ step.distance.text }}</li>
-                        <li>Travel mode: {{ step.travelMode }}</li>
-                    </ul>
-                {% endfor %}
+{% extends '::base.html.twig' %}
+{% block container %}
+    <div class="container">
+        <div class="page-header">
+            <h1>Status:{{ status }}</h1>
+        </div>
+        <ul>
+            {% for route in routes %}
+                <li>
+                    Route {{ loop.index }}<br>
+                    {% for leg in route.legs %}
+                        Leg {{ loop.index }}<br>
+                        {% for step in leg.steps %}
+                            Step {{ loop.index }}<br>
+                            <ul>
+                                <li>Distance: {{ step.distance.text }}</li>
+                                <li>Duration: {{ step.duration.text }}</li>
+                                <li>Instructions: {{ step.instructions }}</li>
+                                <li>Distance: {{ step.distance.text }}</li>
+                                <li>Travel mode: {{ step.travelMode }}</li>
+                            </ul>
+                        {% endfor %}
+                    {% endfor %}
+                </li>
             {% endfor %}
-        </li>
-    {% endfor %}
-</ul>
-</body>
+        </ul>
+    </div>
+{% endblock container %}
