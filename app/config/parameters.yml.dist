@@ -18,3 +18,6 @@ parameters:
     vkontakte_secret: ~
     facebook_id: ~
     facebook_secret: ~
+
+    node_bin: /usr/bin/node
+    node_paths: [/opt/lessc/lib, /usr/lib/node_modules]
