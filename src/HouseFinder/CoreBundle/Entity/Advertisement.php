@@ -112,7 +112,7 @@ class Advertisement
     protected $brickType;
 
     /**
-     * @ORM\ManyToOne(targetEntity="Address")
+     * @ORM\ManyToOne(targetEntity="Address", inversedBy="advertisements")
      * @ORM\JoinColumn
      */
     protected $address;
@@ -125,7 +125,7 @@ class Advertisement
     protected $heatingType;
 
     /**
-     * @var datetime $created
+     * @var \DateTime $created
      *
      * @Gedmo\Timestampable(on="create")
      * @ORM\Column(type="datetime")
@@ -133,7 +133,7 @@ class Advertisement
     protected $created;
 
     /**
-     * @var datetime $updated
+     * @var \DateTime $updated
      *
      * @Gedmo\Timestampable(on="update")
      * @ORM\Column(type="datetime", nullable=true)
@@ -141,7 +141,7 @@ class Advertisement
     protected $updated;
 
     /**
-     * @var datetime $contentChanged
+     * @var \DateTime $contentChanged
      *
      * @ORM\Column(name="content_changed", type="datetime", nullable=true)
      * @Gedmo\Timestampable(on="change", field={"title", "body"})
