@@ -8,6 +8,8 @@
 
 namespace HouseFinder\CoreBundle\Entity;
 
+use Doctrine\Common\Collections\ArrayCollection;
+use Doctrine\Common\Collections\Collection;
 use FOS\UserBundle\Model\User as BaseUser;
 use Doctrine\ORM\Mapping as ORM;
 
@@ -41,8 +43,11 @@ class User extends BaseUser
     /** @ORM\Column(type="string") */
     protected $type = self::TYPE_PRIVATE;
 
-    /** @ORM\Column(type="array") */
-    protected $associatedEmails = array();
+    /**
+     * @var Collection
+     * @ORM\OneToMany(targetEntity="Email", mappedBy="user", cascade={"persist", "merge"})
+     */
+    protected $emails;
 
     /**
      * @param mixed $type
@@ -58,17 +63,6 @@ class User extends BaseUser
     public function getType()
     {
         return $this->type;
-    }
-
-
-    /**
-     * Get id
-     *
-     * @return integer
-     */
-    public function getId()
-    {
-        return $this->id;
     }
 
     /**
@@ -118,15 +112,51 @@ class User extends BaseUser
     }
 
     /**
+     * @ORM\PrePersist()
+     * @ORM\PreUpdate()
+     */
+    public function updateEmails()
+    {
+        $email = new Email();
+        $email->setValue($this->getEmail());
+        $this->addEmail($email);
+    }
+
+    /**
+     * Constructor
+     */
+    public function __construct()
+    {
+        parent::__construct();
+        $this->emails = new ArrayCollection();
+    }
+
+    /**
      * Add email
      *
-     * @param string $email
+     * @param Email $email
      * @return User
      */
-    public function addAssociatedEmail($email)
+    public function addEmail(Email $email)
     {
-        if (!in_array($email, $this->associatedEmails)) {
-            $this->associatedEmails[] = $email;
+        if (!$this->emails->contains($email)) {
+            $this->emails[] = $email;
+            $email->setUser($this);
+        }
+
+        return $this;
+    }
+
+    /**
+     * Add emails
+     *
+     * @param Collection $emails
+     * @return User
+     */
+    public function addEmails(Collection $emails)
+    {
+        foreach($emails as $email) {
+            $this->addEmail($email);
         }
 
         return $this;
@@ -135,41 +165,24 @@ class User extends BaseUser
     /**
      * Remove email
      *
-     * @param string $email
-     * @return User
+     * @param Email $email
      */
-    public function removeAssociatedEmail($email)
+    public function removeEmail(Email $email)
     {
-        $this->associatedEmails = array_filter(
-            $this->associatedEmails,
-            function ($item) use ($email) {
-                if ($item == $email) {
-                    return false;
-                }
-
-                return true;
-            }
-        );
-
-        return $this;
+        if ($this->emails->contains($email)) {
+            $this->emails->removeElement($email);
+            $email->setUser(null);
+        }
     }
+
 
     /**
      * Get emails
      *
-     * @return array
+     * @return Collection
      */
-    public function getAssociatedEmails()
+    public function getEmails()
     {
-        return $this->associatedEmails;
-    }
-
-    /**
-     * @ORM\PrePersist()
-     * @ORM\PreUpdate()
-     */
-    public function updateAssociatedEmails()
-    {
-        $this->addAssociatedEmail($this->getEmail());
+        return $this->emails;
     }
 }
