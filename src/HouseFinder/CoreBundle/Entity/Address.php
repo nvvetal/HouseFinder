@@ -2,6 +2,8 @@
 
 namespace HouseFinder\CoreBundle\Entity;
 
+use Doctrine\Common\Collections\ArrayCollection;
+use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\Mapping as ORM;
 
 /**
@@ -19,53 +21,54 @@ class Address
      * @ORM\Id
      * @ORM\GeneratedValue(strategy="AUTO")
      */
-    public $id;
+    protected $id;
 
     /**
      * @ORM\OneToMany(targetEntity="Advertisement", mappedBy="address")
      */
-    public $advertisements;
+    protected $advertisements;
 
     //TODO: refactor to city -> street
     /** @ORM\Column(type="string") */
-    public $address;
+    protected $address;
 
     /**
      * Get id
      *
-     * @return integer 
+     * @return integer
      */
     public function getId()
     {
         return $this->id;
     }
+
     /**
      * Constructor
      */
     public function __construct()
     {
-        $this->advertisements = new \Doctrine\Common\Collections\ArrayCollection();
+        $this->advertisements = new ArrayCollection();
     }
-    
+
     /**
      * Add advertisements
      *
-     * @param \HouseFinder\CoreBundle\Entity\Advertisement $advertisements
+     * @param Advertisement $advertisements
      * @return Address
      */
-    public function addAdvertisement(\HouseFinder\CoreBundle\Entity\Advertisement $advertisements)
+    public function addAdvertisement(Advertisement $advertisements)
     {
         $this->advertisements[] = $advertisements;
-    
+
         return $this;
     }
 
     /**
      * Remove advertisements
      *
-     * @param \HouseFinder\CoreBundle\Entity\Advertisement $advertisements
+     * @param Advertisement $advertisements
      */
-    public function removeAdvertisement(\HouseFinder\CoreBundle\Entity\Advertisement $advertisements)
+    public function removeAdvertisement(Advertisement $advertisements)
     {
         $this->advertisements->removeElement($advertisements);
     }
@@ -73,7 +76,7 @@ class Address
     /**
      * Get advertisements
      *
-     * @return \Doctrine\Common\Collections\Collection 
+     * @return Collection
      */
     public function getAdvertisements()
     {
@@ -89,14 +92,14 @@ class Address
     public function setAddress($address)
     {
         $this->address = $address;
-    
+
         return $this;
     }
 
     /**
      * Get address
      *
-     * @return string 
+     * @return string
      */
     public function getAddress()
     {
