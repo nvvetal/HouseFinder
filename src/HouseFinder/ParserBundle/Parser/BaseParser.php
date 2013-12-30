@@ -73,7 +73,7 @@ abstract class BaseParser
         if(mb_stripos($text, 'кирп.', 0, 'UTF-8') !== false) return Advertisement::WALL_TYPE_BRICK;
         if(mb_stripos($text, 'кирпич', 0, 'UTF-8') !== false) return Advertisement::WALL_TYPE_BRICK;
         if(mb_stripos($text, 'панель', 0, 'UTF-8') !== false) return Advertisement::WALL_TYPE_PANEL;
-        return NULL;
+        return '';
     }
 
     public function parseFullLiveKitchenSpace($text)
@@ -105,7 +105,7 @@ abstract class BaseParser
     {
         if(mb_stripos($text, 'автономка', 0, 'UTF-8') !== false) return Advertisement::HEATING_TYPE_INDEPENDENT;
         if(mb_stripos($text, 'автономное отопление', 0, 'UTF-8') !== false) return  Advertisement::HEATING_TYPE_INDEPENDENT;
-        return NULL;
+        return '';
     }
 
     public function parseTextVault($text)
@@ -126,6 +126,7 @@ abstract class BaseParser
         if(mb_stripos($text, 'пластиковые окна', 0, 'UTF-8') !== false) return true;
         if(mb_stripos($text, 'стеклопакет', 0, 'UTF-8') !== false) return true;
         if(mb_stripos($text, 'евроокна', 0, 'UTF-8') !== false) return true;
+        if(mb_stripos($text, 'м/п окна', 0, 'UTF-8') !== false) return true;
         return false;
     }
 

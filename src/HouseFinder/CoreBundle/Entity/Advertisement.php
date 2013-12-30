@@ -691,13 +691,15 @@ class Advertisement
     {
         $kitchens = array();
         if(count($this->getRooms()) == 0) return NULL;
-        foreach($this->getRooms() as $room)
+        $rooms = $this->getRooms();
+        foreach($rooms as &$room)
         {
             /* @var $room Room */
             if($room->getType() != Room::TYPE_KITCHEN) continue;
-            $kitchens[] = &$room;
+            $kitchens[] = $room;
         }
         return $kitchens;
     }
+
 
 }

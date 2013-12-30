@@ -23,38 +23,49 @@ class SlandoParser extends BaseParser
      */
     protected function parseListDomCrawler(Crawler $crawler)
     {
-        $links = $crawler->filter('a.detailsLink')->each(function (Crawler $node, $i) {
-            $text = $node->text();
-            $text = trim($text, " \n\t\r\0\x0B\xC2\xA0");
-            if (empty($text)) return false;
-            $url = $node->attr('href');
-            $sourceHash = '';
-            if(preg_match("/(\w+)\.html$/i", $url, $matches)){
-                $sourceHash = $matches[1];
-            }
-            return array(
-                'title'         => $text,
-                'url'           => $url,
-                'sourceHash'    => $sourceHash,
-            );
-        });
+        try {
+            $links = $crawler->filter('a.detailsLink')->each(function (Crawler $node, $i) {
+                $text = $node->text();
+                $text = trim($text, " \n\t\r\0\x0B\xC2\xA0");
+                if (empty($text)) return false;
+                $url = $node->attr('href');
+                $sourceHash = '';
+                if(preg_match("/(\w+)\.html$/i", $url, $matches)){
+                    $sourceHash = $matches[1];
+                }
+                return array(
+                    'title'         => $text,
+                    'url'           => $url,
+                    'sourceHash'    => $sourceHash,
+                );
+            });
+        }catch(\Exception $e){
+            echo "Cant get details: ".$e->getMessage();
+        }
         $pages = array();
+        $dublicates = 0;
         foreach ($links as $key => $link) {
             if ($link === false) continue;
+            /**
+             * @var $em EntityManager
+             */
+            $em = $this->container->get('Doctrine')->getManager();
+            $find = $em->getRepository('HouseFinderCoreBundle:AdvertisementSlando')->findOneBy(array('sourceHash' => $link['sourceHash']));
+            if(!is_null($find)) $dublicates++;
+            if($dublicates >= 3) {
+                echo "Dublicates found next...\n";
+                break;
+            }
             $service = $this->container->get('housefinder.parser.service.slando');
             $crawlerPage = $service->getPageCrawler($link['url']);
-            $pageData = $this->parsePageDomCrawler($crawlerPage);
-            $pages[$key] = $link;
-            $pages[$key]['data'] = $pageData;
-            //TODO: temporary
-            //break;
+            try {
+                $pageData = $this->parsePageDomCrawler($crawlerPage);
+                $pages[$key] = $link;
+                $pages[$key]['data'] = $pageData;
+            }catch(\Exception $e){
+                echo "Error on page {$link['url']} :".$e->getMessage();
+            }
         }
-        /*
-                header('Content-Type: text/html; charset=utf-8');
-                echo "<pre>";
-                var_dump($pages);
-                exit;
-        */
         return $pages;
     }
 
@@ -483,6 +494,10 @@ class SlandoParser extends BaseParser
             }elseif(is_null($kitchens[0]->getSpace())){
                 $kitchens[0]->setSpace($space['kitchenSpace']);
             }
+        }
+        if($entity->getHeatingType() == ''){
+            $heatingIndependent = $this->parseTextIndependentHeating($entity->getDescription());
+            if($heatingIndependent) $entity->setHeatingType($heatingIndependent);
         }
     }
 }
