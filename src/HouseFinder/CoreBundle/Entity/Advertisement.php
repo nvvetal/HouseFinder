@@ -58,12 +58,12 @@ class Advertisement
     /** @ORM\Column(type="string") */
     protected $type;
 
-    /** @ORM\Column(type="string") */
+    /** @ORM\Column(type="string", nullable=true) */
     protected $rentType;
 
     /**
      * @var \DateTime $rentStartDate
-     * @ORM\Column(type="date")
+     * @ORM\Column(type="date", nullable=true)
      */
     protected $rentStartDate;
 
@@ -685,6 +685,19 @@ class Advertisement
     public function getRentStartDate()
     {
         return $this->rentStartDate;
+    }
+
+    public function getKitchens()
+    {
+        $kitchens = array();
+        if(count($this->getRooms()) == 0) return NULL;
+        foreach($this->getRooms() as $room)
+        {
+            /* @var $room Room */
+            if($room->getType() != Room::TYPE_KITCHEN) continue;
+            $kitchens[] = &$room;
+        }
+        return $kitchens;
     }
 
 }

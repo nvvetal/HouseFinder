@@ -70,8 +70,111 @@ abstract class BaseParser
 
     public function parseTextWallType($text)
     {
-        if(mb_strpos($text, 'кирпич', 0, 'UTF-8') !== false) return Advertisement::WALL_TYPE_BRICK;
-        if(mb_strpos($text, 'панель', 0, 'UTF-8') !== false) return Advertisement::WALL_TYPE_PANEL;
-        return '';
+        if(mb_stripos($text, 'кирп.', 0, 'UTF-8') !== false) return Advertisement::WALL_TYPE_BRICK;
+        if(mb_stripos($text, 'кирпич', 0, 'UTF-8') !== false) return Advertisement::WALL_TYPE_BRICK;
+        if(mb_stripos($text, 'панель', 0, 'UTF-8') !== false) return Advertisement::WALL_TYPE_PANEL;
+        return NULL;
+    }
+
+    public function parseFullLiveKitchenSpace($text)
+    {
+        $text = str_replace(",", ".", $text);
+        if(preg_match("~([\d.]+)[\s/]+([\d.]+)[\s/]+([\d.]+)~", $text, $m)){
+            return array(
+                'fullSpace'     => trim($m[1], '.'),
+                'livingSpace'   => trim($m[2], '.'),
+                'kitchenSpace'  => trim($m[3], '.'),
+            );
+        }
+        return NULL;
+    }
+
+    public function parseTextBalcony($text)
+    {
+        if(mb_stripos($text, 'балкон', 0, 'UTF-8') !== false) return true;
+        return false;
+    }
+
+    public function parseTextPhone($text)
+    {
+        if(mb_stripos($text, 'телефон', 0, 'UTF-8') !== false) return true;
+        return false;
+    }
+
+    public function parseTextIndependentHeating($text)
+    {
+        if(mb_stripos($text, 'автономка', 0, 'UTF-8') !== false) return Advertisement::HEATING_TYPE_INDEPENDENT;
+        if(mb_stripos($text, 'автономное отопление', 0, 'UTF-8') !== false) return  Advertisement::HEATING_TYPE_INDEPENDENT;
+        return NULL;
+    }
+
+    public function parseTextVault($text)
+    {
+        if(mb_stripos($text, 'подвал', 0, 'UTF-8') !== false) return true;
+        return false;
+    }
+
+    public function parseTextGarage($text)
+    {
+        if(mb_stripos($text, 'гараж', 0, 'UTF-8') !== false) return true;
+        return false;
+    }
+
+    public function parseTextWindowPlastic($text)
+    {
+        if(mb_stripos($text, 'мпо', 0, 'UTF-8') !== false) return true;
+        if(mb_stripos($text, 'пластиковые окна', 0, 'UTF-8') !== false) return true;
+        if(mb_stripos($text, 'стеклопакет', 0, 'UTF-8') !== false) return true;
+        if(mb_stripos($text, 'евроокна', 0, 'UTF-8') !== false) return true;
+        return false;
+    }
+
+    public function parseTextConditioner($text)
+    {
+        if(mb_stripos($text, 'кондиционер', 0, 'UTF-8') !== false) return true;
+        return false;
+    }
+
+    public function parseTextGasBoiler($text)
+    {
+        if(mb_stripos($text, 'газовая колонка', 0, 'UTF-8') !== false) return true;
+        return false;
+    }
+
+    public function parseTextElectricalBoiler($text)
+    {
+        if(mb_stripos($text, 'бойлер', 0, 'UTF-8') !== false) return true;
+        return false;
+    }
+
+    public function parseTextLaminate($text)
+    {
+        if(mb_stripos($text, 'ламинат', 0, 'UTF-8') !== false) return true;
+        return false;
+    }
+
+    public function parseTextParquet($text)
+    {
+        if(mb_stripos($text, 'паркет', 0, 'UTF-8') !== false) return true;
+        return false;
+    }
+
+    public function parseTextWithDocuments($text)
+    {
+        if(mb_stripos($text, 'документы готовы', 0, 'UTF-8') !== false) return true;
+        return false;
+    }
+
+    public function parseTextFurniture($text)
+    {
+        if(mb_stripos($text, 'без мебели', 0, 'UTF-8') !== false) return false;
+        if(mb_stripos($text, 'мебель', 0, 'UTF-8') !== false) return true;
+        return false;
+    }
+
+    public function parseTextRefrigerator($text)
+    {
+        if(mb_stripos($text, 'холодильник', 0, 'UTF-8') !== false) return true;
+        return false;
     }
 }

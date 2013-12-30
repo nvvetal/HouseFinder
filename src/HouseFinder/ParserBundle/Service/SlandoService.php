@@ -38,7 +38,7 @@ class SlandoService extends BaseService
                 $em->flush();
             }
         }catch(\Exception $e){
-            echo 'ERROR: '.$entity->getSourceURL()."<br/>\n";
+            echo 'ERROR: '.$entity->getSourceURL().":".$e->getMessage()."<br/>\n";
             return self::SAVE_ENTITY_FAIL;
         }
         return self::SAVE_ENTITY_SUCCESS;

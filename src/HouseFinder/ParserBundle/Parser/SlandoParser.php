@@ -151,6 +151,7 @@ class SlandoParser extends BaseParser
         }
         $this->fillRooms($entity, $raw['data']['params']);
         $this->fillFullSpace($entity, $raw['data']['params']);
+        $this->fillLivingSpace($entity, $raw['data']['params']);
         $this->fillLevel($entity, $raw['data']['params']);
         $this->fillMaxLevels($entity, $raw['data']['params']);
         $this->fillWallType($entity, $raw['data']['params']);
@@ -192,10 +193,21 @@ class SlandoParser extends BaseParser
 
     private function fillFullSpace(AdvertisementSlando &$entity, $params)
     {
-        $content = $this->searchSlandoParamByName('Жилая площадь', $params);
+        $content = $this->searchSlandoParamByName('Общая площадь', $params);
         if(is_null($content)) return false;
         if(preg_match("/^(\d+)/iu", $content, $m)){
             $entity->setFullSpace($m[1]);
+            return true;
+        }
+        return false;
+    }
+
+    private function fillLivingSpace(AdvertisementSlando &$entity, $params)
+    {
+        $content = $this->searchSlandoParamByName('Жилая площадь', $params);
+        if(is_null($content)) return false;
+        if(preg_match("/^(\d+)/iu", $content, $m)){
+            $entity->setLivingSpace($m[1]);
             return true;
         }
         return false;
@@ -394,7 +406,8 @@ class SlandoParser extends BaseParser
             'price' => 0,
             'currency' => Advertisement::CURRENCY_UAH
         );
-        if(preg_match("/(.*) (\w+)\./iu", $content, $matches)){
+        $content = str_replace(" ", "", $content);
+        if(preg_match("~^([\d\s]+)(.*?)\s*$~", $content, $matches)){
             $priceData = array(
                 'price'     => str_replace(" ", '', $matches[1]),
                 'currency'  => $this->getCurrencyBySlando($matches[2]),
@@ -409,7 +422,7 @@ class SlandoParser extends BaseParser
         $currency = '';
         switch($slandoCurrency)
         {
-            case "грн":
+            case "грн.":
                 $currency = Advertisement::CURRENCY_UAH;
                 break;
             case "$":
@@ -455,6 +468,21 @@ class SlandoParser extends BaseParser
     {
         if($entity->getWallType() == '') {
             $entity->setWallType($this->parseTextWallType($entity->getDescription()));
+        }
+
+        $space = $this->parseFullLiveKitchenSpace($entity->getDescription());
+        if(!is_null($space)){
+            if(is_null($entity->getFullSpace())) $entity->setFullSpace($space['fullSpace']);
+            if(is_null($entity->getLivingSpace())) $entity->setLivingSpace($space['livingSpace']);
+            $kitchens = $entity->getKitchens();
+            if(is_null($kitchens)){
+                $kitchen = new Room();
+                $kitchen->setAdvertisement($entity);
+                $kitchen->setType(Room::TYPE_KITCHEN);
+                $kitchen->setSpace($space['kitchenSpace']);
+            }elseif(is_null($kitchens[0]->getSpace())){
+                $kitchens[0]->setSpace($space['kitchenSpace']);
+            }
         }
     }
 }
