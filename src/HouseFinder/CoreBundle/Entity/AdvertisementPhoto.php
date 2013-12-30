@@ -21,7 +21,7 @@ class AdvertisementPhoto
     protected $id;
 
     /**
-     * @ORM\ManyToOne(targetEntity="Advertisement")
+     * @ORM\ManyToOne(targetEntity="Advertisement", inversedBy="photos")
      * @ORM\JoinColumn
      */
     protected $advertisement;
