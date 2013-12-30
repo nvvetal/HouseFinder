@@ -15,9 +15,7 @@ class UserRepository extends EntityRepository
     public function mergeUsers(User $currentUser, User $mergedUser, UserManagerInterface $userManager)
     {
         //TODO: merge users
-        foreach ($mergedUser->getAssociatedEmails() as $email) {
-            $currentUser->addAssociatedEmail($email);
-        }
+        $currentUser->addEmails($mergedUser->getEmails());
         $userManager->deleteUser($mergedUser);
     }
 }
