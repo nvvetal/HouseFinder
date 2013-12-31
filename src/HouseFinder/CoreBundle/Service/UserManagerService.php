@@ -32,6 +32,9 @@ class UserManagerService
         if (!$currentUser instanceof User || !$mergedUser instanceof User) {
             throw new \RuntimeException('$currentUser and $mergedUser must be instances of HouseFinder\CoreBundle\Entity\User');
         }
+        if ($currentUser === $mergedUser) {
+            return;
+        }
         /** @var $userRepository UserRepository */
         $userRepository = $this->em->getRepository('HouseFinder\CoreBundle\Entity\User');
         /** @var $currentUser User */
