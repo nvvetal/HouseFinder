@@ -28,7 +28,9 @@
         "gedmo/doctrine-extensions": "2.3.8",
         "egeloen/google-map-bundle": "*",
         "willdurand/geocoder": "*",
-        "widop/http-adapter-bundle": "1.1.*"
+        "widop/http-adapter-bundle": "1.1.*",
+        "mopa/bootstrap-bundle": "3.x-dev",
+        "twbs/bootstrap": "3.0.x-dev"
     },
     "scripts": {
         "post-install-cmd": [
@@ -36,14 +38,16 @@
             "Sensio\\Bundle\\DistributionBundle\\Composer\\ScriptHandler::buildBootstrap",
             "Sensio\\Bundle\\DistributionBundle\\Composer\\ScriptHandler::clearCache",
             "Sensio\\Bundle\\DistributionBundle\\Composer\\ScriptHandler::installAssets",
-            "Sensio\\Bundle\\DistributionBundle\\Composer\\ScriptHandler::installRequirementsFile"
+            "Sensio\\Bundle\\DistributionBundle\\Composer\\ScriptHandler::installRequirementsFile",
+            "Mopa\\Bundle\\BootstrapBundle\\Composer\\ScriptHandler::postInstallMirrorTwitterBootstrap"
         ],
         "post-update-cmd": [
             "Incenteev\\ParameterHandler\\ScriptHandler::buildParameters",
             "Sensio\\Bundle\\DistributionBundle\\Composer\\ScriptHandler::buildBootstrap",
             "Sensio\\Bundle\\DistributionBundle\\Composer\\ScriptHandler::clearCache",
             "Sensio\\Bundle\\DistributionBundle\\Composer\\ScriptHandler::installAssets",
-            "Sensio\\Bundle\\DistributionBundle\\Composer\\ScriptHandler::installRequirementsFile"
+            "Sensio\\Bundle\\DistributionBundle\\Composer\\ScriptHandler::installRequirementsFile",
+            "Mopa\\Bundle\\BootstrapBundle\\Composer\\ScriptHandler::postInstallMirrorTwitterBootstrap"
         ]
     },
     "config": {
