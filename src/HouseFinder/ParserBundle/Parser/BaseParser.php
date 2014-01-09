@@ -74,6 +74,7 @@ abstract class BaseParser
         if(mb_stripos($text, 'кирпич', 0, 'UTF-8') !== false) return Advertisement::WALL_TYPE_BRICK;
         if(mb_stripos($text, ' кир ', 0, 'UTF-8') !== false) return Advertisement::WALL_TYPE_BRICK;
         if(mb_stripos($text, 'панель', 0, 'UTF-8') !== false) return Advertisement::WALL_TYPE_PANEL;
+        if(mb_stripos($text, 'цегляний', 0, 'UTF-8') !== false) return Advertisement::WALL_TYPE_PANEL;
         return '';
     }
 
@@ -94,17 +95,23 @@ abstract class BaseParser
     {
         if(mb_stripos($text, 'без балкона', 0, 'UTF-8') !== false) return false;
         if(mb_stripos($text, 'балкон', 0, 'UTF-8') !== false) return true;
+        if(mb_stripos($text, 'балк.', 0, 'UTF-8') !== false) return true;
+        if(mb_stripos($text, 'б\з', 0, 'UTF-8') !== false) return true;
+        if(mb_stripos($text, 'б/з', 0, 'UTF-8') !== false) return true;
         return $this->parseTextLoggia($text);
     }
 
     public function parseTextLoggia($text)
     {
         if(mb_stripos($text, 'лоджия', 0, 'UTF-8') !== false) return true;
+        if(mb_stripos($text, 'лоджии', 0, 'UTF-8') !== false) return true;
+        if(mb_stripos($text, 'лоджией', 0, 'UTF-8') !== false) return true;
         return false;
     }
 
     public function parseTextPhone($text)
     {
+        if(mb_stripos($text, 'подробности по телефону', 0, 'UTF-8') !== false) return false;
         if(mb_stripos($text, 'телефон', 0, 'UTF-8') !== false) return true;
         return false;
     }
@@ -114,6 +121,10 @@ abstract class BaseParser
         if(mb_stripos($text, 'автономка', 0, 'UTF-8') !== false) return Advertisement::HEATING_TYPE_INDEPENDENT;
         if(mb_stripos($text, 'автономное отопление', 0, 'UTF-8') !== false) return  Advertisement::HEATING_TYPE_INDEPENDENT;
         if(mb_stripos($text, 'электроконвектор', 0, 'UTF-8') !== false) return  Advertisement::HEATING_TYPE_INDEPENDENT;
+        if(mb_stripos($text, 'автон. отоплен.', 0, 'UTF-8') !== false) return  Advertisement::HEATING_TYPE_INDEPENDENT;
+        if(mb_stripos($text, 'с автономным отоплением', 0, 'UTF-8') !== false) return  Advertisement::HEATING_TYPE_INDEPENDENT;
+        if(mb_stripos($text, 'автономне опалення', 0, 'UTF-8') !== false) return  Advertisement::HEATING_TYPE_INDEPENDENT;
+        if(mb_stripos($text, 'автономным отоплением', 0, 'UTF-8') !== false) return  Advertisement::HEATING_TYPE_INDEPENDENT;
         return '';
     }
 
@@ -137,6 +148,9 @@ abstract class BaseParser
         if(mb_stripos($text, 'евроокна', 0, 'UTF-8') !== false) return true;
         if(mb_stripos($text, 'м/п окна', 0, 'UTF-8') !== false) return true;
         if(mb_stripos($text, 'метало-пластик', 0, 'UTF-8') !== false) return true;
+        if(mb_stripos($text, 'мп окна', 0, 'UTF-8') !== false) return true;
+        if(mb_stripos($text, 'металопластикові вікна', 0, 'UTF-8') !== false) return true;
+        if(mb_stripos($text, 'металлопластиковое окно', 0, 'UTF-8') !== false) return true;
         return false;
     }
 
@@ -181,7 +195,8 @@ abstract class BaseParser
     {
         if(mb_stripos($text, 'без мебели', 0, 'UTF-8') !== false) return false;
         if(mb_stripos($text, 'мебель', 0, 'UTF-8') !== false) return true;
-        return false;
+        return $this->parseTextFurnitureKitchenIntegrated($text);
+        //return false;
     }
 
     public function parseTextRefrigerator($text)
@@ -198,20 +213,33 @@ abstract class BaseParser
 
     public function parseTextWCIndependent($text)
     {
-        if(mb_stripos($text, 'Санузел раздельный.', 0, 'UTF-8') !== false) return true;
+        if(mb_stripos($text, 'Санузел раздельный', 0, 'UTF-8') !== false) return true;
+        if(mb_stripos($text, 'раздельный санузел', 0, 'UTF-8') !== false) return true;
         if(mb_stripos($text, 'с/у разд', 0, 'UTF-8') !== false) return true;
+        if(mb_stripos($text, 'с/узел раздельный', 0, 'UTF-8') !== false) return true;
+        return false;
+    }
+
+    public function parseTextWCShared($text)
+    {
+        if(mb_stripos($text, 'саузел совместно', 0, 'UTF-8') !== false) return true;
+        if(mb_stripos($text, 'с\у совместный', 0, 'UTF-8') !== false) return true;
         return false;
     }
 
     public function parseTextCounters($text)
     {
         if(mb_stripos($text, 'счетчик', 0, 'UTF-8') !== false) return true;
+        if(mb_stripos($text, 'счётчик', 0, 'UTF-8') !== false) return true;
         return false;
     }
 
     public function parseTextArmoredDoor($text)
     {
         if(mb_stripos($text, 'бронированная дверь', 0, 'UTF-8') !== false) return true;
+        if(mb_stripos($text, 'бронедверь', 0, 'UTF-8') !== false) return true;
+        if(mb_stripos($text, 'дверь бронированная', 0, 'UTF-8') !== false) return true;
+        if(mb_stripos($text, 'бронировая дверь', 0, 'UTF-8') !== false) return true;
         return false;
     }
 
@@ -230,13 +258,93 @@ abstract class BaseParser
     public function parseTextPantry($text)
     {
         if(mb_stripos($text, 'кладовка', 0, 'UTF-8') !== false) return true;
+        if(mb_stripos($text, 'кладовая', 0, 'UTF-8') !== false) return true;
         return false;
     }
 
     public function parseTextFurnitureKitchenIntegrated($text)
     {
         if(mb_stripos($text, 'встроенная кухня', 0, 'UTF-8') !== false) return true;
+        if(mb_stripos($text, 'кухонная мебель', 0, 'UTF-8') !== false) return true;
+        if(mb_stripos($text, 'встр. кухня', 0, 'UTF-8') !== false) return true;
         return false;
     }
 
+    public function parseTextNotCorner($text)
+    {
+        if(mb_stripos($text, 'не угловая', 0, 'UTF-8') !== false) return true;
+        if(mb_stripos($text, 'не гуловая', 0, 'UTF-8') !== false) return true;
+        if(mb_stripos($text, 'не гловая', 0, 'UTF-8') !== false) return true;
+        if(mb_stripos($text, 'не углова', 0, 'UTF-8') !== false) return true;
+        return false;
+    }
+
+    public function parseTextDoorsWindows($text)
+    {
+        if(mb_stripos($text, 'столярка', 0, 'UTF-8') !== false) return true;
+        return false;
+    }
+
+    public function parseTextIntercom($text)
+    {
+        if(mb_stripos($text, 'домофон', 0, 'UTF-8') !== false) return true;
+        return false;
+    }
+
+    public function parseTextCableTV($text)
+    {
+        if(mb_stripos($text, 'кабельное', 0, 'UTF-8') !== false) return true;
+        return false;
+    }
+
+    public function parseTextTV($text)
+    {
+        if(mb_stripos($text, 'телевизор', 0, 'UTF-8') !== false) return true;
+        if(mb_stripos($text, 'плазма', 0, 'UTF-8') !== false) return true;
+        return false;
+    }
+
+    public function parseTextTech($text)
+    {
+        if(mb_stripos($text, 'бытовая техника', 0, 'UTF-8') !== false) return true;
+        if(mb_stripos($text, 'быт.техника', 0, 'UTF-8') !== false) return true;
+        return false;
+    }
+
+    public function parseTextRoomsSeparated($text)
+    {
+        if(mb_stripos($text, 'комнаты раздельные', 0, 'UTF-8') !== false) return true;
+        return false;
+    }
+
+    public function parseTextRoomsAdjacent($text)
+    {
+        if(mb_stripos($text, 'комнаты смежные', 0, 'UTF-8') !== false) return true;
+        return false;
+    }
+
+    public function parseTextShower($text)
+    {
+        if(mb_stripos($text, 'душевая кабина', 0, 'UTF-8') !== false) return true;
+        return false;
+    }
+
+    public function parseTextWashingMachine($text)
+    {
+        if(mb_stripos($text, 'стиральная машина', 0, 'UTF-8') !== false) return true;
+        return false;
+    }
+
+    public function parseTextMicrowave($text)
+    {
+        if(mb_stripos($text, 'микроволновая печь', 0, 'UTF-8') !== false) return true;
+        if(mb_stripos($text, 'СВЧ печь', 0, 'UTF-8') !== false) return true;
+        return false;
+    }
+
+    public function parseTextKitchenHood($text)
+    {
+        if(mb_stripos($text, 'вытяжка', 0, 'UTF-8') !== false) return true;
+        return false;
+    }
 }

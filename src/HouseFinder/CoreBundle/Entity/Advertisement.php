@@ -2,8 +2,14 @@
 
 namespace HouseFinder\CoreBundle\Entity;
 
+use Doctrine\Common\Collections\ArrayCollection;
+use Doctrine\Common\Collections\Collection;
 use Gedmo\Mapping\Annotation as Gedmo;
 use Doctrine\ORM\Mapping as ORM;
+use HouseFinder\CoreBundle\Entity\Address;
+use HouseFinder\CoreBundle\Entity\AdvertisementPhoto;
+use HouseFinder\CoreBundle\Entity\Room;
+use HouseFinder\CoreBundle\Entity\User;
 
 /**
  * @ORM\Table()
@@ -153,8 +159,8 @@ class Advertisement
      */
     public function __construct()
     {
-        $this->photos = new \Doctrine\Common\Collections\ArrayCollection();
-        $this->rooms = new \Doctrine\Common\Collections\ArrayCollection();
+        $this->photos = new ArrayCollection();
+        $this->rooms = new ArrayCollection();
     }
     
     /**
@@ -561,10 +567,10 @@ class Advertisement
     /**
      * Set user
      *
-     * @param \HouseFinder\CoreBundle\Entity\User $user
+     * @param User $user
      * @return Advertisement
      */
-    public function setUser(\HouseFinder\CoreBundle\Entity\User $user = null)
+    public function setUser(User $user = null)
     {
         $this->user = $user;
     
@@ -574,7 +580,7 @@ class Advertisement
     /**
      * Get user
      *
-     * @return \HouseFinder\CoreBundle\Entity\User 
+     * @return User
      */
     public function getUser()
     {
@@ -584,10 +590,10 @@ class Advertisement
     /**
      * Add photos
      *
-     * @param \HouseFinder\CoreBundle\Entity\AdvertisementPhoto $photos
+     * @param AdvertisementPhoto $photos
      * @return Advertisement
      */
-    public function addPhoto(\HouseFinder\CoreBundle\Entity\AdvertisementPhoto $photos)
+    public function addPhoto(AdvertisementPhoto $photos)
     {
         $this->photos[] = $photos;
     
@@ -597,9 +603,9 @@ class Advertisement
     /**
      * Remove photos
      *
-     * @param \HouseFinder\CoreBundle\Entity\AdvertisementPhoto $photos
+     * @param AdvertisementPhoto $photos
      */
-    public function removePhoto(\HouseFinder\CoreBundle\Entity\AdvertisementPhoto $photos)
+    public function removePhoto(AdvertisementPhoto $photos)
     {
         $this->photos->removeElement($photos);
     }
@@ -607,7 +613,7 @@ class Advertisement
     /**
      * Get photos
      *
-     * @return \Doctrine\Common\Collections\Collection 
+     * @return Collection
      */
     public function getPhotos()
     {
@@ -617,10 +623,10 @@ class Advertisement
     /**
      * Add rooms
      *
-     * @param \HouseFinder\CoreBundle\Entity\Room $rooms
+     * @param Room $rooms
      * @return Advertisement
      */
-    public function addRoom(\HouseFinder\CoreBundle\Entity\Room $rooms)
+    public function addRoom(Room $rooms)
     {
         $this->rooms[] = $rooms;
     
@@ -630,9 +636,9 @@ class Advertisement
     /**
      * Remove rooms
      *
-     * @param \HouseFinder\CoreBundle\Entity\Room $rooms
+     * @param Room $rooms
      */
-    public function removeRoom(\HouseFinder\CoreBundle\Entity\Room $rooms)
+    public function removeRoom(Room $rooms)
     {
         $this->rooms->removeElement($rooms);
     }
@@ -640,9 +646,9 @@ class Advertisement
     /**
      * Get rooms
      *
-     * @return \Doctrine\Common\Collections\Collection 
+     * @return Collection
      */
-    public function getRooms()
+    public function &getRooms()
     {
         return $this->rooms;
     }
@@ -650,10 +656,10 @@ class Advertisement
     /**
      * Set address
      *
-     * @param \HouseFinder\CoreBundle\Entity\Address $address
+     * @param Address $address
      * @return Advertisement
      */
-    public function setAddress(\HouseFinder\CoreBundle\Entity\Address $address = null)
+    public function setAddress(Address $address = null)
     {
         $this->address = $address;
     
@@ -663,7 +669,7 @@ class Advertisement
     /**
      * Get address
      *
-     * @return \HouseFinder\CoreBundle\Entity\Address 
+     * @return Address
      */
     public function getAddress()
     {
@@ -686,11 +692,11 @@ class Advertisement
         return $this->rentStartDate;
     }
 
-    public function getKitchens()
+    public function &getKitchens()
     {
+        $rooms = &$this->getRooms();
         $kitchens = array();
-        if(count($this->getRooms()) == 0) return NULL;
-        $rooms = $this->getRooms();
+        if(count($rooms) == 0) return NULL;
         foreach($rooms as &$room)
         {
             /* @var $room Room */
