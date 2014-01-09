@@ -117,12 +117,11 @@ class Advertisement
      */
     protected $address;
 
-
-    protected $haveGarage;
-    protected $haveVault;
-
     /** @ORM\Column(type="string", nullable=true) */
     protected $heatingType;
+
+    /** @ORM\Column(type="text", nullable=true) */
+    protected $special;
 
     /**
      * @var \DateTime $created
@@ -701,5 +700,26 @@ class Advertisement
         return $kitchens;
     }
 
+    /**
+     * @param $key
+     * @param $val
+     * @internal param mixed $special
+     */
+    public function setSpecial($key, $val)
+    {
+        $special = $this->getSpecial();
+        $special[$key] = $val;
+        $this->special = json_encode($special);
+    }
+
+    /**
+     * @return array
+     */
+    public function getSpecial()
+    {
+        $special = $this->special;
+        if(is_null($special)) return array();
+        return json_decode($special, true);
+    }
 
 }

@@ -477,15 +477,16 @@ class SlandoParser extends BaseParser
 
     public function postParseText(Advertisement &$entity)
     {
+        $txt = $entity->getDescription();
         if($entity->getWallType() == '') {
-            $entity->setWallType($this->parseTextWallType($entity->getDescription()));
+            $entity->setWallType($this->parseTextWallType($txt));
         }
-
-        $space = $this->parseFullLiveKitchenSpace($entity->getDescription());
+        $space = $this->parseFullLiveKitchenSpace($txt);
         if(!is_null($space)){
             if(is_null($entity->getFullSpace())) $entity->setFullSpace($space['fullSpace']);
             if(is_null($entity->getLivingSpace())) $entity->setLivingSpace($space['livingSpace']);
             $kitchens = $entity->getKitchens();
+            /*
             if(is_null($kitchens)){
                 $kitchen = new Room();
                 $kitchen->setAdvertisement($entity);
@@ -494,10 +495,36 @@ class SlandoParser extends BaseParser
             }elseif(is_null($kitchens[0]->getSpace())){
                 $kitchens[0]->setSpace($space['kitchenSpace']);
             }
+            */
         }
         if($entity->getHeatingType() == ''){
-            $heatingIndependent = $this->parseTextIndependentHeating($entity->getDescription());
+            $heatingIndependent = $this->parseTextIndependentHeating($txt);
             if($heatingIndependent) $entity->setHeatingType($heatingIndependent);
         }
+
+        //parse special features
+
+        if($this->parseTextBalcony($txt)) $entity->setSpecial('balcony', true);
+        if($this->parseTextPhone($txt)) $entity->setSpecial('phone', true);
+        if($this->parseTextVault($txt)) $entity->setSpecial('vault', true);
+        if($this->parseTextGarage($txt)) $entity->setSpecial('garage', true);
+        if($this->parseTextWindowPlastic($txt)) $entity->setSpecial('windowPlastic', true);
+        if($this->parseTextConditioner($txt)) $entity->setSpecial('conditioner', true);
+        if($this->parseTextGasBoiler($txt)) $entity->setSpecial('boilerGas', true);
+        if($this->parseTextElectricalBoiler($txt)) $entity->setSpecial('BoilerElectro', true);
+        if($this->parseTextLaminate($txt)) $entity->setSpecial('laminate', true);
+        if($this->parseTextParquet($txt)) $entity->setSpecial('parquet', true);
+        if($this->parseTextWithDocuments($txt)) $entity->setSpecial('documents', true);
+        if($this->parseTextFurniture($txt)) $entity->setSpecial('furniture', true);
+        if($this->parseTextRefrigerator($txt)) $entity->setSpecial('refrigerator', true);
+        if($this->parseTextCanTrade($txt)) $entity->setSpecial('trade', true);
+        if($this->parseTextWCIndependent($txt)) $entity->setSpecial('wcIndependent', true);
+        if($this->parseTextCounters($txt)) $entity->setSpecial('counters', true);
+        if($this->parseTextArmoredDoor($txt)) $entity->setSpecial('doorArmored', true);
+        if($this->parseTextHangar($txt)) $entity->setSpecial('hangar', true);
+        if($this->parseTextLoggia($txt)) $entity->setSpecial('loggia', true);
+        if($this->parseTextInternet($txt)) $entity->setSpecial('internet', true);
+        if($this->parseTextPantry($txt)) $entity->setSpecial('pantry', true);
+
     }
 }
