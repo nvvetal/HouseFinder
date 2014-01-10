@@ -23,14 +23,17 @@ class Address
      */
     protected $id;
 
-    /**
-     * @ORM\OneToMany(targetEntity="Advertisement", mappedBy="address")
-     */
-    protected $advertisements;
-
-    //TODO: refactor to city -> street
     /** @ORM\Column(type="string") */
-    protected $address;
+    protected $region;
+
+    /** @ORM\Column(type="string") */
+    protected $locality;
+
+    /** @ORM\Column(type="string") */
+    protected $street;
+
+    /** @ORM\Column(type="integer", nullable=true) */
+    protected $house;
 
     /**
      * Get id
@@ -42,67 +45,96 @@ class Address
         return $this->id;
     }
 
-    /**
-     * Constructor
-     */
-    public function __construct()
-    {
-        $this->advertisements = new ArrayCollection();
-    }
 
     /**
-     * Add advertisements
+     * Set region
      *
-     * @param Advertisement $advertisements
+     * @param string $region
      * @return Address
      */
-    public function addAdvertisement(Advertisement $advertisements)
+    public function setRegion($region)
     {
-        $this->advertisements[] = $advertisements;
-
+        $this->region = $region;
+    
         return $this;
     }
 
     /**
-     * Remove advertisements
+     * Get region
      *
-     * @param Advertisement $advertisements
+     * @return string 
      */
-    public function removeAdvertisement(Advertisement $advertisements)
+    public function getRegion()
     {
-        $this->advertisements->removeElement($advertisements);
+        return $this->region;
     }
 
     /**
-     * Get advertisements
+     * Set locality
      *
-     * @return Collection
-     */
-    public function getAdvertisements()
-    {
-        return $this->advertisements;
-    }
-
-    /**
-     * Set address
-     *
-     * @param string $address
+     * @param string $locality
      * @return Address
      */
-    public function setAddress($address)
+    public function setLocality($locality)
     {
-        $this->address = $address;
-
+        $this->locality = $locality;
+    
         return $this;
     }
 
     /**
-     * Get address
+     * Get locality
      *
-     * @return string
+     * @return string 
      */
-    public function getAddress()
+    public function getLocality()
     {
-        return $this->address;
+        return $this->locality;
+    }
+
+    /**
+     * Set street
+     *
+     * @param string $street
+     * @return Address
+     */
+    public function setStreet($street)
+    {
+        $this->street = $street;
+    
+        return $this;
+    }
+
+    /**
+     * Get street
+     *
+     * @return string 
+     */
+    public function getStreet()
+    {
+        return $this->street;
+    }
+
+    /**
+     * Set house
+     *
+     * @param integer $house
+     * @return Address
+     */
+    public function setHouse($house)
+    {
+        $this->house = $house;
+    
+        return $this;
+    }
+
+    /**
+     * Get house
+     *
+     * @return integer 
+     */
+    public function getHouse()
+    {
+        return $this->house;
     }
 }

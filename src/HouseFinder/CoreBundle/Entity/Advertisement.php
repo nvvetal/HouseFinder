@@ -90,12 +90,12 @@ class Advertisement
     protected $currency;
 
     /**
-     * @ORM\OneToMany(targetEntity="AdvertisementPhoto", mappedBy="advertisement", cascade={"all"})
+     * @ORM\OneToMany(targetEntity="AdvertisementPhoto", mappedBy="advertisement", cascade={"all"}, orphanRemoval=true)
      */
     protected $photos;
 
     /**
-     * @ORM\OneToMany(targetEntity="Room", mappedBy="advertisement", cascade={"all"})
+     * @ORM\OneToMany(targetEntity="Room", mappedBy="advertisement", cascade={"all"}, orphanRemoval=true)
      */
     protected $rooms;
 

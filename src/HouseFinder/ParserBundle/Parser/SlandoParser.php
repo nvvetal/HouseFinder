@@ -10,6 +10,7 @@ use HouseFinder\CoreBundle\Entity\AdvertisementSlando;
 use HouseFinder\CoreBundle\Entity\UserSlando;
 use HouseFinder\CoreBundle\Entity\UserPhone;
 use HouseFinder\ParserBundle\Parser\BaseParser;
+use HouseFinder\ParserBundle\Service\AddressService;
 use HouseFinder\ParserBundle\Service\SlandoService;
 use phpOCR\cOCR;
 use Symfony\Component\DomCrawler\Crawler;
@@ -140,6 +141,10 @@ class SlandoParser extends BaseParser
         //echo "<pre>";
         //var_dump($raw);
         $userSlando = $this->getUser($raw);
+        /**
+         * @var $addressService AddressService
+         */
+        $addressService = $this->container->get('housefinder.parser.service.address');
         $address = $this->getAddress($raw['data']['address']);
         $entity = new AdvertisementSlando();
         $entity->setUser($userSlando);
@@ -401,10 +406,10 @@ class SlandoParser extends BaseParser
         //TODO: fix address - parse full path
         /** @var $em EntityManager */
         $em = $this->container->get('Doctrine')->getManager();
-        $address = $em->getRepository('HouseFinderCoreBundle:Address')->findOneBy(array('address'=>$content));
+        $address = $em->getRepository('HouseFinderCoreBundle:Address')->findOneBy(array('region'=>$content));
         if(is_null($address)){
             $address = new Address();
-            $address->setAddress($content);
+            $address->setRegion($content);
             $em->persist($address);
             $em->flush();
         }
