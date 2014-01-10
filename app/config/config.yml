@@ -104,6 +104,9 @@ ivory_google_map:
         unit_system: "METRIC"
         sensor: false
         #provide_route_alternatives: true
+    geocoder:
+        enabled: true
+
 mopa_bootstrap:
     initializr:
         google:
