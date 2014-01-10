@@ -11,3 +11,7 @@ services:
   housefinder.parser.parser.slando:
     class: HouseFinder\ParserBundle\Parser\SlandoParser
     arguments: [@service_container, @housefinder.parser.service.slando]
+
+  housefinder.parser.service.address:
+    class: HouseFinder\ParserBundle\Service\AddressService
+    arguments: [@ivory_google_map.geocoder]
