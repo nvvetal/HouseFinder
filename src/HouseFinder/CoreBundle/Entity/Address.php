@@ -2,15 +2,13 @@
 
 namespace HouseFinder\CoreBundle\Entity;
 
-use Doctrine\Common\Collections\ArrayCollection;
-use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\Mapping as ORM;
 
 /**
  * Address
  *
  * @ORM\Table()
- * @ORM\Entity
+ * @ORM\Entity(repositoryClass="HouseFinder\CoreBundle\Entity\AddressRepository")
  */
 class Address
 {
