@@ -142,6 +142,7 @@ abstract class BaseParser
         if(mb_stripos($text, 'автономным отоплением', 0, 'UTF-8') !== false) return  Advertisement::HEATING_TYPE_INDEPENDENT;
         if(mb_strpos($text, 'АО', 0, 'UTF-8') !== false) return  Advertisement::HEATING_TYPE_INDEPENDENT;
         if(mb_stripos($text, 'авт. отопл.', 0, 'UTF-8') !== false) return  Advertisement::HEATING_TYPE_INDEPENDENT;
+        if(mb_stripos($text, 'автоном.отопление', 0, 'UTF-8') !== false) return  Advertisement::HEATING_TYPE_INDEPENDENT;
         return '';
     }
 

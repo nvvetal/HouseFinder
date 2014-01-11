@@ -21,7 +21,7 @@ class Address
      */
     protected $id;
 
-    /** @ORM\Column(type="string", nullable=true) */
+    /** @ORM\Column(type="string") */
     protected $region;
 
     /** @ORM\Column(type="string", nullable=true) */
@@ -30,8 +30,11 @@ class Address
     /** @ORM\Column(type="string", nullable=true) */
     protected $street;
 
-    /** @ORM\Column(type="integer", nullable=true) */
-    protected $house;
+    /** @ORM\Column(type="string", nullable=true) */
+    protected $streetNumber;
+
+    /** @ORM\Column(type="string") */
+    protected $original;
 
     /**
      * Get id
@@ -114,25 +117,41 @@ class Address
     }
 
     /**
-     * Set house
+     * Set streetNumber
      *
-     * @param integer $house
+     * @param integer $streetNumber
      * @return Address
      */
-    public function setHouse($house)
+    public function setStreetNumber($streetNumber)
     {
-        $this->house = $house;
+        $this->streetNumber = $streetNumber;
     
         return $this;
     }
 
     /**
-     * Get house
+     * Get streetNumber
      *
      * @return integer 
      */
-    public function getHouse()
+    public function getStreetNumber()
     {
-        return $this->house;
+        return $this->streetNumber;
+    }
+
+    /**
+     * @param mixed $original
+     */
+    public function setOriginal($original)
+    {
+        $this->original = $original;
+    }
+
+    /**
+     * @return mixed
+     */
+    public function getOriginal()
+    {
+        return $this->original;
     }
 }

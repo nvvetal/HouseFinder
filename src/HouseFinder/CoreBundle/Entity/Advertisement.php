@@ -73,7 +73,6 @@ class Advertisement
      */
     protected $rentStartDate;
 
-
     /** @ORM\Column(type="string", nullable=true) */
     protected $houseType;
 

@@ -29,19 +29,20 @@ class AddressService
     }
 
     /**
-     * @param $address string String representation of address
-     * @throws NoResultException
+     * @param $addressOrig
+     * @internal param string $address String representation of address
      * @return Address
      */
-    public function getAddress($address)
+    public function getAddress($addressOrig)
     {
         /** @var Geocoded $response */
-        $response = $this->geocoder->geocode($address);
+        $response = $this->geocoder->geocode($addressOrig);
         $address = new Address();
-        $address->setHouse($response->getStreetNumber());
+        $address->setStreetNumber($response->getStreetNumber());
         $address->setStreet($response->getStreetName());
         $address->setLocality($response->getCity());
         $address->setRegion($response->getRegion());
+        $address->setOriginal($addressOrig);
         /** @var AddressRepository $addressRepository */
         $addressRepository = $this->em->getRepository('HouseFinder\CoreBundle\Entity\Address');
         $a2 = $addressRepository->findOneByAddress($address);

@@ -145,7 +145,7 @@ class SlandoParser extends BaseParser
          * @var $addressService AddressService
          */
         $addressService = $this->container->get('housefinder.parser.service.address');
-        $address = $this->getAddress($raw['data']['address']);
+        $address = $addressService->getAddress($raw['data']['address']);
         $entity = new AdvertisementSlando();
         $entity->setUser($userSlando);
         $entity->setAddress($address);
@@ -169,8 +169,11 @@ class SlandoParser extends BaseParser
         $this->fillFullSpace($entity, $raw['data']['params']);
         $this->fillLivingSpace($entity, $raw['data']['params']);
         $this->fillLevel($entity, $raw['data']['params']);
+        //TODO: check is house exists, if yes - not fill
         $this->fillMaxLevels($entity, $raw['data']['params']);
         $this->fillWallType($entity, $raw['data']['params']);
+
+
         $this->fillHouseType($entity, $raw['data']['params']);
 
         if(isset($raw['data']['photo']) && count($raw['data']['photo']) > 0){

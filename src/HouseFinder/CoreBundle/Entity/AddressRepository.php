@@ -20,7 +20,7 @@ class AddressRepository extends EntityRepository
                 'region' => $address->getRegion(),
                 'locality' => $address->getLocality(),
                 'street' => $address->getStreet(),
-                'house' => $address->getHouse()
+                'streetNumber' => $address->getStreetNumber()
             )
         );
     }
