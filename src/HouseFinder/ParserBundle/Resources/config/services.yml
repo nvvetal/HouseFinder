@@ -14,4 +14,4 @@ services:
 
   housefinder.parser.service.address:
     class: HouseFinder\ParserBundle\Service\AddressService
-    arguments: [@ivory_google_map.geocoder]
+    arguments: [@ivory_google_map.geocoder, @doctrine.orm.entity_manager]

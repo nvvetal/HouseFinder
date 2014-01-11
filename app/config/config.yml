@@ -106,6 +106,9 @@ ivory_google_map:
         #provide_route_alternatives: true
     geocoder:
         enabled: true
+        provider:
+            class: Geocoder\Provider\YandexProvider
+            locale: ru
 
 mopa_bootstrap:
     initializr:
