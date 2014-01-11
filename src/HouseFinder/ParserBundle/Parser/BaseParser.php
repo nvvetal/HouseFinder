@@ -74,18 +74,33 @@ abstract class BaseParser
         if(mb_stripos($text, 'кирпич', 0, 'UTF-8') !== false) return Advertisement::WALL_TYPE_BRICK;
         if(mb_stripos($text, ' кир ', 0, 'UTF-8') !== false) return Advertisement::WALL_TYPE_BRICK;
         if(mb_stripos($text, 'панель', 0, 'UTF-8') !== false) return Advertisement::WALL_TYPE_PANEL;
-        if(mb_stripos($text, 'цегляний', 0, 'UTF-8') !== false) return Advertisement::WALL_TYPE_PANEL;
+        if(mb_stripos($text, 'цегляний', 0, 'UTF-8') !== false) return Advertisement::WALL_TYPE_BRICK;
+        if(mb_stripos($text, 'кипрпич', 0, 'UTF-8') !== false) return Advertisement::WALL_TYPE_BRICK;
         return '';
     }
 
     public function parseFullLiveKitchenSpace($text)
     {
         $text = str_replace(",", ".", $text);
-        if(preg_match("~([\d.]+)[\s/]+([\d.]+)[\s/]+([\d.]+)~", $text, $m)){
+        $text = str_replace("\\", "/", $text);
+        if(preg_match("/([\d.]+)\s*\/\s*([\d.]+)\s*\/\s*([\d.]+)/", $text, $m)){
             return array(
                 'fullSpace'     => trim($m[1], '.'),
                 'livingSpace'   => trim($m[2], '.'),
                 'kitchenSpace'  => trim($m[3], '.'),
+            );
+        }
+        return NULL;
+    }
+
+    public function parseLevels($text)
+    {
+        $text = str_replace(",", ".", $text);
+        $text = preg_replace("~(\d)\s*[/\\\]\s*(\d)~","$1/$2", $text);
+        if(preg_match("/(?<!\d|\d\/)(\d+)\/(\d+)(?!\d|\/\d)/", $text, $m)){
+            return array(
+                'level'     => $m[1],
+                'maxLevels' => $m[2],
             );
         }
         return NULL;
@@ -98,7 +113,7 @@ abstract class BaseParser
         if(mb_stripos($text, 'балк.', 0, 'UTF-8') !== false) return true;
         if(mb_stripos($text, 'б\з', 0, 'UTF-8') !== false) return true;
         if(mb_stripos($text, 'б/з', 0, 'UTF-8') !== false) return true;
-        return $this->parseTextLoggia($text);
+        return false;
     }
 
     public function parseTextLoggia($text)
@@ -125,6 +140,8 @@ abstract class BaseParser
         if(mb_stripos($text, 'с автономным отоплением', 0, 'UTF-8') !== false) return  Advertisement::HEATING_TYPE_INDEPENDENT;
         if(mb_stripos($text, 'автономне опалення', 0, 'UTF-8') !== false) return  Advertisement::HEATING_TYPE_INDEPENDENT;
         if(mb_stripos($text, 'автономным отоплением', 0, 'UTF-8') !== false) return  Advertisement::HEATING_TYPE_INDEPENDENT;
+        if(mb_strpos($text, 'АО', 0, 'UTF-8') !== false) return  Advertisement::HEATING_TYPE_INDEPENDENT;
+        if(mb_stripos($text, 'авт. отопл.', 0, 'UTF-8') !== false) return  Advertisement::HEATING_TYPE_INDEPENDENT;
         return '';
     }
 
@@ -151,6 +168,7 @@ abstract class BaseParser
         if(mb_stripos($text, 'мп окна', 0, 'UTF-8') !== false) return true;
         if(mb_stripos($text, 'металопластикові вікна', 0, 'UTF-8') !== false) return true;
         if(mb_stripos($text, 'металлопластиковое окно', 0, 'UTF-8') !== false) return true;
+        if(mb_stripos($text, 'м/п/окна', 0, 'UTF-8') !== false) return true;
         return false;
     }
 
@@ -207,7 +225,7 @@ abstract class BaseParser
 
     public function parseTextCanTrade($text)
     {
-        if(mb_stripos($text, 'торг.', 0, 'UTF-8') !== false) return true;
+        if(mb_stripos($text, 'торг', 0, 'UTF-8') !== false) return true;
         return false;
     }
 
@@ -224,6 +242,7 @@ abstract class BaseParser
     {
         if(mb_stripos($text, 'саузел совместно', 0, 'UTF-8') !== false) return true;
         if(mb_stripos($text, 'с\у совместный', 0, 'UTF-8') !== false) return true;
+        if(mb_stripos($text, 'с/у/см', 0, 'UTF-8') !== false) return true;
         return false;
     }
 
@@ -231,6 +250,7 @@ abstract class BaseParser
     {
         if(mb_stripos($text, 'счетчик', 0, 'UTF-8') !== false) return true;
         if(mb_stripos($text, 'счётчик', 0, 'UTF-8') !== false) return true;
+        if(mb_stripos($text, 'сч. на ', 0, 'UTF-8') !== false) return true;
         return false;
     }
 
@@ -259,6 +279,7 @@ abstract class BaseParser
     {
         if(mb_stripos($text, 'кладовка', 0, 'UTF-8') !== false) return true;
         if(mb_stripos($text, 'кладовая', 0, 'UTF-8') !== false) return true;
+        if(mb_stripos($text, 'кладовки', 0, 'UTF-8') !== false) return true;
         return false;
     }
 
@@ -308,6 +329,7 @@ abstract class BaseParser
     {
         if(mb_stripos($text, 'бытовая техника', 0, 'UTF-8') !== false) return true;
         if(mb_stripos($text, 'быт.техника', 0, 'UTF-8') !== false) return true;
+        if(mb_stripos($text, 'обставлена техникой', 0, 'UTF-8') !== false) return true;
         return false;
     }
 
@@ -332,6 +354,8 @@ abstract class BaseParser
     public function parseTextWashingMachine($text)
     {
         if(mb_stripos($text, 'стиральная машина', 0, 'UTF-8') !== false) return true;
+        if(mb_stripos($text, 'стир.машинка', 0, 'UTF-8') !== false) return true;
+        if(mb_stripos($text, 'стиралка', 0, 'UTF-8') !== false) return true;
         return false;
     }
 

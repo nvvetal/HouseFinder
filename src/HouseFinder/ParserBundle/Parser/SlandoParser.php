@@ -488,24 +488,30 @@ class SlandoParser extends BaseParser
         }
         $space = $this->parseFullLiveKitchenSpace($txt);
         if(!is_null($space)){
+            //echo $entity->getSourceURL()."\n";
+            //var_dump($space);
             if(is_null($entity->getFullSpace())) $entity->setFullSpace($space['fullSpace']);
-            if(is_null($entity->getLivingSpace())) $entity->setLivingSpace($space['livingSpace']);
-            /*
-            $kitchens = &$entity->getKitchens();
-            if(count($kitchens) == 0){
-                $kitchen = new Room();
-                $kitchen->setAdvertisement($entity);
-                $kitchen->setType(Room::TYPE_KITCHEN);
-                $kitchen->setSpace($space['kitchenSpace']);
-                $this->container->get('Doctrine')->getManager()->flush();
-            }elseif(is_null($kitchens[0]->getSpace())){
-                $kitchens[0]->setSpace($space['kitchenSpace']);
+            if(is_null($entity->getLivingSpace())) {
+                if(count($entity->getLivingRooms()) == 1){
+                    $entity->setFirstLivingRoomSpace($space['livingSpace']);
+                }
+                $entity->setLivingSpace($space['livingSpace']);
             }
-            */
+            $entity->setFirstKitchenSpace($space['kitchenSpace']);
         }
         if($entity->getHeatingType() == ''){
             $heatingIndependent = $this->parseTextIndependentHeating($txt);
             if($heatingIndependent) $entity->setHeatingType($heatingIndependent);
+        }
+
+        $levels = $this->parseLevels($txt);
+        if(!is_null($levels)){
+            if(is_null($entity->getLevel())) {
+                $entity->setLevel($levels['level']);
+            }
+            if(is_null($entity->getMaxLevels())) {
+                $entity->setMaxLevels($levels['maxLevels']);
+            }
         }
 
         //parse special features

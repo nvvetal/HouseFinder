@@ -706,6 +706,48 @@ class Advertisement
         return $kitchens;
     }
 
+    public function &getLivingRooms()
+    {
+        $rooms = &$this->getRooms();
+        $lRooms = array();
+        if(count($rooms) == 0) return NULL;
+        foreach($rooms as &$room)
+        {
+            /* @var $room Room */
+            if($room->getType() != Room::TYPE_ROOM) continue;
+            $lRooms[] = $room;
+        }
+        return $lRooms;
+    }
+
+    public function setFirstKitchenSpace($space)
+    {
+        $kitchens = &$this->getKitchens();
+        if(count($kitchens) == 0){
+            $kitchen = new Room();
+            $kitchen->setAdvertisement($this);
+            $kitchen->setType(Room::TYPE_KITCHEN);
+            $kitchen->setSpace($space);
+            $this->addRoom($kitchen);
+        }elseif(is_null($kitchens[0]->getSpace())){
+            $kitchens[0]->setSpace($space);
+        }
+    }
+
+    public function setFirstLivingRoomSpace($space)
+    {
+        $rooms = &$this->getLivingRooms();
+        if(count($rooms) == 0){
+            $room = new Room();
+            $room->setAdvertisement($this);
+            $room->setType(Room::TYPE_ROOM);
+            $room->setSpace($space);
+            $this->addRoom($room);
+        }elseif(is_null($rooms[0]->getSpace())){
+            $rooms[0]->setSpace($space);
+        }
+    }
+
     /**
      * @param $key
      * @param $val
