@@ -10,8 +10,15 @@ class DefaultControllerTest extends WebTestCase
     {
         $client = static::createClient();
 
-        $crawler = $client->request('GET', '/hello/Fabien');
+        $crawler = $client->request('GET', '/register');
+        $this->assertEquals(301, $client->getResponse()->getStatusCode());
+        $this->assertEquals('http://localhost/register/', $client->getResponse()->headers->get('location'));
 
-        $this->assertTrue($crawler->filter('html:contains("Hello Fabien")')->count() > 0);
+        $crawler = $client->followRedirect();
+        $this->assertTrue(
+            $crawler->filter(
+                'html:contains(\'You have requested a non-existent service "fos_user.registration.form"\')'
+            )->count() > 0
+        );
     }
 }
