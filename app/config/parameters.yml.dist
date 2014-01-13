@@ -14,10 +14,10 @@ parameters:
     locale:            en
     secret:            ThisTokenIsNotSoSecretChangeIt
 
-    vkontakte_id: ~
-    vkontakte_secret: ~
-    facebook_id: ~
-    facebook_secret: ~
+    vkontakte_id: dummy
+    vkontakte_secret: dummy
+    facebook_id: dummy
+    facebook_secret: dummy
 
     node_bin: /usr/bin/node
     node_paths: [/opt/lessc/lib, /usr/lib/node_modules]
