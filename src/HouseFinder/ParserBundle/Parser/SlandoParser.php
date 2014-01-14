@@ -106,7 +106,8 @@ class SlandoParser extends BaseParser
             $data['sourceID'] = $matches[6];
             $data['createdDateTime'] = $matches[5].'-'.$this->getMonthByRussianName($matches[4]).'-'.$matches[3].' '.$matches[1].':'.$matches[2].':00';
         }
-        $phone = $crawler->filter("span[data-rel=phone]")->eq(0)->extract(array('class'))[0];
+        $res = $crawler->filter("span[data-rel=phone]")->eq(0)->extract(array('class'));
+        $phone = $res[0];
         if (preg_match("/\{.*\}/", $phone, $matches)) {
             //var_dump($matches);
             $phoneJSON = json_decode(strtr($matches[0], "'", '"'), true);
