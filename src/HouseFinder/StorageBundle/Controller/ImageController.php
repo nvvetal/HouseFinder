@@ -30,8 +30,8 @@ class ImageController extends Controller
         $path = explode('/', $data['path']);
         $url = $this->get('router')->generate('storage_image_url', array(
             'id'        => $id,
-            'path1'      => $path[0],
-            'path2'      => $path[1],
+            'path1'     => $path[0],
+            'path2'     => $path[1],
             'context'   => $data['context'],
             'ext'       => $data['ext'],
         ));
