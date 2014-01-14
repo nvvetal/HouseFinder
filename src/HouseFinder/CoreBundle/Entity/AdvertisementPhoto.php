@@ -3,6 +3,7 @@
 namespace HouseFinder\CoreBundle\Entity;
 
 use Doctrine\ORM\Mapping as ORM;
+use HouseFinder\CoreBundle\Entity\Advertisement;
 
 /**
  * AdvertisementPhoto
@@ -32,6 +33,9 @@ class AdvertisementPhoto
 
     /** @ORM\Column(type="string", nullable=true) */
     protected $path;
+
+    /** @ORM\Column(type="string", nullable=true) */
+    protected $ext;
 
     /**
      * Get id
@@ -92,10 +96,10 @@ class AdvertisementPhoto
     /**
      * Set advertisement
      *
-     * @param \HouseFinder\CoreBundle\Entity\Advertisement $advertisement
+     * @param Advertisement $advertisement
      * @return AdvertisementPhoto
      */
-    public function setAdvertisement(\HouseFinder\CoreBundle\Entity\Advertisement $advertisement = null)
+    public function setAdvertisement(Advertisement $advertisement = null)
     {
         $this->advertisement = $advertisement;
     
@@ -105,10 +109,27 @@ class AdvertisementPhoto
     /**
      * Get advertisement
      *
-     * @return \HouseFinder\CoreBundle\Entity\Advertisement 
+     * @return Advertisement
      */
     public function getAdvertisement()
     {
         return $this->advertisement;
+    }
+
+
+    /**
+     * @param mixed $ext
+     */
+    public function setExt($ext)
+    {
+        $this->ext = $ext;
+    }
+
+    /**
+     * @return mixed
+     */
+    public function getExt()
+    {
+        return $this->ext;
     }
 }

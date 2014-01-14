@@ -1,0 +1,8 @@
+storage_advertisement_photo:
+    pattern:  /advertisement/photo/{id}
+    defaults: { _controller: HouseFinderStorageBundle:Image:advertisementPhoto }
+    methods:   [POST]
+
+storage_image_url:
+    pattern:  /image/{context}/{path1}/{path2}/WIDTH/HEIGHT/{id}.{ext}
+    methods:   [GET]

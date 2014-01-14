@@ -53,6 +53,7 @@ abstract class BaseParser
         foreach ($rows as $row)
         {
             $entity = $this->getEntityByRAW($row);
+            if(empty($entity)) continue;
             $this->postParseText($entity);
             $entities[] = $entity;
         }

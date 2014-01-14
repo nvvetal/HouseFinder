@@ -1,6 +1,10 @@
+house_finder_storage:
+    resource: "@HouseFinderStorageBundle/Resources/config/routing.yml"
+    prefix:   /storage
+
 house_finder_parser:
     resource: "@HouseFinderParserBundle/Resources/config/routing.yml"
-    prefix:   /
+    prefix:   /parser
 
 house_finder_auth:
     resource: "@HouseFinderAuthBundle/Resources/config/routing.yml"

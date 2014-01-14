@@ -25,6 +25,7 @@ class AppKernel extends Kernel
             new Widop\HttpAdapterBundle\WidopHttpAdapterBundle(),
             new Ivory\GoogleMapBundle\IvoryGoogleMapBundle(),
             new Mopa\Bundle\BootstrapBundle\MopaBootstrapBundle(),
+            new HouseFinder\StorageBundle\HouseFinderStorageBundle(),
         );
 
         if (in_array($this->getEnvironment(), array('dev', 'test'))) {

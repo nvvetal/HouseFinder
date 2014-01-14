@@ -1,0 +1,15 @@
+parameters:
+    housefinder.storage.path: "%kernel.root_dir%/storage"
+
+services:
+#    house_finder_storage.example:
+#        class: %house_finder_storage.example.class%
+#        arguments: [@service_id, "plain_value", %parameter%]
+
+  housefinder.storage.image.advertisement.photo:
+    class: HouseFinder\StorageBundle\Image\AdvertisementPhoto
+    arguments: [@service_container, @doctrine.orm.entity_manager]
+
+  housefinder.storage.service.image.advertisement.photo:
+    class: HouseFinder\StorageBundle\Service\ImageService
+    arguments: [@housefinder.storage.image.advertisement.photo]

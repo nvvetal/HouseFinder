@@ -145,7 +145,9 @@ class SlandoParser extends BaseParser
          * @var $addressService AddressService
          */
         $addressService = $this->container->get('housefinder.parser.service.address');
+        if(empty($raw['data']['address'])) return NULL;
         $address = $addressService->getAddress($raw['data']['address']);
+        if(is_null($address)) return NULL;
         $entity = new AdvertisementSlando();
         $entity->setUser($userSlando);
         $entity->setAddress($address);

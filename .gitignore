@@ -12,3 +12,5 @@
 /bin/
 /composer.phar
 .idea
+/app/storage/*
+!app/storage/.gitkeep

@@ -35,23 +35,27 @@ class AddressService
      */
     public function getAddress($addressOrig)
     {
-        /** @var Geocoded $response */
-        $response = $this->geocoder->geocode($addressOrig);
-        $address = new Address();
-        $address->setStreetNumber($response->getStreetNumber());
-        $address->setStreet($response->getStreetName());
-        $address->setLocality($response->getCity());
-        $address->setRegion($response->getRegion());
-        $address->setOriginal($addressOrig);
-        /** @var AddressRepository $addressRepository */
-        $addressRepository = $this->em->getRepository('HouseFinder\CoreBundle\Entity\Address');
-        $a2 = $addressRepository->findOneByAddress($address);
-        if (!empty($a2)) {
-            return $a2;
+        try {
+            /** @var Geocoded $response */
+            $response = $this->geocoder->geocode($addressOrig);
+            $address = new Address();
+            $address->setStreetNumber($response->getStreetNumber());
+            $address->setStreet($response->getStreetName());
+            $address->setLocality($response->getCity());
+            $address->setRegion($response->getRegion());
+            $address->setOriginal($addressOrig);
+            /** @var AddressRepository $addressRepository */
+            $addressRepository = $this->em->getRepository('HouseFinder\CoreBundle\Entity\Address');
+            $a2 = $addressRepository->findOneByAddress($address);
+            if (!empty($a2)) {
+                return $a2;
+            }
+            $this->em->persist($address);
+            $this->em->flush($address);
+        }catch(\Exception $e){
+            echo $e->getMessage().'['.$addressOrig.']'."\n";
+            return NULL;
         }
-        $this->em->persist($address);
-        $this->em->flush($address);
-
         return $address;
     }
 }
