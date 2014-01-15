@@ -54,3 +54,8 @@ house_finder_core:
     resource: "@HouseFinderCoreBundle/Controller/"
     type:     annotation
     prefix:   /
+
+house_finder_frontend:
+    resource: "@HouseFinderFrontendBundle/Controller/"
+    type:     annotation
+    prefix:   /

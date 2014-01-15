@@ -1,0 +1,12 @@
+{% verbatim %}
+<script type="text/ng-template" id="header.html">
+    <div>
+        <div ng-show="headerType == 'login'">
+            <div ng-include="'header-login.html'"></div>
+        </div>
+        <div ng-show="headerType == 'default'">
+            <div ng-include="'header-default.html'"></div>
+        </div>
+    </div>
+</script>
+{% endverbatim %}

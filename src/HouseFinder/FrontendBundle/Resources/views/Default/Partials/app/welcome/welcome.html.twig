@@ -1,0 +1,12 @@
+{% verbatim %}
+<script type="text/ng-template" id="app/welcome/welcome.html">
+    <app-header></app-header>
+    <div ng-show="loaded">
+        WELCOME!
+    </div>
+    <div ng-hide="loaded">
+        <ng-include src="'app/loading.html'"></ng-include>
+    </div>
+    <app-footer></app-footer>
+</script>
+{% endverbatim %}
