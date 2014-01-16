@@ -26,6 +26,8 @@ class AppKernel extends Kernel
             new Ivory\GoogleMapBundle\IvoryGoogleMapBundle(),
             new Mopa\Bundle\BootstrapBundle\MopaBootstrapBundle(),
             new HouseFinder\StorageBundle\HouseFinderStorageBundle(),
+            new Innova\AngularJSBundle\InnovaAngularJSBundle(),
+            new HouseFinder\FrontendBundle\HouseFinderFrontendBundle(),
         );
 
         if (in_array($this->getEnvironment(), array('dev', 'test'))) {

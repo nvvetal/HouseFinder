@@ -1,0 +1,12 @@
+{% verbatim %}
+<script type="text/ng-template" id="app/notfound/notfound.html">
+    <app-header></app-header>
+    <div ng-show="loaded">
+        notfound
+    </div>
+    <div ng-hide="loaded">
+        <ng-include src="'app/loading.html'"></ng-include>
+    </div>
+    <app-footer></app-footer>
+</script>
+{% endverbatim %}

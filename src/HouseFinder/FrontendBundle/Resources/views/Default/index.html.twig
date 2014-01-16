@@ -1,0 +1,29 @@
+{% extends '::base.html.twig' %}
+
+{% block head_style %}
+    {{ parent() }}
+    <base href="{{ path('frontend_root') }}">
+{% endblock head_style %}
+
+{% block container %}
+    <div class="container" ng-app="app">
+        <div ng-view>
+            {% include 'HouseFinderFrontendBundle:Default:Partials/app/loading-inner.html.twig' %}
+        </div>
+        {% include 'HouseFinderFrontendBundle:Default:templates.html.twig' %}
+    </div>
+{% endblock container %}
+
+{% block foot_script %}
+    {{ parent() }}
+    {% javascripts '@InnovaAngularJSBundle/Resources/public/js/angular.min.js'
+    '@InnovaAngularJSBundle/Resources/public/js/angular-route.min.js'
+    '@HouseFinderFrontendBundle/Resources/public/js/app/app.js'
+
+    '@HouseFinderFrontendBundle/Resources/public/js/common/directives/header/header.js'
+
+    '@HouseFinderFrontendBundle/Resources/public/js/app/notfound/notfound.js'
+    '@HouseFinderFrontendBundle/Resources/public/js/app/welcome/welcome.js' %}
+    <script src="{{ asset_url }}"></script>
+    {% endjavascripts %}
+{% endblock foot_script %}

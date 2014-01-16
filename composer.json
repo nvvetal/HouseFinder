@@ -30,7 +30,8 @@
         "willdurand/geocoder": "*",
         "widop/http-adapter-bundle": "1.1.*",
         "mopa/bootstrap-bundle": "3.x-dev",
-        "twbs/bootstrap": "3.0.x-dev"
+        "twbs/bootstrap": "3.0.x-dev",
+        "innova/angular-js-bundle": "1.0.2"
     },
     "scripts": {
         "post-install-cmd": [
