@@ -1,3 +1,4 @@
+[![Build Status](https://travis-ci.org/nvvetal/HouseFinder.png?branch=master)](https://travis-ci.org/nvvetal/HouseFinder)
 Symfony Standard Edition
 ========================
 
