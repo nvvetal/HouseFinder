@@ -5,7 +5,7 @@ angular.module('app').directive('appSearchMain', ['$route', function ($route) {
         scope: {},
         templateUrl: 'searchMain.html',
         link: function (scope, element, attrs) {
-            scope.test = 'ololo';
+            scope.buyCurrency = '$';
         }
     }
 }]);

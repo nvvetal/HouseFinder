@@ -4,6 +4,14 @@
     <div ng-show="loaded">
         WELCOME!
         <app-search-main></app-search-main>
+        <div>
+            Currency:
+            <div class="btn-group">
+                <button type="button" class="btn btn-default">USD</button>
+                <button type="button" class="btn btn-default">UAH</button>
+                <button type="button" class="btn btn-default">EUR</button>
+            </div>
+        </div>
     </div>
     <div ng-hide="loaded">
         <ng-include src="'app/loading.html'"></ng-include>

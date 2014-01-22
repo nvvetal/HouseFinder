@@ -1,7 +1,19 @@
 {% verbatim %}
 <script type="text/ng-template" id="searchMain.html">
-    <div>
-        {{ test }}
+    <div class="row">
+        <div class="col-xs-4"></div>
+        <div class="col-xs-4">
+            <form class="form-inline" role="form">
+                <div class="row">
+                    <div class="input-group col-sm-5">
+                        <span class="input-group-addon">Price, {{ buyCurrency }}</span>
+                        <input type="text" name="price_from" class="form-control" placeholder="Price From">
+                        <input type="text" name="price_to" class="form-control" placeholder="Price To">
+                    </div>
+                </div>
+            </form>
+        </div>
+        <div class="col-xs-4"></div>
     </div>
 </script>
 {% endverbatim %}
