@@ -13,8 +13,6 @@ angular.module('app.welcome', [])
             }
         });
     }]).
-    controller('WelcomeCtrl', [
-        '$scope',
-        function ($scope) {
-            $scope.loaded = true;
-        }]);
+    controller('WelcomeCtrl', ['$scope', function ($scope) {
+        $scope.loaded = true;
+    }]);
