@@ -2,6 +2,9 @@
 
 {% block head_style %}
     {{ parent() }}
+    {% stylesheets '@HouseFinderFrontendBundle/Resources/public/css/*' %}
+        <link href="{{ asset_url }}" type="text/css" rel="stylesheet" media="screen" />
+    {% endstylesheets %}
     <base href="{{ path('frontend_root') }}">
 {% endblock head_style %}
 
@@ -20,7 +23,10 @@
     '@InnovaAngularJSBundle/Resources/public/js/angular-route.min.js'
     '@HouseFinderFrontendBundle/Resources/public/js/app/app.js'
 
+    '@HouseFinderFrontendBundle/Resources/public/js/common/services/user.js'
+
     '@HouseFinderFrontendBundle/Resources/public/js/common/directives/header/header.js'
+    '@HouseFinderFrontendBundle/Resources/public/js/common/directives/currencySelect.js'
     '@HouseFinderFrontendBundle/Resources/public/js/common/directives/searchMain.js'
 
     '@HouseFinderFrontendBundle/Resources/public/js/app/notfound/notfound.js'

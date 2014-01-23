@@ -1,0 +1,10 @@
+{% verbatim %}
+<script type="text/ng-template" id="currencySelect.html">
+    <div>
+        Currency:
+        <div class="btn-group">
+            <button type="button" class="btn btn-default {{ fillActive(currency.value) }}" ng-repeat="currency in currencies" ng-click="changeCurrency(currency.value)">{{ currency.name }}</button>
+        </div>
+    </div>
+</script>
+{% endverbatim %}
