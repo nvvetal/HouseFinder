@@ -1,0 +1,7 @@
+.form-main-search .input-group .form-control {
+    float: none;
+}
+
+.form-main-search .input-group select.form-control {
+    width: 96%;
+}

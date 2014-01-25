@@ -3,6 +3,12 @@ angular.module('app').directive('appSearchMain', ['$route', 'UserService', funct
         restrict: "E",
         replace: true,
         scope: {},
+
+        controller: ['$scope', 'AdvertisementService', function($scope, AdvertisementService){
+            $scope.search = function(){
+                AdvertisementService.getAdvertisements();
+            }
+        }],
         templateUrl: 'searchMain.html',
         link: function (scope, element, attrs) {
             scope.currencyShort = UserService.getCurrencyShort();
