@@ -1,5 +1,6 @@
 (function () {
     angular.module('app', [
+        'ngResource',
         'ngRoute',
         'app.notfound',
         'app.welcome'

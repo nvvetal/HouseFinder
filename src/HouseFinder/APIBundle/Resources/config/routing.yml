@@ -1,0 +1,3 @@
+house_finder_api_homepage:
+    pattern:  /advertisements
+    defaults: { _controller: HouseFinderAPIBundle:Advertisements:list }

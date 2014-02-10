@@ -28,6 +28,7 @@ class AppKernel extends Kernel
             new HouseFinder\StorageBundle\HouseFinderStorageBundle(),
             new Innova\AngularJSBundle\InnovaAngularJSBundle(),
             new HouseFinder\FrontendBundle\HouseFinderFrontendBundle(),
+            new HouseFinder\APIBundle\HouseFinderAPIBundle(),
         );
 
         if (in_array($this->getEnvironment(), array('dev', 'test'))) {

@@ -1,3 +1,7 @@
+house_finder_api:
+    resource: "@HouseFinderAPIBundle/Resources/config/routing.yml"
+    prefix:   /api
+
 house_finder_storage:
     resource: "@HouseFinderStorageBundle/Resources/config/routing.yml"
     prefix:   /storage

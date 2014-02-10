@@ -1,16 +1,13 @@
-angular.module('app').factory('AdvertisementService', ['$rootScope', 'ApiService', function($rootScope, ApiService) {
+angular.module('app').factory('AdvertisementService', ['$rootScope', '$resource', function($rootScope, $resource) {
     return {
         getAdvertisements: function(params){
             params = params || {};
-            ApiService.get('advertisement', 'advertisements',
-                function(data, status, headers, config) {
-                    console.log(1);
-                },
-                function(data, status, headers, config) {
-                    console.log(2);
-                }
-            );
+            params.hoho = 'hmmm';
+            var Advertisements = $resource('/api/advertisements', {},{
+                search: { method: "POST", isArray: true}
+            });
+            var zzz = Advertisements.search(params);
+            if(zzz.$resolved) console.log(zzz);
         }
-
     };
 }]);
