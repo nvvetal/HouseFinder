@@ -116,3 +116,18 @@ mopa_bootstrap:
             wt: 'xxx'
             analytics: 'UA-xxxxxxx-xx'
     form: ~  # Adds twig form theme  support
+
+fos_rest:
+    routing_loader:
+        default_format: json
+        include_format:       true
+    param_fetcher_listener: true
+    body_listener: true
+    format_listener: true
+    view:
+        view_response_listener: 'force'
+
+
+sensio_framework_extra:
+    view:
+        annotations: false

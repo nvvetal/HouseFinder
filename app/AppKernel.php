@@ -29,6 +29,8 @@ class AppKernel extends Kernel
             new Innova\AngularJSBundle\InnovaAngularJSBundle(),
             new HouseFinder\FrontendBundle\HouseFinderFrontendBundle(),
             new HouseFinder\APIBundle\HouseFinderAPIBundle(),
+            new JMS\SerializerBundle\JMSSerializerBundle(),
+            new FOS\RestBundle\FOSRestBundle()
         );
 
         if (in_array($this->getEnvironment(), array('dev', 'test'))) {

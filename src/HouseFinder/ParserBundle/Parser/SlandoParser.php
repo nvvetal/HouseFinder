@@ -31,7 +31,7 @@ class SlandoParser extends BaseParser
                 if (empty($text)) return false;
                 $url = $node->attr('href');
                 $sourceHash = '';
-                if(preg_match("/(\w+)\.html$/i", $url, $matches)){
+                if(preg_match("/(\w+)\.html/i", $url, $matches)){
                     $sourceHash = $matches[1];
                 }
                 return array(
@@ -110,20 +110,29 @@ class SlandoParser extends BaseParser
         $phone = $res[0];
         if (preg_match("/\{.*\}/", $phone, $matches)) {
             //var_dump($matches);
-            $phoneJSON = json_decode(strtr($matches[0], "'", '"'), true);
-            $phoneHash = $phoneJSON['id'];
-            /** @var $service SlandoService */
-            $service = $this->container->get('housefinder.parser.service.slando');
-            $phoneURL = 'http://slando.ua/ajax/misc/contact/phone/' . $phoneHash . '/';
-            sleep(3);
-            $phoneContent = json_decode($service->getPageContent($phoneURL), true);
-            list(, $phoneContent,) = explode('"', $phoneContent);
-            $phoneFile = $service->getFile($phoneContent);
-            $template = cOCR::loadTemplate('slando');
-            $img = cOCR::openImg($phoneFile);
-            cOCR::setInfelicity(5);
-            $data['phone'] = explode(",", preg_replace("/[^\d,]/", "", cOCR::defineImg(cOCR::$img, $template)));
-            unlink($phoneFile);
+            try {
+                $data['phone'] = array();
+                /*
+                $phoneJSON = json_decode(strtr($matches[0], "'", '"'), true);
+                $phoneHash = $phoneJSON['id'];
+                */
+                /** @var $service SlandoService */
+                /*
+                $service = $this->container->get('housefinder.parser.service.slando');
+                $phoneURL = 'http://slando.ua/ajax/misc/contact/phone/' . $phoneHash . '/';
+                sleep(3);
+                $phoneContent = json_decode($service->getPageContent($phoneURL), true);
+                list(, $phoneContent,) = explode('"', $phoneContent);
+                $phoneFile = $service->getFile($phoneContent);
+                $template = cOCR::loadTemplate('slando');
+                $img = cOCR::openImg($phoneFile);
+                cOCR::setInfelicity(5);
+                $data['phone'] = explode(",", preg_replace("/[^\d,]/", "", cOCR::defineImg(cOCR::$img, $template)));
+                unlink($phoneFile);
+                */
+            }catch(\Exception $e){
+                echo $e->getMessage();
+            }
         }
         /*
                 echo "<pre>";
@@ -362,6 +371,7 @@ class SlandoParser extends BaseParser
         $userHash = isset($raw['data']['ownerHash']) ? $raw['data']['ownerHash'] : '';
         $userURL = isset($raw['data']['ownerUrl']) ? $raw['data']['ownerUrl'] : '';
         $UserSlando = null;
+        if(empty($userHash)) $userHash = 'nohash';
         if(!empty($userHash)){
             $UserSlando = $em->getRepository('HouseFinderCoreBundle:UserSlando')
                 ->findOneBy(array('sourceHash' => $userHash));

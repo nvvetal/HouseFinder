@@ -13,6 +13,7 @@ use Doctrine\Common\Collections\Collection;
 use FOS\UserBundle\Model\User as BaseUser;
 use Doctrine\ORM\Mapping as ORM;
 
+
 /**
  * @ORM\Table()
  * @ORM\Entity(repositoryClass="HouseFinder\CoreBundle\Entity\UserRepository")
