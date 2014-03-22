@@ -3,7 +3,7 @@
         "This file locks the dependencies of your project to a known state",
         "Read more about it at http://getcomposer.org/doc/01-basic-usage.md#composer-lock-the-lock-file"
     ],
-    "hash": "c26e5c47e2dfc140f09525c6bb0c16ba",
+    "hash": "bd8542acb66237f04a7e480fbfba87a8",
     "packages": [
         {
             "name": "claroline/kernel-bundle",

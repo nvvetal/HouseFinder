@@ -13,16 +13,33 @@ use HouseFinder\StorageBundle\Image\BaseImage;
 class ImageService
 {
     protected $image;
+    protected $container;
 
-    public function __construct(BaseImage $image)
+    public function __construct(BaseImage $image, $container)
     {
         $this->image = $image;
+        $this->container = $container;
     }
 
     public function getFileData($entity)
     {
         return $this->image->getFile($entity);
     }
+
+    public function getURL($entity){
+        $data = $this->getFileData($entity);
+        if(empty($data['path'])) return '';
+        $path = explode('/', $data['path']);
+        $url = $this->container->get('router')->generate('storage_image_url', array(
+            'id'        => $entity->getId(),
+            'path1'     => $path[0],
+            'path2'     => $path[1],
+            'context'   => $data['context'],
+            'ext'       => $data['ext'],
+        ), true);
+        return $url;
+    }
+
 
     public function saveFileByURL($url, $entity)
     {

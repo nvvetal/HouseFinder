@@ -12,4 +12,4 @@ services:
 
   housefinder.storage.service.image.advertisement.photo:
     class: HouseFinder\StorageBundle\Service\ImageService
-    arguments: [@housefinder.storage.image.advertisement.photo]
+    arguments: [@housefinder.storage.image.advertisement.photo, @service_container]

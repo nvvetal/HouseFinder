@@ -15,7 +15,7 @@ use HouseFinder\CoreBundle\Entity\User;
  * @ORM\Table()
  * @ORM\InheritanceType("SINGLE_TABLE")
  * @ORM\DiscriminatorMap({"base" = "Advertisement", "internal" = "AdvertisementInternal", "external" = "AdvertisementExternal","slando" = "AdvertisementSlando"})
- * @ORM\Entity
+ * @ORM\Entity(repositoryClass="HouseFinder\CoreBundle\Entity\AdvertisementRepository")
  */
 class Advertisement
 {
@@ -562,6 +562,17 @@ class Advertisement
     {
         return $this->contentChanged;
     }
+
+    /**
+     * @return \DateTime
+     */
+    public function getLastUpdated()
+    {
+        $lastUpdated = $this->getUpdated();
+        $created = $this->getCreated();
+        return !empty($lastUpdated) ?  $lastUpdated : $created;
+    }
+
 
     /**
      * Set user
