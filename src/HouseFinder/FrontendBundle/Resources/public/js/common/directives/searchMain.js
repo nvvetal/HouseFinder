@@ -17,7 +17,7 @@ angular.module('app').directive('appSearchMain', ['$route', 'UserService', funct
             $scope.advertisementPage = function(page){
                 $scope.advertisementCurrentPage = page;
                 $('#advertisement-pager li').each(function(index){
-                    $(this).removeClass('active');
+                    $('#advertisement-pager li').eq(index).removeClass('active');
                 });
                 $('#advertisement-pager li').eq(page).addClass('active');
                 $scope.search();
@@ -37,7 +37,7 @@ angular.module('app').directive('appSearchMain', ['$route', 'UserService', funct
             ];
             scope.advertisements = [];
             scope.advertisementsAvailable = false;
-            scope.advertisementCurrentPage = 1;
+            scope.advertisementCurrentPage = 0;
             scope.$on('userCurrencyChange', function(args){
                 scope.currencyShort = UserService.getCurrencyShort();
             });

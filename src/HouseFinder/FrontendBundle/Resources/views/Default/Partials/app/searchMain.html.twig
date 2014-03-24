@@ -96,7 +96,7 @@
                 </tr>
             </table>
             <ul class="pagination" ng-if="advertisementsAvailable" id="advertisement-pager">
-                <li ng-repeat="page in []|range:advertisements.pages" ng-click="advertisementPage(page)"><a href="#">{{ page + 1 }}</a></li>
+                <li ng-class="{active: $advertisementCurrentPage==page}" ng-repeat="page in []|range:advertisements.pages" ng-click="advertisementPage(page)"><a href="#">{{ page + 1 }}</a></li>
             </ul>
         </div>
     </div>

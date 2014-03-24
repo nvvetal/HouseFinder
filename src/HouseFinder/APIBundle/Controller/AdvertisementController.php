@@ -35,13 +35,15 @@ class AdvertisementController extends FOSRestController
     public function cgetAction(Request $request)
     {
         $em = $this->getDoctrine()->getManager();
+        parse_str($request->get('data'), $data);
         $params = array(
             'perPage' => 30,
-            'page'  => 0,
+            'data'  => $data,
         );
         $advertisements = $em->getRepository('HouseFinderCoreBundle:Advertisement')->search($params);
         $data = array(
             'pages' => $advertisements['pages'],
+            'count' => $advertisements['count'],
         );
         foreach($advertisements['items'] as $advertisement){
             $photoUrl = '';
