@@ -1,16 +1,12 @@
-angular.module('app').factory('AdvertisementService', ['$rootScope', '$resource', function($rootScope, $resource) {
+angular.module('app').factory('AdvertisementService', ['$rootScope', '$q', '$resource', function($rootScope, $q, $resource) {
     return {
         getAdvertisements: function(params){
-            params = params || {};
-            var Advertisement = $resource('/api/advertisements', {}, {
-                search: {method: 'GET', isArray: true}
+            var Advertisement = $resource('/api/advertisements');
+            var deferred = $q.defer();
+            Advertisement.get(params, function(data){
+                deferred.resolve(data);
             });
-            var Advertisements = Advertisement.search(params, function(){
-                for(var i = 0; i <= Advertisements.length; i++){
-                    var ad = Advertisements[i];
-                }
-                //console.log(Advertisements);
-            });
+            return deferred.promise;
         }
     };
 }]);

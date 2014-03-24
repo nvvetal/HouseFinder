@@ -64,6 +64,7 @@ class AdvertisementController extends FOSRestController
                 'currency'  => $advertisement->getCurrency(),
                 'photo'     => $photoUrl,
                 'lastDate'  => $advertisement->getLastUpdated()->format('Y-m-d H:i'),
+                'address'  => '',
             );
         }
         return $data;
