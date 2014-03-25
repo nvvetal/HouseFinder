@@ -3,12 +3,20 @@
     <app-header></app-header>
     <div ng-show="loaded">
         WELCOME!
-        <app-search-main></app-search-main>
-        <app-currency-select></app-currency-select>
-    </div>
-    <div ng-hide="loaded">
-        <ng-include src="'app/loading.html'"></ng-include>
-    </div>
-    <app-footer></app-footer>
+        <div>
+            <div class="row">
+                <div class="col-xs-2">
+                    <app-search-filter></app-search-filter>
+                </div>
+                <div class="col-xs-8">
+                    <app-search-main></app-search-main>
+                </div>
+                <div class="col-xs-2"></div>
+            </div>
+        </div>
+        <div ng-hide="loaded">
+            <ng-include src="'app/loading.html'"></ng-include>
+        </div>
+        <app-footer></app-footer>
 </script>
 {% endverbatim %}

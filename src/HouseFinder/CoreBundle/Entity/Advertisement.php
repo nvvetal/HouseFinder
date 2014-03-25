@@ -36,6 +36,7 @@ class Advertisement
     const CURRENCY_RUB = 'RUB';
     const CURRENCY_UAH = 'UAH';
 
+    const WALL_TYPE_ALL       = 'all';
     const WALL_TYPE_BRICK       = 'brick';
     const WALL_TYPE_PANEL       = 'panel';
     const WALL_TYPE_BLOCK       = 'block';

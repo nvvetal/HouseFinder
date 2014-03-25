@@ -1,0 +1,19 @@
+{% verbatim %}
+<script type="text/ng-template" id="searchFilter.html">
+    <div>
+        <select class="form-control"
+                ng-model="searchFilterCity"
+                ng-options="city as city.label for city in cities"
+                ng-change="searchFilterCityChange(searchFilterCity)"
+        >
+            <option value="">Выберите город</option>
+        </select>
+        <select class="form-control"
+                ng-model="searchFilterPeriod"
+                ng-options="period as period.label for period in periods"
+                ng-change="searchFilterPeriodChange(searchFilterPeriod)"
+        >
+        </select>
+    </div>
+</script>
+{% endverbatim %}

@@ -13,6 +13,7 @@ class AdvertisementRepository extends EntityRepository
         $page = isset($params['data']['page']) ? (int) $params['data']['page'] : '';
         $em = $this->getEntityManager();
         $q = $em->getRepository('HouseFinderCoreBundle:Advertisement')->createQueryBuilder('a');
+        $q->innerJoin('a.address', 'address');
         if(!empty($params['data']['price_from'])){
             $q->andWhere('a.price >= :priceFrom');
             $q->setParameter(':priceFrom', $params['data']['price_from']);
@@ -49,7 +50,7 @@ class AdvertisementRepository extends EntityRepository
             $q->setParameter(':spaceTo', $params['data']['space_living_to']);
         }
 
-        if(!empty($params['data']['type'])){
+        if(!empty($params['data']['type']) &&  $params['data']['type'] != Advertisement::WALL_TYPE_ALL){
             $q->andWhere('a.wallType = :type');
             $q->setParameter(':type', $params['data']['type']);
         }
@@ -70,6 +71,24 @@ class AdvertisementRepository extends EntityRepository
         if(!empty($params['data']['house_level_to'])){
             $q->andWhere('a.maxLevels <= :levelTo');
             $q->setParameter(':levelTo', $params['data']['house_level_to']);
+        }
+
+        if(!empty($params['data']['city_id'])){
+            $q->andWhere('address.locality = :cityId');
+            $q->setParameter(':cityId', $params['data']['city_id']);
+        }
+
+        if(!empty($params['data']['period'])){
+            switch($params['data']['period']){
+                case 'week':
+                    $q->andWhere('a.created BETWEEN :periodBegin AND :periodEnd');
+
+                    break;
+
+                case 'month':
+
+                    break;
+            }
         }
 
         $q->groupBy('a.id');

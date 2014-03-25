@@ -38,8 +38,17 @@ angular.module('app').directive('appSearchMain', ['$route', 'UserService', funct
             scope.advertisements = [];
             scope.advertisementsAvailable = false;
             scope.advertisementCurrentPage = 0;
-            scope.$on('userCurrencyChange', function(args){
+            //scope.cityId = 0;
+            scope.$on('userCurrencyChange', function(e, args){
                 scope.currencyShort = UserService.getCurrencyShort();
+            });
+            scope.$on('searchFilterCityChange', function(e, args){
+                scope.cityId = args.cityId;
+                scope.search();
+            });
+            scope.$on('searchFilterPeriodChange', function(e, args){
+                scope.period = args.period;
+                scope.search();
             });
         }
     }

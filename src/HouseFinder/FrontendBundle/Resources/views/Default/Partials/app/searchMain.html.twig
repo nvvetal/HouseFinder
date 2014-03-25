@@ -1,13 +1,10 @@
 {% verbatim %}
 <script type="text/ng-template" id="searchMain.html">
     <div>
-        <div class="row">
-            <div class="col-xs-2"></div>
-            <div class="col-xs-8">
-                <form id="mainSearch" class="form form-main-search" role="form" ng-submit="search()">
-                    <div class="row">
-                        <div class="col-xs-6">
-                            <div class="input-group">
+        <form id="mainSearch" class="form form-main-search" role="form" ng-submit="search()">
+            <div class="row">
+                <div class="col-xs-6">
+                    <div class="input-group">
                             <span class="input-group-addon input-sm">
                                 Price, {{ currencyShort }}
                                 <input type="text" name="price_from" class="form-control input-sm" placeholder="From">
@@ -15,8 +12,8 @@
                             <span class="input-group-addon input-sm">
                                 <input type="text" name="price_to" class="form-control input-sm" placeholder="To">
                             </span>
-                            </div>
-                            <div class="input-group">
+                    </div>
+                    <div class="input-group">
                             <span class="input-group-addon input-sm">
                                 Rooms count
                                 <input type="text" name="rooms_from" class="form-control input-sm" placeholder="From">
@@ -24,59 +21,61 @@
                             <span class="input-group-addon input-sm">
                                 <input type="text" name="rooms_to" class="form-control input-sm" placeholder="To">
                             </span>
-                            </div>
-                            <div class="input-group">
+                    </div>
+                    <div class="input-group">
                             <span class="input-group-addon input-sm">Space
                                 <input type="text" name="space_from" class="form-control input-sm" placeholder="From">
                             </span>
                             <span class="input-group-addon input-sm">
                                 <input type="text" name="space_to" class="form-control input-sm" placeholder="To">
                             </span>
-                            </div>
-                            <div class="input-group">
+                    </div>
+                    <div class="input-group">
                             <span class="input-group-addon input-sm">Living Space
                                 <input type="text" name="space_living_from" class="form-control input-sm" placeholder="From">
                             </span>
                             <span class="input-group-addon input-sm">
                                 <input type="text" name="space_living_to" class="form-control input-sm" placeholder="To">
                             </span>
-                            </div>
-                        </div>
-                        <div class="col-xs-6">
-                            <div class="input-group">
+                    </div>
+                </div>
+                <div class="col-xs-6">
+                    <div class="input-group">
                             <span class="input-group-addon input-sm">
                                 Type
                                 <select name="type" class="form-control input-sm">
                                     <option value="{{ type.value }}" ng-repeat="type in types">{{ type.name }}</option>
                                 </select>
                             </span>
-                            </div>
-                            <div class="input-group">
+                    </div>
+                    <div class="input-group">
                             <span class="input-group-addon input-sm">Level
                                 <input type="text" name="level_from" class="form-control input-sm" placeholder="From">
                             </span>
                             <span class="input-group-addon input-sm">
                                 <input type="text" name="level_to" class="form-control input-sm" placeholder="To">
                             </span>
-                            </div>
-                            <div class="input-group">
+                    </div>
+                    <div class="input-group">
                             <span class="input-group-addon input-sm">House Level
                                 <input type="text" name="house_level_from" class="form-control input-sm" placeholder="From">
                             </span>
                             <span class="input-group-addon input-sm">
                                 <input type="text" name="house_level_to" class="form-control input-sm" placeholder="To">
                             </span>
-                            </div>
-                            <div class="input-group">
-                                <button type="submit" class="btn btn-danger" >Search</button>
-                                <button type="button" class="btn btn-info">More</button>
-                            </div>
-                        </div>
                     </div>
-                    <input type="hidden" name="page" value="{{ advertisementCurrentPage }}" />
-                </form>
+                    <div class="input-group">
+                        <button type="submit" class="btn btn-danger" >Search</button>
+                        <button type="button" class="btn btn-info">More</button>
+                    </div>
+                </div>
             </div>
-            <div class="col-xs-2"></div>
+            <input type="hidden" name="page" value="{{ advertisementCurrentPage }}" />
+            <input type="hidden" name="city_id" value="{{ cityId }}" />
+            <input type="hidden" name="period" value="{{ period }}" />
+        </form>
+        <div class="row">
+            <app-currency-select></app-currency-select>
         </div>
         <div class="row">
             <table class="table table-striped table-bordered" ng-if="advertisementsAvailable">
