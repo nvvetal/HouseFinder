@@ -101,7 +101,7 @@ class AdvertisementRepository extends EntityRepository
         $c = count($paginator);
         return array(
             'items' => $paginator,
-            'pages' => ceil($c / $params->limit),
+            'pages' => ceil($c / $limit),
             'count' => $c
         );
     }

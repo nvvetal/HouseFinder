@@ -10,3 +10,7 @@ services:
     my_user_provider:
       class: %my_user_provider.class%
       arguments: [@fos_user.user_manager, { vkontakte: vkontakteId, facebook: facebookId }, @my_user_manager_service]
+
+    housefinder.service.logger:
+      class: HouseFinder\CoreBundle\Service\LoggerService
+      arguments: []

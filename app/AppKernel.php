@@ -21,7 +21,6 @@ class AppKernel extends Kernel
             new HWI\Bundle\OAuthBundle\HWIOAuthBundle(),
             new Widop\HttpAdapterBundle\WidopHttpAdapterBundle(),
             new Ivory\GoogleMapBundle\IvoryGoogleMapBundle(),
-            new Mopa\Bundle\BootstrapBundle\MopaBootstrapBundle(),
             new HouseFinder\StorageBundle\HouseFinderStorageBundle(),
             new Innova\AngularJSBundle\InnovaAngularJSBundle(),
             new JMS\SerializerBundle\JMSSerializerBundle(),

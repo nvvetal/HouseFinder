@@ -8,6 +8,7 @@ use FOS\RestBundle\Routing\ClassResourceInterface;
 use HouseFinder\CoreBundle\Entity\Advertisement;
 use HouseFinder\CoreBundle\Entity\AdvertisementRepository;
 use HouseFinder\CoreBundle\Entity\DataContainer;
+use HouseFinder\APIBundle\Entity\Output;
 use HouseFinder\CoreBundle\Entity\http;
 use HouseFinder\StorageBundle\Service\ImageService;
 use MyProject\Proxies\__CG__\stdClass;
@@ -87,12 +88,64 @@ class AdvertisementController extends FOSRestController
             ), HTTP::HTTP_SUCCESS);
 
         }catch(\Exception $e){
-            $this->get('housefinder.logger')->write('[res error][error '.$e->getMessage().'][code '.$e->getCode().'][data '.print_r($request->getContent(),true).']', 'api_advertisement_list');
+            $this->get('housefinder.service.logger')->write('[res error][error '.$e->getMessage().'][code '.$e->getCode().'][data '.print_r($request->getContent(),true).']', 'api_advertisement_list');
             return $this->view(array(
                 'code'      => $e->getCode(),
                 'message'   => $e->getMessage(),
+                'data'      => array(),
             ), $e->getCode());
         }
     }
+
+    /**
+     * @Get("/{id}")
+     * @ApiDoc(
+     *  description="",
+     *  section="Advertisement",
+     *  statusCodes={
+     *      200="Successful",
+     *      400="Invalid json message received",
+     *      404={
+     *          "Advertisement not found"
+     *      },
+     *      417="Data passed is not correct",
+     *      422="SQL Error",
+     *      500="The API token authentication expired"
+     *  },
+     *  output={
+     *    "class"   = "HouseFinder\APIBundle\Entity\Output",
+     *    "parsers" = {
+     *      "Nelmio\ApiDocBundle\Parser\JmsMetadataParser",
+     *      "Nelmio\ApiDocBundle\Parser\ValidationParser"
+     *    }
+     *  }
+     * )
+     */
+    public function getAdvertisementAction(Advertisement $advertisement)
+    {
+        $request = $this->getRequest();
+        try {
+            return $this->view(array(
+                'code'      => HTTP::HTTP_SUCCESS,
+                'message'   => 'ok',
+                'data'      => array(
+                    'id'            => $advertisement->getId(),
+                    'name'          => $advertisement->getName(),
+                    'description'   => trim($advertisement->getDescription()),
+                    'ownerId'       => $advertisement->getUser()->getId(),
+                ),
+            ), HTTP::HTTP_SUCCESS);
+
+        }catch(\Exception $e){
+            $this->get('housefinder.service.logger')->write('[res error][error '.$e->getMessage().'][code '.$e->getCode().'][data '.print_r($request->getContent(),true).']', 'api_advertisement_item');
+            return $this->view(array(
+                'code'      => $e->getCode(),
+                'message'   => $e->getMessage(),
+                'data'      => array(),
+            ), $e->getCode());
+        }
+    }
+
+
 
 }
