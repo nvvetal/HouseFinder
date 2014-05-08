@@ -1,3 +1,5 @@
 api_advertisement:
-    type: rest
     resource: HouseFinder\APIBundle\Controller\AdvertisementController
+    type:     annotation
+    defaults: {_format: json}
+    prefix:   /api/advertisements/

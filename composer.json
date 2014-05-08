@@ -33,7 +33,8 @@
         "twbs/bootstrap": "v3.0.0",
         "innova/angular-js-bundle": "1.*",
         "friendsofsymfony/rest-bundle": "1.3.*",
-        "jms/serializer-bundle": "dev-master"
+        "jms/serializer-bundle": "dev-master",
+        "nelmio/api-doc-bundle": "2.5.1"
     },
     "scripts": {
         "post-install-cmd": [

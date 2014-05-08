@@ -1,6 +1,12 @@
+NelmioApiDocBundle:
+    resource: "@NelmioApiDocBundle/Resources/config/routing.yml"
+    prefix:   /api/doc
+
+
 house_finder_api:
     resource: "@HouseFinderAPIBundle/Resources/config/routing.yml"
-    prefix:   /api
+
+
 
 house_finder_storage:
     resource: "@HouseFinderStorageBundle/Resources/config/routing.yml"
@@ -63,3 +69,5 @@ house_finder_frontend:
     resource: "@HouseFinderFrontendBundle/Controller/"
     type:     annotation
     prefix:   /
+
+

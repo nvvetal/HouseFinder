@@ -19,24 +19,28 @@ class AppKernel extends Kernel
             new Sensio\Bundle\BuzzBundle\SensioBuzzBundle(),
             new FOS\UserBundle\FOSUserBundle(),
             new HWI\Bundle\OAuthBundle\HWIOAuthBundle(),
-            new HouseFinder\CoreBundle\HouseFinderCoreBundle(),
-            new HouseFinder\AuthBundle\HouseFinderAuthBundle(),
-            new HouseFinder\ParserBundle\HouseFinderParserBundle(),
             new Widop\HttpAdapterBundle\WidopHttpAdapterBundle(),
             new Ivory\GoogleMapBundle\IvoryGoogleMapBundle(),
             new Mopa\Bundle\BootstrapBundle\MopaBootstrapBundle(),
             new HouseFinder\StorageBundle\HouseFinderStorageBundle(),
             new Innova\AngularJSBundle\InnovaAngularJSBundle(),
-            new HouseFinder\FrontendBundle\HouseFinderFrontendBundle(),
-            new HouseFinder\APIBundle\HouseFinderAPIBundle(),
             new JMS\SerializerBundle\JMSSerializerBundle(),
-            new FOS\RestBundle\FOSRestBundle()
+            new FOS\RestBundle\FOSRestBundle(),
+
+#project
+            new HouseFinder\CoreBundle\HouseFinderCoreBundle(),
+            new HouseFinder\AuthBundle\HouseFinderAuthBundle(),
+            new HouseFinder\ParserBundle\HouseFinderParserBundle(),
+            new HouseFinder\FrontendBundle\HouseFinderFrontendBundle(),
+            new HouseFinder\APIBundle\HouseFinderAPIBundle()
+
         );
 
         if (in_array($this->getEnvironment(), array('dev', 'test'))) {
             $bundles[] = new Symfony\Bundle\WebProfilerBundle\WebProfilerBundle();
             $bundles[] = new Sensio\Bundle\DistributionBundle\SensioDistributionBundle();
             $bundles[] = new Sensio\Bundle\GeneratorBundle\SensioGeneratorBundle();
+            $bundles[] = new Nelmio\ApiDocBundle\NelmioApiDocBundle();
         }
 
         return $bundles;
