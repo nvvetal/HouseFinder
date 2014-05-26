@@ -21,7 +21,7 @@ use Doctrine\ORM\Mapping as ORM;
  * @ORM\DiscriminatorMap({"base" = "User", "internal" = "UserInternal", "slando" = "UserSlando"})
  * @ORM\HasLifecycleCallbacks
  */
-class User extends BaseUser
+class User extends BaseUser implements UserInterface
 {
     const TYPE_PRIVATE = 'private';
     const TYPE_REALTOR = 'realtor';
@@ -185,5 +185,12 @@ class User extends BaseUser
     public function getEmails()
     {
         return $this->emails;
+    }
+
+    public function getUsernameFiltered()
+    {
+        $username = $this->getUsername();
+        if(preg_match("/^([^\@]+)\@/i", $username, $m)) return $m[1];
+        return NULL;
     }
 }

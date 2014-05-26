@@ -132,7 +132,38 @@ class AdvertisementController extends FOSRestController
                     'id'            => $advertisement->getId(),
                     'name'          => $advertisement->getName(),
                     'description'   => trim($advertisement->getDescription()),
-                    'ownerId'       => $advertisement->getUser()->getId(),
+                    'type'          => $advertisement->getType(),
+                    'rentType'      => $advertisement->getRentType(),
+                    'rentStartDate' => is_null($advertisement->getRentStartDate()) ? null : $advertisement->getRentStartDate()->format('Y-m-d'),
+                    'houseType'     => $advertisement->getHouseType(),
+                    'price'         => $advertisement->getPrice(),
+                    'currency'      => $advertisement->getCurrency(),
+                    'fullSpace'     => $advertisement->getFullSpace(),
+                    'livingSpace'   => $advertisement->getLivingSpace(),
+                    'level'         => $advertisement->getLevel(),
+                    'maxLevels'     => $advertisement->getMaxLevels(),
+                    'wallType'      => $advertisement->getWallType(),
+                    'brickType'     => $advertisement->getBrickType(),
+                    'heatingType'   => $advertisement->getHeatingType(),
+                    'special'       => $advertisement->getSpecial(),
+                    'created'       => $advertisement->getCreated()->format('d/m/Y H:i:s'),
+                    'owner'         => array(
+                        'id'        => $advertisement->getUser()->getId(),
+                        'username'  => $advertisement->getUser()->getUsernameFiltered(),
+                    ),
+                    'address'       => array(
+                        'id'        => $advertisement->getAddress()->getId(),
+                        //TODO: parse in correct
+                        'address'   => $advertisement->getAddress()->getOriginal(),
+                    ),
+                    //TODO: get list of photos
+                    'photos'        => array(
+
+                    ),
+                    //TODO: get list of rooms
+                    'rooms'        => array(
+
+                    ),
                 ),
             ), HTTP::HTTP_SUCCESS);
 
