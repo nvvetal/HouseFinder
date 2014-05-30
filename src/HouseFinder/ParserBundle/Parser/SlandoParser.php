@@ -107,8 +107,8 @@ class SlandoParser extends BaseParser
             $data['createdDateTime'] = $matches[5].'-'.$this->getMonthByRussianName($matches[4]).'-'.$matches[3].' '.$matches[1].':'.$matches[2].':00';
         }
         $res = $crawler->filter("span[data-rel=phone]")->eq(0)->extract(array('class'));
-        $phone = $res[0];
-        if (preg_match("/\{.*\}/", $phone, $matches)) {
+        //$phone = $res[0];
+        if (isset($res[0]) && preg_match("/\{.*\}/", $res[0], $matches)) {
             //var_dump($matches);
             try {
                 $data['phone'] = array();
@@ -406,13 +406,16 @@ class SlandoParser extends BaseParser
             $this->fillUserType($UserSlando, $raw['data']['params']);
             $em->persist($UserSlando);
             $em->flush();
-            foreach ($raw['data']['phone'] as $msisdn){
-                $phone = new UserPhone();
-                $phone->setMsisdn($msisdn);
-                $phone->setUser($UserSlando);
-                $em->persist($phone);
-                $em->flush();
+            if(isset($raw['data']['phone']) && count($raw['data']['phone']) > 0){
+                foreach ($raw['data']['phone'] as $msisdn){
+                    $phone = new UserPhone();
+                    $phone->setMsisdn($msisdn);
+                    $phone->setUser($UserSlando);
+                    $em->persist($phone);
+                    $em->flush();
+                }
             }
+
         }
         return $UserSlando;
     }

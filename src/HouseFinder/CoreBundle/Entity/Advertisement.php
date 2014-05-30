@@ -77,6 +77,12 @@ class Advertisement
     /** @ORM\Column(type="string", nullable=true) */
     protected $houseType;
 
+    /**
+     * @ORM\ManyToOne(targetEntity="House")
+     * @ORM\JoinColumn
+     */
+    protected $house;
+
     /** @ORM\Column(type="string") */
     protected $name;
 
@@ -779,6 +785,22 @@ class Advertisement
         $special = $this->special;
         if(is_null($special)) return array();
         return json_decode($special, true);
+    }
+
+    /**
+     * @return House
+     */
+    public function getHouse()
+    {
+        return $this->house;
+    }
+
+    /**
+     * @param House $house
+     */
+    public function setHouse($house)
+    {
+        $this->house = $house;
     }
 
 }

@@ -14,3 +14,19 @@ services:
     housefinder.service.logger:
       class: HouseFinder\CoreBundle\Service\LoggerService
       arguments: []
+
+    housefinder.service.advertisement:
+      class: HouseFinder\CoreBundle\Service\AdvertisementService
+      arguments: [@service_container]
+
+    housefinder.service.address:
+      class: HouseFinder\CoreBundle\Service\AddressService
+      arguments: []
+
+    housefinder.service.user:
+      class: HouseFinder\CoreBundle\Service\UserService
+      arguments: []
+
+    housefinder.service.house:
+      class: HouseFinder\CoreBundle\Service\HouseService
+      arguments: [@service_container]

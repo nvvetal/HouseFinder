@@ -10,6 +10,9 @@ use HouseFinder\CoreBundle\Entity\AdvertisementRepository;
 use HouseFinder\CoreBundle\Entity\DataContainer;
 use HouseFinder\APIBundle\Entity\Output;
 use HouseFinder\CoreBundle\Entity\http;
+use HouseFinder\CoreBundle\Service\AddressService;
+use HouseFinder\CoreBundle\Service\AdvertisementService;
+use HouseFinder\CoreBundle\Service\UserService;
 use HouseFinder\StorageBundle\Service\ImageService;
 use MyProject\Proxies\__CG__\stdClass;
 use Symfony\Bundle\FrameworkBundle\Controller\Controller;
@@ -50,37 +53,9 @@ class AdvertisementController extends FOSRestController
                     throw new \Exception('FORM::'.$key.'::'.$error->getMessage(), HTTP::HTTP_NOT_ACCEPTABLE);
                 }
             }
-            /** @var AdvertisementRepository $advertisementsRepo */
-            $advertisementsRepo = $em->getRepository('HouseFinderCoreBundle:Advertisement');
-            $advertisements = $advertisementsRepo->search($class);
-            $data = array(
-                'pages' => $advertisements['pages'],
-                'count' => $advertisements['count'],
-            );
-            foreach ($advertisements['items'] as $advertisement) {
-                $photoUrl = '';
-                /**
-                 * @var $advertisement Advertisement
-                 */
-                $photos = $advertisement->getPhotos();
-                if (!is_null($photos) && count($photos) > 0) {
-                    /**
-                     * @var $imageService ImageService
-                     */
-                    $imageService = $this->container->get('housefinder.storage.service.image.advertisement.photo');
-                    $photoUrl = $imageService->getURL($photos[0]);
-                }
-                $data['items'][] = array(
-                    'id' => $advertisement->getId(),
-                    'userId' => $advertisement->getUser()->getId(),
-                    'name' => $advertisement->getName(),
-                    'price' => $advertisement->getPrice(),
-                    'currency' => $advertisement->getCurrency(),
-                    'photo' => $photoUrl,
-                    'lastDate' => $advertisement->getLastUpdated()->format('Y-m-d H:i'),
-                    'address' => '',
-                );
-            }
+            /** @var AdvertisementService $advertisementService */
+            $advertisementService = $this->container->get('housefinder.service.advertisement');
+            $data = $advertisementService->getAdvertisementsREST($class);
             return $this->view(array(
                 'code'      => HTTP::HTTP_SUCCESS,
                 'message'   => 'ok',
@@ -125,46 +100,13 @@ class AdvertisementController extends FOSRestController
     {
         $request = $this->getRequest();
         try {
+            /** @var AdvertisementService $advertisementService */
+            $advertisementService = $this->container->get('housefinder.service.advertisement');
+
             return $this->view(array(
                 'code'      => HTTP::HTTP_SUCCESS,
                 'message'   => 'ok',
-                'data'      => array(
-                    'id'            => $advertisement->getId(),
-                    'name'          => $advertisement->getName(),
-                    'description'   => trim($advertisement->getDescription()),
-                    'type'          => $advertisement->getType(),
-                    'rentType'      => $advertisement->getRentType(),
-                    'rentStartDate' => is_null($advertisement->getRentStartDate()) ? null : $advertisement->getRentStartDate()->format('Y-m-d'),
-                    'houseType'     => $advertisement->getHouseType(),
-                    'price'         => $advertisement->getPrice(),
-                    'currency'      => $advertisement->getCurrency(),
-                    'fullSpace'     => $advertisement->getFullSpace(),
-                    'livingSpace'   => $advertisement->getLivingSpace(),
-                    'level'         => $advertisement->getLevel(),
-                    'maxLevels'     => $advertisement->getMaxLevels(),
-                    'wallType'      => $advertisement->getWallType(),
-                    'brickType'     => $advertisement->getBrickType(),
-                    'heatingType'   => $advertisement->getHeatingType(),
-                    'special'       => $advertisement->getSpecial(),
-                    'created'       => $advertisement->getCreated()->format('d/m/Y H:i:s'),
-                    'owner'         => array(
-                        'id'        => $advertisement->getUser()->getId(),
-                        'username'  => $advertisement->getUser()->getUsernameFiltered(),
-                    ),
-                    'address'       => array(
-                        'id'        => $advertisement->getAddress()->getId(),
-                        //TODO: parse in correct
-                        'address'   => $advertisement->getAddress()->getOriginal(),
-                    ),
-                    //TODO: get list of photos
-                    'photos'        => array(
-
-                    ),
-                    //TODO: get list of rooms
-                    'rooms'        => array(
-
-                    ),
-                ),
+                'data'      => $advertisementService->getAdvertisementFullREST($advertisement),
             ), HTTP::HTTP_SUCCESS);
 
         }catch(\Exception $e){

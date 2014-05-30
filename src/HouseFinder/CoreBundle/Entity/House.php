@@ -8,7 +8,7 @@ use HouseFinder\CoreBundle\Entity\Address;
 /**
  * House
  *
- * @ORM\Table()
+ * @ORM\Table(uniqueConstraints={@ORM\UniqueConstraint(name="uniq_address", columns={"address_id"})})
  * @ORM\Entity
  */
 class House
@@ -44,6 +44,9 @@ class House
 
     /** @ORM\Column(type="string", nullable=true) */
     protected $brickType;
+
+    /** @ORM\Column(type="boolean", nullable=true) */
+    protected $isCorrect;
 
     /**
      * Get id
@@ -145,5 +148,21 @@ class House
     public function getAddress()
     {
         return $this->address;
+    }
+
+    /**
+     * @return bool
+     */
+    public function isCorrect()
+    {
+        return $this->isCorrect;
+    }
+
+    /**
+     * @param bool $isCorrect
+     */
+    public function setIsCorrect($isCorrect)
+    {
+        $this->isCorrect = $isCorrect;
     }
 }
