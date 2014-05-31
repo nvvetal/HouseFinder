@@ -9,6 +9,7 @@ use HouseFinder\CoreBundle\Entity\Room;
 use HouseFinder\CoreBundle\Entity\AdvertisementSlando;
 use HouseFinder\CoreBundle\Entity\UserSlando;
 use HouseFinder\CoreBundle\Entity\UserPhone;
+use HouseFinder\CoreBundle\Service\HouseService;
 use HouseFinder\ParserBundle\Parser\BaseParser;
 use HouseFinder\ParserBundle\Service\AddressService;
 use HouseFinder\ParserBundle\Service\SlandoService;
@@ -53,7 +54,7 @@ class SlandoParser extends BaseParser
             $em = $this->container->get('Doctrine')->getManager();
             $find = $em->getRepository('HouseFinderCoreBundle:AdvertisementSlando')->findOneBy(array('sourceHash' => $link['sourceHash']));
             if(!is_null($find)) $dublicates++;
-            if($dublicates >= 3) {
+            if($dublicates >= 5) {
                 echo "Dublicates found next...\n";
                 break;
             }
@@ -151,16 +152,18 @@ class SlandoParser extends BaseParser
         //echo "<pre>";
         //var_dump($raw);
         $userSlando = $this->getUser($raw);
-        /**
-         * @var $addressService AddressService
-         */
+        /** @var AddressService $addressService */
         $addressService = $this->container->get('housefinder.parser.service.address');
+        /** @var HouseService $houseService */
+        $houseService = $this->container->get('housefinder.service.house');
         if(empty($raw['data']['address'])) return NULL;
         $address = $addressService->getAddress($raw['data']['address']);
         if(is_null($address)) return NULL;
         $entity = new AdvertisementSlando();
         $entity->setUser($userSlando);
         $entity->setAddress($address);
+        $house = $houseService->getHouseByAddress($address);
+        if(!is_null($house)) $entity->setHouse($house);
         $entity->setName($raw['title']);
         $entity->setDescription($raw['data']['text']);
         $entity->setSourceId($raw['data']['sourceID']);

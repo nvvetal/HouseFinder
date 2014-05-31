@@ -83,11 +83,20 @@ class AdvertisementRepository extends EntityRepository
             switch($params->period){
                 case 'week':
                     $q->andWhere('a.created BETWEEN :periodBegin AND :periodEnd');
-
+                    $start = new \DateTime();
+                    $start->setTimestamp(strtotime('-7 day'));
+                    $end = new \DateTime();
+                    $q->setParameter(':periodBegin', $start);
+                    $q->setParameter(':periodEnd', $end);
                     break;
 
                 case 'month':
-
+                    $q->andWhere('a.created BETWEEN :periodBegin AND :periodEnd');
+                    $start = new \DateTime();
+                    $start->setTimestamp(strtotime('-1 month'));
+                    $end = new \DateTime();
+                    $q->setParameter(':periodBegin', $start);
+                    $q->setParameter(':periodEnd', $end);
                     break;
             }
         }
@@ -96,7 +105,6 @@ class AdvertisementRepository extends EntityRepository
         $q->orderBy('a.created', 'DESC');
         $q->setFirstResult($page*$limit);
         $q->setMaxResults($limit);
-        //echo $q->getQuery()->getSQL();        exit;
         $paginator = new Paginator($q, $fetchJoinCollection = true);
         $c = count($paginator);
         return array(
@@ -104,5 +112,53 @@ class AdvertisementRepository extends EntityRepository
             'pages' => ceil($c / $limit),
             'count' => $c
         );
+    }
+
+    public function findByFresh(DataContainer $params)
+    {
+        $em = $this->getEntityManager();
+        try {
+            $q = $em->getRepository('HouseFinderCoreBundle:Advertisement')->createQueryBuilder('a');
+            $q->innerJoin('a.address', 'address');
+            if(isset($params->city_id)){
+                $q->andWhere('address.locality = :cityId');
+                $q->setParameter(':cityId', $params->city_id);
+            }
+
+            if(isset($params->type)){
+                switch($params->type){
+                    case "new":
+                        $q->andWhere('a.created BETWEEN :start AND :end');
+                        $start = new \DateTime();
+                        $start->setTimestamp(time() - 3*24*3600);
+                        $end = new \DateTime();
+                        $q->setParameter(':start', $start);
+                        $q->setParameter(':end', $end);
+                        break;
+                    case "normal":
+                        $q->andWhere('a.created BETWEEN :start AND :end');
+                        $start = new \DateTime();
+                        $start->setTimestamp(time() - 7*24*3600);
+                        $end = new \DateTime();
+                        $q->setParameter(':start', $start);
+                        $q->setParameter(':end', $end);
+                        break;
+                    case "old":
+                        $q->andWhere('a.created BETWEEN :start AND :end');
+                        $start = new \DateTime();
+                        $start->setTimestamp(strtotime('-1 month'));
+                        $end = new \DateTime();
+                        $q->setParameter(':start', $start);
+                        $q->setParameter(':end', $end);
+                        break;
+                }
+            }
+            $q->andWhere('address.streetNumber IS NOT NULL');
+            $q->groupBy('a.id');
+            $q->orderBy('a.created', 'DESC');
+            $data = $q->getQuery()->getResult();
+        }catch(\Exception $e){
+        }
+        return $data;
     }
 }

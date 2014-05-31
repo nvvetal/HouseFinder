@@ -1,6 +1,7 @@
 parameters:
     my_user_provider.class: HouseFinder\CoreBundle\Security\Core\User\FOSUBUserProvider
     my_user_manager_service.class: HouseFinder\CoreBundle\Service\UserManagerService
+    housefinder.logger_path: %kernel.root_dir%/logs/
 
 
 services:
@@ -13,7 +14,7 @@ services:
 
     housefinder.service.logger:
       class: HouseFinder\CoreBundle\Service\LoggerService
-      arguments: []
+      arguments: [%housefinder.logger_path%]
 
     housefinder.service.advertisement:
       class: HouseFinder\CoreBundle\Service\AdvertisementService
@@ -30,3 +31,10 @@ services:
     housefinder.service.house:
       class: HouseFinder\CoreBundle\Service\HouseService
       arguments: [@service_container]
+
+#event listener
+    housefinder.event_listener.house.address.create:
+      class: HouseFinder\CoreBundle\EventListener\HouseEventListener
+      arguments:  [@housefinder.service.house, @housefinder.service.logger]
+      tags:
+        - { name: kernel.event_listener, event: address.create, method: onAddressCreateEvent }

@@ -69,30 +69,49 @@ class AdvertisementService
             'count' => $advertisements['count'],
         );
         foreach ($advertisements['items'] as $advertisement) {
-            $photoUrl = '';
-            /**
-             * @var $advertisement Advertisement
-             */
-            $photos = $advertisement->getPhotos();
-            if (!is_null($photos) && count($photos) > 0) {
-                /**
-                 * @var $imageService ImageService
-                 */
-                $imageService = $this->container->get('housefinder.storage.service.image.advertisement.photo');
-                $photoUrl = $imageService->getURL($photos[0]);
-            }
-            $data['items'][] = array(
-                'id' => $advertisement->getId(),
-                'userId' => $advertisement->getUser()->getId(),
-                'name' => $advertisement->getName(),
-                'price' => $advertisement->getPrice(),
-                'currency' => $advertisement->getCurrency(),
-                'photo' => $photoUrl,
-                'lastDate' => $advertisement->getLastUpdated()->format('Y-m-d H:i'),
-                'address' => $addressService->getAddressREST($advertisement->getAddress()),
-            );
+            $data['items'][] = $this->getAdvertisementREST($advertisement);
         }
         return $data;
+    }
+
+    /**
+     * @param DataContainer $class
+     * @return array
+     */
+    public function getAdvertisementsForMapREST(DataContainer $class)
+    {
+        $em = $this->container->get('Doctrine')->getManager();
+        /** @var AdvertisementRepository $advertisementsRepo */
+        $advertisementsRepo = $em->getRepository('HouseFinderCoreBundle:Advertisement');
+        /** @var AddressService $addressService */
+        $addressService = $this->container->get('housefinder.service.address');
+        $advertisements = $advertisementsRepo->findByFresh($class);
+        $data = array();
+        foreach ($advertisements as $advertisement) {
+            $data['items'][] = $this->getAdvertisementREST($advertisement);
+        }
+        return $data;
+    }
+
+    public function getAdvertisementREST(Advertisement $advertisement)
+    {
+        $photoUrls = $this->getPhotoURLs($advertisement);
+        $photoUrl = '';
+        if (!is_null($photoUrls) && count($photoUrls) > 0) {
+            $photoUrl = $photoUrls[0];
+        }
+        /** @var AddressService $addressService */
+        $addressService = $this->container->get('housefinder.service.address');
+        return array(
+            'id' => $advertisement->getId(),
+            'userId' => $advertisement->getUser()->getId(),
+            'name' => $advertisement->getName(),
+            'price' => $advertisement->getPrice(),
+            'currency' => $advertisement->getCurrency(),
+            'photo' => $photoUrl,
+            'lastDate' => $advertisement->getLastUpdated()->format('Y-m-d H:i'),
+            'address' => $addressService->getAddressREST($advertisement->getAddress()),
+        );
     }
 
     /**
@@ -105,7 +124,10 @@ class AdvertisementService
         $addressService = $this->container->get('housefinder.service.address');
         /** @var UserService $userService */
         $userService = $this->container->get('housefinder.service.user');
-        return array(
+        /** @var HouseService $houseService */
+        $houseService = $this->container->get('housefinder.service.house');
+
+        $data = array(
             'id'            => $advertisement->getId(),
             'name'          => $advertisement->getName(),
             'description'   => trim($advertisement->getDescription()),
@@ -126,11 +148,13 @@ class AdvertisementService
             'created'       => $advertisement->getCreated()->format('d/m/Y H:i:s'),
             'owner'         => $userService->getUserREST($advertisement->getUser()),
             'address'       => $addressService->getAddressREST($advertisement->getAddress()),
+            'house'         => $houseService->getHouseByAddressREST($advertisement->getAddress()),
             'photos'        => $this->getPhotoURLs($advertisement),
             'rooms'         => $this->getRooms($advertisement),
             'roomsLiving'   => count($advertisement->getLivingRooms()),
-            'house'         => (!is_null($advertisement->getHouse()) && $advertisement->getHouse()->isCorrect() ) ? $advertisement->getHouse() : NULL,
         );
+
+        return $data;
     }
 
 }

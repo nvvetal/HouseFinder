@@ -40,9 +40,27 @@ class HouseService
         $em = $this->container->get('Doctrine')->getManager();
         /** @var House $house */
         $house =  $em->getRepository('HouseFinderCoreBundle:House')->findOneBy(array(
-            'Address' => $address,
+            'address' => $address,
         ));
         return $house;
+    }
+
+    /**
+     * @param Address $address
+     * @return array|null
+     */
+    public function getHouseByAddressREST(Address $address)
+    {
+        $house = $this->getHouseByAddress($address);
+        if(is_null($house)) return null;
+        $data = array(
+            'id'        => $house->getId(),
+            'addressId' => $house->getAddress()->getId(),
+            'brickType' => $house->getBrickType(),
+            'maxLevels' => $house->getMaxLevels(),
+            'wallType'  => $house->getWallType(),
+        );
+        return $data;
     }
 
 }

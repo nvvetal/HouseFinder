@@ -23,7 +23,7 @@ class AdvertisementPhoto
 
     /**
      * @ORM\ManyToOne(targetEntity="Advertisement", inversedBy="photos")
-     * @ORM\JoinColumn
+     * @ORM\JoinColumn(onDelete="CASCADE")
      */
     protected $advertisement;
 

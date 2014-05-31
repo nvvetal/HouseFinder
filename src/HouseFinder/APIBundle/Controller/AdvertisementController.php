@@ -30,6 +30,7 @@ use FOS\RestBundle\Controller\Annotations\Prefix,
     FOS\RestBundle\Controller\Annotations\Put;
 use Nelmio\ApiDocBundle\Annotation\ApiDoc;
 use HouseFinder\APIBundle\Form\Advertisement\AdvertisementListType;
+use HouseFinder\APIBundle\Form\Advertisement\AdvertisementMapType;
 
 class AdvertisementController extends FOSRestController
 {
@@ -64,6 +65,45 @@ class AdvertisementController extends FOSRestController
 
         }catch(\Exception $e){
             $this->get('housefinder.service.logger')->write('[res error][error '.$e->getMessage().'][code '.$e->getCode().'][data '.print_r($request->getContent(),true).']', 'api_advertisement_list');
+            return $this->view(array(
+                'code'      => $e->getCode(),
+                'message'   => $e->getMessage(),
+                'data'      => array(),
+            ), $e->getCode());
+        }
+    }
+
+    /**
+     * @Get("/map")
+     * @ApiDoc(
+     *  description="",
+     *  section="Advertisement",
+     *  input="HouseFinder\APIBundle\Form\Advertisement\AdvertisementMapType"
+     * )
+     */
+    public function cgetMapAction(Request $request)
+    {
+        try {
+            $em = $this->getDoctrine()->getManager();
+            $class = new DataContainer();
+            $form = $this->createForm(new AdvertisementMapType(), $class);
+            $form->bind($request);
+            if ($form->isValid() == false) {
+                foreach ($form->getErrors() as $key => $error) {
+                    throw new \Exception('FORM::'.$key.'::'.$error->getMessage(), HTTP::HTTP_NOT_ACCEPTABLE);
+                }
+            }
+            /** @var AdvertisementService $advertisementService */
+            $advertisementService = $this->container->get('housefinder.service.advertisement');
+            $data = $advertisementService->getAdvertisementsForMapREST($class);
+            return $this->view(array(
+                'code'      => HTTP::HTTP_SUCCESS,
+                'message'   => 'ok',
+                'data'      => $data,
+            ), HTTP::HTTP_SUCCESS);
+
+        }catch(\Exception $e){
+            $this->get('housefinder.service.logger')->write('[res error][error '.$e->getMessage().'][code '.$e->getCode().'][data '.print_r($request->getContent(),true).']', 'api_advertisement_map_list');
             return $this->view(array(
                 'code'      => $e->getCode(),
                 'message'   => $e->getMessage(),

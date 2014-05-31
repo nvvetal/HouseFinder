@@ -63,7 +63,7 @@ class AdvertisementListType extends AbstractType
             ->add('house_level_to', 'integer', array(
                 'required'      => false,
             ))
-            ->add('city_id', 'integer', array(
+            ->add('city_id', 'text', array(
                 'required'      => false,
             ))
             ->add('period', 'text', array(

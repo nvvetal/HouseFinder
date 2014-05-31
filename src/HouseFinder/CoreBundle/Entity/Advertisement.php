@@ -124,7 +124,7 @@ class Advertisement
     protected $brickType;
 
     /**
-     * @ORM\ManyToOne(targetEntity="Address", inversedBy="advertisements")
+     * @ORM\ManyToOne(targetEntity="Address")
      * @ORM\JoinColumn
      */
     protected $address;

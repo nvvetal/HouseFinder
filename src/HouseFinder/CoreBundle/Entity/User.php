@@ -46,9 +46,15 @@ class User extends BaseUser implements UserInterface
 
     /**
      * @var Collection
-     * @ORM\OneToMany(targetEntity="Email", mappedBy="user", cascade={"persist", "merge"})
+     * @ORM\OneToMany(targetEntity="Email", mappedBy="user", cascade={"all"})
      */
     protected $emails;
+
+    /**
+     * @var Collection
+     * @ORM\OneToMany(targetEntity="UserPhone", mappedBy="user", cascade={"all"})
+     */
+    protected $phones;
 
     /**
      * @param mixed $type
@@ -130,6 +136,7 @@ class User extends BaseUser implements UserInterface
     {
         parent::__construct();
         $this->emails = new ArrayCollection();
+        $this->phones = new ArrayCollection();
     }
 
     /**
@@ -186,6 +193,64 @@ class User extends BaseUser implements UserInterface
     {
         return $this->emails;
     }
+
+
+    /**
+     * Add phone
+     *
+     * @param UserPhone $phone
+     * @return User
+     */
+    public function addPhone(UserPhone $phone)
+    {
+        if (!$this->phones->contains($phone)) {
+            $this->phones[] = $phone;
+            $phone->setUser($this);
+        }
+
+        return $this;
+    }
+
+    /**
+     * Add phones
+     *
+     * @param Collection $phones
+     * @return User
+     */
+    public function addPhones(Collection $phones)
+    {
+        foreach($phones as $phone) {
+            $this->addPhone($phone);
+        }
+
+        return $this;
+    }
+
+    /**
+     * Remove phone
+     *
+     * @param UserPhone $phone
+     */
+    public function removePhone(UserPhone $phone)
+    {
+        if ($this->phones->contains($phone)) {
+            $this->phones->removeElement($phone);
+            $phone->setUser(null);
+        }
+    }
+
+
+    /**
+     * Get phones
+     *
+     * @return Collection
+     */
+    public function getPhones()
+    {
+        return $this->phones;
+    }
+
+
 
     public function getUsernameFiltered()
     {

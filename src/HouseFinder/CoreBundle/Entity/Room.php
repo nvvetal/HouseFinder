@@ -27,7 +27,7 @@ class Room
 
     /**
      * @ORM\ManyToOne(targetEntity="Advertisement", inversedBy="rooms")
-     * @ORM\JoinColumn
+     * @ORM\JoinColumn(onDelete="CASCADE")
      */
     protected $advertisement;
 

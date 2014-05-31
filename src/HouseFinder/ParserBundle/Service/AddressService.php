@@ -11,9 +11,12 @@ namespace HouseFinder\ParserBundle\Service;
 use Doctrine\ORM\EntityManager;
 use Geocoder\Exception\NoResultException;
 use Geocoder\Result\Geocoded;
+use HouseFinder\CoreBundle\AddressEvents;
 use HouseFinder\CoreBundle\Entity\Address;
 use HouseFinder\CoreBundle\Entity\AddressRepository;
+use HouseFinder\CoreBundle\Event\FilterAddressCreateEvent;
 use Ivory\GoogleMap\Services\Geocoding\Geocoder;
+use Symfony\Component\EventDispatcher\EventDispatcher;
 
 class AddressService
 {
@@ -21,11 +24,13 @@ class AddressService
     protected $geocoder;
     /** @var  EntityManager */
     protected $em;
+    protected $event_dispatcher;
 
-    public function __construct(Geocoder $geocoder, EntityManager $em)
+    public function __construct(Geocoder $geocoder, EntityManager $em, EventDispatcher $event_dispatcher)
     {
         $this->geocoder = $geocoder;
         $this->em = $em;
+        $this->event_dispatcher = $event_dispatcher;
     }
 
     /**
@@ -52,6 +57,8 @@ class AddressService
             }
             $this->em->persist($address);
             $this->em->flush($address);
+            $event = new FilterAddressCreateEvent($address);
+            $this->event_dispatcher->dispatch(AddressEvents::ADDRESS_CREATE, $event);
         }catch(\Exception $e){
             echo $e->getMessage().'['.$addressOrig.']'."\n";
             return NULL;

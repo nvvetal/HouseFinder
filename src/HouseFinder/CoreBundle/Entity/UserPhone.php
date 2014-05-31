@@ -21,8 +21,8 @@ class UserPhone
     protected $id;
 
     /**
-     * @ORM\ManyToOne(targetEntity="User")
-     * @ORM\JoinColumn
+     * @ORM\ManyToOne(targetEntity="User", inversedBy="phones")
+     * @ORM\JoinColumn(onDelete="CASCADE")
      */
     protected $user;
 
