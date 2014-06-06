@@ -35,10 +35,43 @@ class KomunalParser
         }catch(\Exception $e){
             $addresses[] = 'Украина, Житомир, '.trim($data->text());
         }
-        //var_dump($addresses);
-        //exit;
-        return $addresses;
+        //TODO: parse вул. Саєнка буд.208 -220,237
+        $addr = array();
+        foreach($addresses as $address){
+            $parts = $this->parseAddressParts($address);
+            if(count($parts) > 0) {
+                foreach($parts as $part){
+                    $addr[] = $part;
+                }
+                var_dump($address, $parts);
+            }else{
+                $addr[] = $address;
+            }
+        }
+
+        return $addr;
     }
+
+    private function parseAddressParts($address)
+    {
+        $parts = array();
+        $address = str_replace(' -', '-', $address);
+        $address = str_replace(' ,', ',', $address);
+        $begin = mb_strpos($address, 'буд.')+7;
+        $number = trim(substr($address, $begin));
+        $numbers = explode(',', $number);
+        if(count($numbers) == 1) return $parts;
+        foreach($numbers as $numberData){
+            $n = explode('-', $numberData);
+            if(count($n) == 1) {
+                $parts[] = substr($address, 0, $begin).$n[0];
+                continue;
+            }
+            for($i = $n[0]; $i <= $n[count($n)-1]; $i++) $parts[] = substr($address, 0, $begin).$i;
+        }
+        return $parts;
+    }
+
 
     public function fetchAllIssues($content)
     {

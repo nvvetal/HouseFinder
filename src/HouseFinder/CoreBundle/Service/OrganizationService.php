@@ -45,6 +45,7 @@ class OrganizationService
         $organization->setAddress($address);
         $organization->setName($name);
         $organization->setDescription($description);
+        $organization->setCreated(new \DateTime());
         $em->persist($organization);
         $em->flush($organization);
         return $organization;
