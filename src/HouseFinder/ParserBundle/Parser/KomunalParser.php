@@ -35,7 +35,6 @@ class KomunalParser
         }catch(\Exception $e){
             $addresses[] = 'Украина, Житомир, '.trim($data->text());
         }
-        //TODO: parse вул. Саєнка буд.208 -220,237
         $addr = array();
         foreach($addresses as $address){
             $parts = $this->parseAddressParts($address);
@@ -43,7 +42,6 @@ class KomunalParser
                 foreach($parts as $part){
                     $addr[] = $part;
                 }
-                var_dump($address, $parts);
             }else{
                 $addr[] = $address;
             }
