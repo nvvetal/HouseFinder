@@ -54,10 +54,12 @@ class SlandoParser extends BaseParser
             $em = $this->container->get('Doctrine')->getManager();
             $find = $em->getRepository('HouseFinderCoreBundle:AdvertisementSlando')->findOneBy(array('sourceHash' => $link['sourceHash']));
             if(!is_null($find)) $dublicates++;
+            /*
             if($dublicates >= 5) {
                 echo "Dublicates found next...\n";
                 break;
             }
+            */
             $service = $this->container->get('housefinder.parser.service.slando');
             $crawlerPage = $service->getPageCrawler($link['url']);
             try {

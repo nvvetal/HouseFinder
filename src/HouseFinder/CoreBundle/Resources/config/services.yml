@@ -32,6 +32,10 @@ services:
       class: HouseFinder\CoreBundle\Service\HouseService
       arguments: [@service_container]
 
+    housefinder.service.organization:
+      class: HouseFinder\CoreBundle\Service\OrganizationService
+      arguments: [@service_container]
+
 #event listener
     housefinder.event_listener.house.address.create:
       class: HouseFinder\CoreBundle\EventListener\HouseEventListener

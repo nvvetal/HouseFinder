@@ -1,0 +1,2 @@
+0 */2 * * * /usr/bin/php /web/hfnv/app/console housefinder:parser:slando 2>&1 >> /web/hfnv/app/logs/parser_slando.log
+0 10,22 * * * /usr/bin/php /web/hfnv/app/console housefinder:parser:komunal  2>&1 >> /web/hfnv/app/logs/parser_komunal.log

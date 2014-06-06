@@ -24,11 +24,7 @@ abstract class BaseService
     protected $options = array();
 
 
-    /**
-     * @param AdvertisementExternal $entity
-     * @return mixed
-     */
-    abstract function saveAdvertisementEntity(AdvertisementExternal &$entity);
+
 
     /**
      * @param Container $container
@@ -53,36 +49,6 @@ abstract class BaseService
 
     /**
      * @param $url
-     * @param string $type
-     * @return array
-     */
-
-    public function fillLastAdvertisements($url, $type = Advertisement::TYPE_RENT)
-    {
-        $domCrawler = $this->getPageCrawler($url);
-
-        /** @var $parser SlandoParser */
-        $parser = $this->container->get('housefinder.parser.parser.slando');
-        $entities = $parser->getEntities($domCrawler, $type);
-        $filledCnt = 0;
-        $breakCnt = 0;
-        $failCnt = 0;
-        foreach ($entities as $entity){
-            $res = $this->saveAdvertisementEntity($entity);
-            if($res == self::SAVE_ENTITY_BREAK) $breakCnt++;
-            if($res == self::SAVE_ENTITY_SUCCESS) $filledCnt++;
-            if($res == self::SAVE_ENTITY_FAIL) $failCnt++;
-            if($breakCnt >= 3) break;
-        }
-        return array(
-            'success' => $filledCnt,
-            'break' => $breakCnt,
-            'fail' => $failCnt,
-        );
-    }
-
-    /**
-     * @param $url
      * @return Crawler
      */
     public function getPageCrawler($url)
@@ -99,6 +65,14 @@ abstract class BaseService
     {
         $guzzle = $this->client->getClient();
         $request = $guzzle->get($url);
+        $response = $request->send();
+        return $response->getBody(true);
+    }
+
+    public function postPageContent($url, $headers = null, $postBody = null, $options = array())
+    {
+        $guzzle = $this->client->getClient();
+        $request = $guzzle->post($url, $headers, $postBody, $options);
         $response = $request->send();
         return $response->getBody(true);
     }

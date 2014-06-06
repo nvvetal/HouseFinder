@@ -26,11 +26,11 @@ class SlandoParserCommand extends Command
         $service = $container->get('housefinder.parser.service.slando');
         $urls = array(
             'http://zhitomir.zht.slando.ua/nedvizhimost/arenda-kvartir/' => array('type' => Advertisement::TYPE_RENT),
-            'http://zhitomir.zht.slando.ua/nedvizhimost/arenda-kvartir/?page=2' => array('type' => Advertisement::TYPE_RENT),
-            'http://zhitomir.zht.slando.ua/nedvizhimost/arenda-kvartir/?page=3' => array('type' => Advertisement::TYPE_RENT),
+            //'http://zhitomir.zht.slando.ua/nedvizhimost/arenda-kvartir/?page=2' => array('type' => Advertisement::TYPE_RENT),
+            //'http://zhitomir.zht.slando.ua/nedvizhimost/arenda-kvartir/?page=3' => array('type' => Advertisement::TYPE_RENT),
             'http://zhitomir.zht.slando.ua/nedvizhimost/prodazha-kvartir/?currency=USD' => array('type' => Advertisement::TYPE_SELL),
-            'http://zhitomir.zht.slando.ua/nedvizhimost/prodazha-kvartir/?currency=USD&page=2' => array('type' => Advertisement::TYPE_SELL),
-            'http://zhitomir.zht.slando.ua/nedvizhimost/prodazha-kvartir/?currency=USD&page=3' => array('type' => Advertisement::TYPE_SELL),
+            //'http://zhitomir.zht.slando.ua/nedvizhimost/prodazha-kvartir/?currency=USD&page=2' => array('type' => Advertisement::TYPE_SELL),
+            //'http://zhitomir.zht.slando.ua/nedvizhimost/prodazha-kvartir/?currency=USD&page=3' => array('type' => Advertisement::TYPE_SELL),
         );
         foreach ($urls as $url => $urlData){
             $output->writeln('Parsing Slando Type: '.$urlData['type'].', URL: '.$url);
