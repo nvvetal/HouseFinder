@@ -48,7 +48,7 @@ class Issue
 
     /**
      * @ORM\ManyToOne(targetEntity="Organization")
-     * @ORM\JoinColumn
+     * @ORM\JoinColumn(onDelete="CASCADE")
      */
     protected $organization;
 

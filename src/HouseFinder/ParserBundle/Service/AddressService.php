@@ -49,6 +49,11 @@ class AddressService
             $address->setLocality($response->getCity());
             $address->setRegion($response->getRegion());
             $address->setOriginal($addressOrig);
+            $coordinates = $response->getCoordinates();
+            if(!is_null($response->getStreetNumber())){
+                $address->setLatitude($coordinates[0]);
+                $address->setLongitude($coordinates[1]);
+            }
             /** @var AddressRepository $addressRepository */
             $addressRepository = $this->em->getRepository('HouseFinder\CoreBundle\Entity\Address');
             $a2 = $addressRepository->findOneByAddress($address);
