@@ -22,7 +22,7 @@ services:
 
     housefinder.service.address:
       class: HouseFinder\CoreBundle\Service\AddressService
-      arguments: []
+      arguments: [@doctrine.orm.entity_manager]
 
     housefinder.service.user:
       class: HouseFinder\CoreBundle\Service\UserService

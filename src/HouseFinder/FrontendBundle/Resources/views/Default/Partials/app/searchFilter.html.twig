@@ -1,7 +1,7 @@
 {% verbatim %}
 <script type="text/ng-template" id="searchFilter.html">
     <div>
-        <select class="form-control"
+        <select class="form-control" id="searchFilterCity"
                 ng-model="searchFilterCity"
                 ng-options="city as city.label for city in cities"
                 ng-change="searchFilterCityChange(searchFilterCity)"

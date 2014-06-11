@@ -13,6 +13,14 @@ angular.module('app.welcome', [])
             }
         });
     }]).
-    controller('WelcomeCtrl', ['$scope', function ($scope) {
+    controller('WelcomeCtrl', ['$scope', 'UserService', 'MapService', 'AddressService', function ($scope, UserService, MapService, AddressService) {
         $scope.loaded = true;
+        UserService.initLocation();
+
+        $scope.$on('searchFilterCityChange', function(e, dt){
+            AddressService.getCity(dt.cityId).then(function(city){
+                MapService.show('map', city.latitude, city.longitude);
+
+            });
+        });
     }]);

@@ -59,8 +59,15 @@ doctrine:
 
     orm:
         auto_generate_proxy_classes: %kernel.debug%
-        auto_mapping: true
-        naming_strategy: doctrine.orm.naming_strategy.underscore
+        #auto_mapping: true
+
+        entity_managers:
+            default:
+                naming_strategy: doctrine.orm.naming_strategy.underscore
+                auto_mapping: true #from orm to here or custom mapping
+                dql:
+                    numeric_functions:
+                        pow: HouseFinder\CoreBundle\DQL\PowFunction
 
 # Swiftmailer Configuration
 swiftmailer:

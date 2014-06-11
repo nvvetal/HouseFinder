@@ -2,7 +2,11 @@
 
 {% block head_style %}
     {{ parent() }}
-    {% stylesheets '@HouseFinderFrontendBundle/Resources/public/css/*' %}
+    {% stylesheets
+        '@HouseFinderFrontendBundle/Resources/public/css/*'
+        '@HouseFinderFrontendBundle/Resources/public/css/main.css'
+        'http://cdn.leafletjs.com/leaflet-0.7.3/leaflet.css'
+    %}
         <link href="{{ asset_url }}" type="text/css" rel="stylesheet" media="screen" />
     {% endstylesheets %}
     <base href="{{ path('frontend_root') }}">
@@ -19,12 +23,16 @@
 
 {% block foot_script %}
     {{ parent() }}
-    {% javascripts '@InnovaAngularJSBundle/Resources/public/js/angular.min.js'
+    {% javascripts
+    '@HouseFinderFrontendBundle/Resources/public/js/vendor/modernizr-2.6.2.min.js'
+    '@InnovaAngularJSBundle/Resources/public/js/angular.min.js'
     '@InnovaAngularJSBundle/Resources/public/js/angular-route.min.js'
     '@InnovaAngularJSBundle/Resources/public/js/angular-resource.min.js'
     '@HouseFinderFrontendBundle/Resources/public/js/app/app.js'
     '@HouseFinderFrontendBundle/Resources/public/js/common/services/user.js'
     '@HouseFinderFrontendBundle/Resources/public/js/common/services/advertisement.js'
+    '@HouseFinderFrontendBundle/Resources/public/js/common/services/map.js'
+    '@HouseFinderFrontendBundle/Resources/public/js/common/services/address.js'
 
     '@HouseFinderFrontendBundle/Resources/public/js/common/directives/header/header.js'
     '@HouseFinderFrontendBundle/Resources/public/js/common/directives/currencySelect.js'
@@ -34,7 +42,9 @@
     '@HouseFinderFrontendBundle/Resources/public/js/common/filters/range.js'
 
     '@HouseFinderFrontendBundle/Resources/public/js/app/notfound/notfound.js'
-    '@HouseFinderFrontendBundle/Resources/public/js/app/welcome/welcome.js' %}
+    '@HouseFinderFrontendBundle/Resources/public/js/app/welcome/welcome.js'
+    'http://cdn.leafletjs.com/leaflet-0.7.3/leaflet.js'
+    %}
     <script src="{{ asset_url }}"></script>
     {% endjavascripts %}
 {% endblock foot_script %}

@@ -4,7 +4,7 @@ angular.module('app').directive('appSearchFilter', ['$route', '$rootScope', 'Use
         replace: true,
         scope: {},
 
-        controller: ['$scope', 'AdvertisementService', function($scope, AdvertisementService){
+        controller: ['$scope', 'AdvertisementService', 'AddressService', function($scope, AdvertisementService, AddressService){
             $scope.searchFilterCityChange = function(cityFilter){
                 if(cityFilter === null) return false;
                 $rootScope.$broadcast('searchFilterCityChange', {'cityId': cityFilter.label});
@@ -15,13 +15,21 @@ angular.module('app').directive('appSearchFilter', ['$route', '$rootScope', 'Use
                 $rootScope.$broadcast('searchFilterPeriodChange', {'period': periodFilter.value});
                 return true;
             }
+
+            $scope.$on('userCurrentLocation', function(e, args){
+                AddressService.getCityNear(args.latitude, args.longitude).then(function(city){
+                    $scope.searchFilterCity = $scope.cities[0];
+                    $scope.searchFilterCityChange($scope.cities[0]);
+                });
+            });
+
         }],
         templateUrl: 'searchFilter.html',
         link: function (scope, element, attrs) {
-            scope.cities = [
-                {label: 'Житомир', value: '1'}
-            ];
             //TODO: select user city to searchFilterCity if know
+            scope.cities = [
+                {label: 'Житомир'}
+            ];
             scope.periods = [
                 {label: 'За неделю', value: 'week'},
                 {label: 'За месяц', value: 'month'}
