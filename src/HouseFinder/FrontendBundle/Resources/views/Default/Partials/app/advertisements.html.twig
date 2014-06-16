@@ -10,7 +10,7 @@
                         {{ advertisement.lastDate }}
                     </td>
                     <td>
-                        <img ng-mouseleave="hideBigImage()" ng-mouseenter="showBigImage($event)" src="{{ advertisement.photo|imageWH:100:100 }}" data-big-image="{{ advertisement.photo|imageWH:500:500 }}" alt="" />
+                        <img ng-mouseleave="hideBigImage()" ng-mouseenter="showBigImage($event)" ng-src="{{ advertisement.photo|imageWH:100:100 }}" data-big-image="{{ advertisement.photo|imageWH:500:500 }}" alt="" />
                     </td>
                     <td>
                         <a ui-sref="advertisement({id: advertisement.id})" target="_blank">
