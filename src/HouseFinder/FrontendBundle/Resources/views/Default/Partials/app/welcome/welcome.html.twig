@@ -3,14 +3,13 @@
     <app-header></app-header>
     <div ng-show="loaded">
         WELCOME!
-        <div>
+        <div ng-controller="appSearchCtrl">
             <div class="row">
                 <div class="col-xs-2">
                     <app-search-filter></app-search-filter>
                 </div>
                 <div class="col-xs-8">
-                    <app-search-main></app-search-main>
-                    <div id="map"></div>
+                    <app-search-main on-adtype="getCtrlAdType()" on-period="getCtrlPeriod()" on-city="getCtrlCity()" on-page="getCtrlPage()" ></app-search-main>
                 </div>
                 <div class="col-xs-2"></div>
             </div>
@@ -19,5 +18,6 @@
             <ng-include src="'app/loading.html'"></ng-include>
         </div>
         <app-footer></app-footer>
+    </div>
 </script>
 {% endverbatim %}

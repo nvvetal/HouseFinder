@@ -6,8 +6,15 @@
                 ng-options="city as city.label for city in cities"
                 ng-change="searchFilterCityChange(searchFilterCity)"
         >
-            <option value="">Выберите город</option>
+            <option value="">Please select city</option>
         </select>
+        <select class="form-control"
+                ng-model="searchFilterType"
+                ng-options="type as type.label for type in types"
+                ng-change="searchFilterTypeChange(searchFilterType)"
+                >
+        </select>
+
         <select class="form-control"
                 ng-model="searchFilterPeriod"
                 ng-options="period as period.label for period in periods"

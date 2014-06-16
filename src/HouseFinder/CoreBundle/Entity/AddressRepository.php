@@ -61,4 +61,18 @@ class AddressRepository extends EntityRepository
         $q->setMaxResults(1);
         return $q->getQuery()->getOneOrNullResult();
     }
+
+    /**
+     * @return array
+     */
+    public function findCitiesAll()
+    {
+        $q = $this->createQueryBuilder('c');
+        $q->andWhere('c.street IS NULL');
+        $q->andWhere('c.streetNumber IS NULL');
+        $q->andWhere('c.locality IS NOT NULL');
+        $q->andWhere('c.locality != :empty');
+        $q->setParameter(':empty', '');
+        return $q->getQuery()->getResult();
+    }
 }

@@ -69,6 +69,9 @@ class AdvertisementListType extends AbstractType
             ->add('period', 'text', array(
                 'required'      => false,
             ))
+            ->add('ad_type', 'text', array(
+                'required'      => false,
+            ))
             ->add("_format", 'text', array(
                 'required'      => false,
             ))

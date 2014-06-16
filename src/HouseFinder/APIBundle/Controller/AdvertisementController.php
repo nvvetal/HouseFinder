@@ -39,12 +39,20 @@ class AdvertisementController extends FOSRestController
      * @ApiDoc(
      *  description="",
      *  section="Advertisement",
-     *  input="HouseFinder\APIBundle\Form\Advertisement\AdvertisementListType"
+     *  input="HouseFinder\APIBundle\Form\Advertisement\AdvertisementListType",
+     *  output={
+     *    "class"   = "HouseFinder\APIBundle\Entity\Output",
+     *    "parsers" = {
+     *      "Nelmio\ApiDocBundle\Parser\JmsMetadataParser",
+     *      "Nelmio\ApiDocBundle\Parser\ValidationParser"
+     *    }
+     *  }
      * )
      */
-    public function cgetAction(Request $request)
+    public function getListAction()
     {
         try {
+            $request = $this->getRequest();
             $em = $this->getDoctrine()->getManager();
             $class = new DataContainer();
             $form = $this->createForm(new AdvertisementListType(), $class);
@@ -78,7 +86,14 @@ class AdvertisementController extends FOSRestController
      * @ApiDoc(
      *  description="",
      *  section="Advertisement",
-     *  input="HouseFinder\APIBundle\Form\Advertisement\AdvertisementMapType"
+     *  input="HouseFinder\APIBundle\Form\Advertisement\AdvertisementMapType",
+     *  output={
+     *    "class"   = "HouseFinder\APIBundle\Entity\Output",
+     *    "parsers" = {
+     *      "Nelmio\ApiDocBundle\Parser\JmsMetadataParser",
+     *      "Nelmio\ApiDocBundle\Parser\ValidationParser"
+     *    }
+     *  }
      * )
      */
     public function cgetMapAction(Request $request)

@@ -1,0 +1,11 @@
+{% verbatim %}
+<script type="text/ng-template" id="app/directives/pager.html">
+    <div ng-if="pagesAvailable">
+        <ul class="pagination">
+            <li ng-click="select({page:page})" ng-class="{active: selected(page)}" ng-repeat="page in []|range:pages" data-page="{{ page }}">
+                <a href="#">{{ page + 1 }}</a>
+            </li>
+        </ul>
+    </div>
+</script>
+{% endverbatim %}

@@ -130,4 +130,51 @@ class AddressController extends FOSRestController
         }
     }
 
+    /**
+     * @Get("/cities")
+     * @ApiDoc(
+     *  description="",
+     *  section="Address",
+     *  statusCodes={
+     *      200="Successful",
+     *      400="Invalid json message received",
+     *      404={
+     *          "Cities not found"
+     *      },
+     *      417="Data passed is not correct",
+     *      422="SQL Error",
+     *      500="The API token authentication expired"
+     *  },
+     *  output={
+     *    "class"   = "HouseFinder\APIBundle\Entity\Output",
+     *    "parsers" = {
+     *      "Nelmio\ApiDocBundle\Parser\JmsMetadataParser",
+     *      "Nelmio\ApiDocBundle\Parser\ValidationParser"
+     *    }
+     *  }
+     * )
+     */
+    public function cgetCities()
+    {
+        $request = $this->getRequest();
+        try {
+            /** @var AddressService $addressService */
+            $addressService = $this->container->get('housefinder.service.address');
+            $addresses = $addressService->getAddressCitiesREST();
+            if(count($addresses) == 0) throw new \Exception('Cities not found', 404);
+            return $this->view(array(
+                'code'      => HTTP::HTTP_SUCCESS,
+                'message'   => 'ok',
+                'data'      => $addresses,
+            ), HTTP::HTTP_SUCCESS);
+
+        }catch(\Exception $e){
+            $this->get('housefinder.service.logger')->write('[res error][error '.$e->getMessage().'][code '.$e->getCode().'][data '.print_r($request->getContent(),true).']', 'api_address_city_by_name');
+            return $this->view(array(
+                'code'      => $e->getCode(),
+                'message'   => $e->getMessage(),
+                'data'      => array(),
+            ), $e->getCode());
+        }
+    }
 }

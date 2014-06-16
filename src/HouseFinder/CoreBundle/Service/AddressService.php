@@ -14,11 +14,7 @@ class AddressService
         $this->em = $em;
     }
 
-    /**
-     * @param Address $address
-     * @return array
-     */
-    public function getAddressREST(Address $address)
+    private function formatAddressREST(Address $address)
     {
         $addressData = array(
             'id'                => $address->getId(),
@@ -26,8 +22,32 @@ class AddressService
             'region'            => $address->getRegion(),
             'street'            => $address->getStreet(),
             'streetNumber'      => $address->getStreetNumber(),
+            'latitude'          => $address->getLatitude(),
+            'longitude'         => $address->getLongitude(),
         );
         return $addressData;
+    }
+
+    public function formatAddressLineREST(Address $address)
+    {
+        $line = array();
+        $line[] = $address->getLocality();
+        $street = $address->getStreet();
+        $number = $address->getStreetNumber();
+        if(!empty($street)){
+            $line[] = $street;
+            if(!empty($number)) $line[] = $number;
+        }
+        return implode(', ', $line);
+    }
+
+    /**
+     * @param Address $address
+     * @return array
+     */
+    public function getAddressREST(Address $address)
+    {
+        return $this->formatAddressREST($address);
     }
 
     /**
@@ -41,13 +61,7 @@ class AddressService
         $address = $repo->findCityByName($name);
         $data = NULL;
         if(is_null($address)) return $data;
-        $data = array(
-            'id'                => $address->getId(),
-            'locality'          => $address->getLocality(),
-            'region'            => $address->getRegion(),
-            'latitude'          => $address->getLatitude(),
-            'longitude'         => $address->getLongitude(),
-        );
+        $data = $this->formatAddressREST($address);
         return $data;
     }
 
@@ -64,13 +78,23 @@ class AddressService
         $data = NULL;
         if(is_null($address)) return $data;
         //var_dump($address);
-        $data = array(
-            'id'                => $address[0]->getId(),
-            'locality'          => $address[0]->getLocality(),
-            'region'            => $address[0]->getRegion(),
-            'latitude'          => $address[0]->getLatitude(),
-            'longitude'         => $address[0]->getLongitude(),
-        );
+        $data = $this->formatAddressREST($address[0]);
+        return $data;
+    }
+
+    /**
+     * @return array
+     */
+    public function getAddressCitiesREST()
+    {
+        /** @var AddressRepository $repo */
+        $repo = $this->em->getRepository('HouseFinderCoreBundle:Address');
+        $addresses = $repo->findCitiesAll();
+        $data = array();
+        if(count($addresses) == 0) return $data;
+        foreach($addresses as $address) {
+            $data[] = $this->formatAddressREST($address);
+        }
         return $data;
     }
 }

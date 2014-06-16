@@ -1,31 +1,24 @@
-angular.module('app').directive('appSearchMain', ['$route', 'UserService', function ($route, UserService) {
+angular.module('app').directive('appSearchMain', ['$route', '$rootScope', 'UserService', function ($route, $rootScope, UserService) {
     return {
         restrict: "E",
         replace: true,
-        scope: {},
-
+        transclude: true,
+        scope: {
+            ctrlAdType: '&onAdtype',
+            ctrlPeriod: '&onPeriod',
+            ctrlCity: '&onCity',
+            ctrlPage: '&onPage'
+        },
         controller: ['$scope', 'AdvertisementService', function($scope, AdvertisementService){
+            $scope.$on('userCurrencyChange', function(e, args){
+                $scope.currencyShort = UserService.getCurrencyShort();
+            });
             $scope.search = function(){
-                var params = {'data': $('#mainSearch').serialize()};
-                var promise = AdvertisementService.getAdvertisements(params);
-                promise.then(function(data){
-                    $scope.advertisements = data;
-                    $scope.advertisementsAvailable = true;
-                });
+                $rootScope.$broadcast('searchPageChange', {'page': 0});
             }
-
-            $scope.advertisementPage = function(page){
-                $scope.advertisementCurrentPage = page;
-                $('#advertisement-pager li').each(function(index){
-                    $('#advertisement-pager li').eq(index).removeClass('active');
-                });
-                $('#advertisement-pager li').eq(page).addClass('active');
-                $scope.search();
-            }
-
         }],
         templateUrl: 'searchMain.html',
-        link: function (scope, element, attrs) {
+        link: function (scope, element, attrs, appSearchCtrl) {
             scope.currencyShort = UserService.getCurrencyShort();
             scope.types = [
                 {name: 'All', value: 'all'},
@@ -35,21 +28,7 @@ angular.module('app').directive('appSearchMain', ['$route', 'UserService', funct
                 {name: 'Block', value: 'block'},
                 {name: 'wood', value: 'wood'}
             ];
-            scope.advertisements = [];
-            scope.advertisementsAvailable = false;
-            scope.advertisementCurrentPage = 0;
-            //scope.cityId = 0;
-            scope.$on('userCurrencyChange', function(e, args){
-                scope.currencyShort = UserService.getCurrencyShort();
-            });
-            scope.$on('searchFilterCityChange', function(e, args){
-                scope.cityId = args.cityId;
-                scope.search();
-            });
-            scope.$on('searchFilterPeriodChange', function(e, args){
-                scope.period = args.period;
-                scope.search();
-            });
+
         }
     }
 }]);

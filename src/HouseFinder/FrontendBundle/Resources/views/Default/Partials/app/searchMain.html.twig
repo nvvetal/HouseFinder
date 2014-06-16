@@ -70,34 +70,16 @@
                     </div>
                 </div>
             </div>
-            <input type="hidden" name="page" value="{{ advertisementCurrentPage }}" />
-            <input type="hidden" name="city_id" value="{{ cityId }}" />
-            <input type="hidden" name="period" value="{{ period }}" />
+            <input type="hidden" name="page" value="{{ ctrlPage() }}" />
+            <input type="hidden" name="city_id" value="{{ ctrlCity() }}" />
+            <input type="hidden" name="ad_type" value="{{ ctrlAdType() }}" />
+            <input type="hidden" name="period" value="{{ ctrlPeriod }}" />
         </form>
         <div class="row">
             <app-currency-select></app-currency-select>
         </div>
-        <div class="row">
-            <table class="table table-striped table-bordered" ng-if="advertisementsAvailable">
-                <tr ng-repeat="advertisement in advertisements.items">
-                    <td>
-                        {{ advertisement.lastDate }}
-                    </td>
-                    <td>
-                        <img src="{{ advertisement.photo }}" alt="" />
-                    </td>
-
-                    <td>
-                        <div>{{ advertisement.name }}</div>
-                        <div>{{ advertisement.address }}</div>
-                    </td>
-                    <td>{{ advertisement.price }} {{ advertisement.currency }}</td>
-                </tr>
-            </table>
-            <ul class="pagination" ng-if="advertisementsAvailable" id="advertisement-pager">
-                <li ng-class="{active: $advertisementCurrentPage==page}" ng-repeat="page in []|range:advertisements.pages" ng-click="advertisementPage(page)"><a href="#">{{ page + 1 }}</a></li>
-            </ul>
-        </div>
+        <div id="map"></div>
+        <app-advertisements></app-advertisements>
     </div>
 </script>
 {% endverbatim %}

@@ -291,7 +291,8 @@ class Advertisement
      */
     public function getDescription()
     {
-        return $this->description;
+        $description = trim($this->description);
+        return $description;
     }
 
     /**

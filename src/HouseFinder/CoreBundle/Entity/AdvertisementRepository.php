@@ -56,6 +56,11 @@ class AdvertisementRepository extends EntityRepository
             $q->setParameter(':type', $params->type);
         }
 
+        if(isset($params->ad_type)){
+            $q->andWhere('a.type = :type');
+            $q->setParameter(':type', $params->ad_type);
+        }
+
         if(isset($params->level_from)){
             $q->andWhere('a.level >= :levelFrom');
             $q->setParameter(':levelFrom', $params->level_from);
@@ -124,32 +129,28 @@ class AdvertisementRepository extends EntityRepository
                 $q->andWhere('address.locality = :cityId');
                 $q->setParameter(':cityId', $params->city_id);
             }
+            if(isset($params->ad_type)){
+                $q->andWhere('a.type = :type');
+                $q->setParameter(':type', $params->ad_type);
+            }
+            if(isset($params->period)){
+                switch($params->period){
+                    case 'week':
+                        $q->andWhere('a.created BETWEEN :periodBegin AND :periodEnd');
+                        $start = new \DateTime();
+                        $start->setTimestamp(strtotime('-7 day'));
+                        $end = new \DateTime();
+                        $q->setParameter(':periodBegin', $start);
+                        $q->setParameter(':periodEnd', $end);
+                        break;
 
-            if(isset($params->type)){
-                switch($params->type){
-                    case "new":
-                        $q->andWhere('a.created BETWEEN :start AND :end');
-                        $start = new \DateTime();
-                        $start->setTimestamp(time() - 3*24*3600);
-                        $end = new \DateTime();
-                        $q->setParameter(':start', $start);
-                        $q->setParameter(':end', $end);
-                        break;
-                    case "normal":
-                        $q->andWhere('a.created BETWEEN :start AND :end');
-                        $start = new \DateTime();
-                        $start->setTimestamp(time() - 7*24*3600);
-                        $end = new \DateTime();
-                        $q->setParameter(':start', $start);
-                        $q->setParameter(':end', $end);
-                        break;
-                    case "old":
-                        $q->andWhere('a.created BETWEEN :start AND :end');
+                    case 'month':
+                        $q->andWhere('a.created BETWEEN :periodBegin AND :periodEnd');
                         $start = new \DateTime();
                         $start->setTimestamp(strtotime('-1 month'));
                         $end = new \DateTime();
-                        $q->setParameter(':start', $start);
-                        $q->setParameter(':end', $end);
+                        $q->setParameter(':periodBegin', $start);
+                        $q->setParameter(':periodEnd', $end);
                         break;
                 }
             }

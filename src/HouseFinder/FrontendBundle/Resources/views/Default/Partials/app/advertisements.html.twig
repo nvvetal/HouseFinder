@@ -1,0 +1,29 @@
+{% verbatim %}
+<script type="text/ng-template" id="advertisements.html">
+    <div>
+        <div class="row">
+            <app-pager select="advertisementPage(page)" page="{{ advertisementCurrentPage }}" pages-max="{{ advertisementsPages }}"></app-pager>
+            <div id="advertisement-big-image" style="position:fixed;display:none;top:100px;"></div>
+            <table class="table table-striped table-bordered" ng-if="advertisementsAvailable">
+                <tr ng-repeat="advertisement in advertisements.items">
+                    <td>
+                        {{ advertisement.lastDate }}
+                    </td>
+                    <td>
+                        <img ng-mouseleave="hideBigImage()" ng-mouseenter="showBigImage($event)" src="{{ advertisement.photo|imageWH:100:100 }}" data-big-image="{{ advertisement.photo|imageWH:500:500 }}" alt="" />
+                    </td>
+                    <td>
+                        <a ui-sref="advertisement({id: advertisement.id})" target="_blank">
+                            <div><strong>{{ advertisement.addressLine }}</strong></div>
+                            <div>{{ advertisement.name }}</div>
+                            <div><i>{{ advertisement.description }}</i></div>
+                        </a>
+                    </td>
+                    <td>{{ advertisement.price }} {{ advertisement.currency }}</td>
+                </tr>
+            </table>
+            <app-pager select="advertisementPage(page)" page="{{ advertisementCurrentPage }}" pages-max="{{ advertisementsPages }}"></app-pager>
+        </div>
+    </div>
+</script>
+{% endverbatim %}

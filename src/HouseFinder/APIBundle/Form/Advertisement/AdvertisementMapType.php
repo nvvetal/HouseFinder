@@ -18,10 +18,13 @@ class AdvertisementMapType extends AbstractType
     public function buildForm(FormBuilderInterface $builder, array $options)
     {
         $builder
-            ->add('type', 'text', array(
+            ->add('period', 'text', array(
                 'required'      => false,
             ))
             ->add('city_id', 'text', array(
+                'required'      => false,
+            ))
+            ->add('ad_type', 'text', array(
                 'required'      => false,
             ))
             ->add("_format", 'text', array(

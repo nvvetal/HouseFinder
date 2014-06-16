@@ -106,11 +106,13 @@ class AdvertisementService
             'id' => $advertisement->getId(),
             'userId' => $advertisement->getUser()->getId(),
             'name' => $advertisement->getName(),
+            'description' => mb_substr(iconv('UTF-8', 'UTF-8//IGNORE', $advertisement->getDescription()),0,170,'UTF-8').'...',
             'price' => $advertisement->getPrice(),
             'currency' => $advertisement->getCurrency(),
             'photo' => $photoUrl,
             'lastDate' => $advertisement->getLastUpdated()->format('Y-m-d H:i'),
             'address' => $addressService->getAddressREST($advertisement->getAddress()),
+            'addressLine' => $addressService->formatAddressLineREST($advertisement->getAddress()),
         );
     }
 
