@@ -13,8 +13,16 @@ angular.module('app').directive('appPager', function(){
                 return page == $scope.page ? true : false;
             }
 
+            $scope.first = function(page){
+                return page == 0 ? true : false;
+            }
+
+            $scope.last = function(page){
+                return page == $scope.pagesMax - 1 ? true : false;
+            }
+
             $scope.refreshPages = function(count){
-                if(count == 0) {
+                if(count <= 1) {
                     $scope.pagesAvailable = false;
                     return false;
                 }
