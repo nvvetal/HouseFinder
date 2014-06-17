@@ -1,3 +1,10 @@
 #map {
     height: 300px;
 }
+
+#advertisement-big-image{
+    position:fixed;
+    display:none;
+    top:100px;
+    z-index: 8;
+}

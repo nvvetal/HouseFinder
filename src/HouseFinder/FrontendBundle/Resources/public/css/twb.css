@@ -5,3 +5,8 @@
 .form-main-search .input-group select.form-control {
     width: 96%;
 }
+
+.pagination-centered{
+    text-align:center;
+
+}

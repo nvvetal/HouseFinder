@@ -1,13 +1,13 @@
 {% verbatim %}
 <script type="text/ng-template" id="app/directives/pager.html">
-    <div ng-if="pagesAvailable">
+    <div ng-if="pagesAvailable"  class="pagination-centered">
         <ul class="pagination">
-            <li ng-class="{disabled: first(page)}"><a href="#">&laquo;</a></li>
+            <li ng-click="select({page:prevPage})" class="previous" ng-class="{disabled: first(page)}"><a href="#">&laquo;</a></li>
             <li ng-click="select({page:page})" ng-class="{active: selected(page)}"
-                ng-repeat="page in []|range:pages" data-page="{{ page }}">
+                ng-repeat="page in getPagesRange()" data-page="{{ page }}">
                 <a href="#">{{ page + 1 }}</a>
             </li>
-            <li ng-class="{disabled: last(page)}"><a href="#">&raquo;</a></li>
+            <li ng-click="select({page:nextPage})" class="next" ng-class="{disabled: last(page)}"><a href="#">&raquo;</a></li>
         </ul>
     </div>
 </script>
