@@ -1,7 +1,10 @@
 <?php
 namespace HouseFinder\CoreBundle\Service;
 
+use Doctrine\ORM\EntityManager;
 use HouseFinder\CoreBundle\Entity\Advertisement;
+use HouseFinder\CoreBundle\Entity\AdvertisementPhoto;
+use HouseFinder\CoreBundle\Entity\AdvertisementPublish;
 use HouseFinder\CoreBundle\Entity\AdvertisementRepository;
 use HouseFinder\CoreBundle\Entity\DataContainer;
 use HouseFinder\CoreBundle\Entity\Room;
@@ -9,10 +12,13 @@ use HouseFinder\CoreBundle\Entity\Room;
 class AdvertisementService
 {
     protected $container;
+    /** @var  EntityManager $em */
+    protected $em;
 
     public function __construct($container)
     {
         $this->container = $container;
+        $this->em = $this->container->get('Doctrine')->getManager();
     }
 
     /**
@@ -58,9 +64,8 @@ class AdvertisementService
      */
     public function getAdvertisementsREST(DataContainer $class)
     {
-        $em = $this->container->get('Doctrine')->getManager();
         /** @var AdvertisementRepository $advertisementsRepo */
-        $advertisementsRepo = $em->getRepository('HouseFinderCoreBundle:Advertisement');
+        $advertisementsRepo = $this->em->getRepository('HouseFinderCoreBundle:Advertisement');
         /** @var AddressService $addressService */
         $addressService = $this->container->get('housefinder.service.address');
         $advertisements = $advertisementsRepo->search($class);
@@ -80,9 +85,8 @@ class AdvertisementService
      */
     public function getAdvertisementsForMapREST(DataContainer $class)
     {
-        $em = $this->container->get('Doctrine')->getManager();
         /** @var AdvertisementRepository $advertisementsRepo */
-        $advertisementsRepo = $em->getRepository('HouseFinderCoreBundle:Advertisement');
+        $advertisementsRepo = $this->em->getRepository('HouseFinderCoreBundle:Advertisement');
         /** @var AddressService $addressService */
         $addressService = $this->container->get('housefinder.service.address');
         $advertisements = $advertisementsRepo->findByFresh($class);
@@ -155,8 +159,51 @@ class AdvertisementService
             'rooms'         => $this->getRooms($advertisement),
             'roomsLiving'   => count($advertisement->getLivingRooms()),
         );
-
         return $data;
     }
 
+    /**
+     * @param Advertisement $advertisement
+     * @param $raw
+     */
+    public function fillAdvertisementPhotosByRaw(Advertisement &$advertisement, $raw)
+    {
+        if(isset($raw['data']['photo']) && count($raw['data']['photo']) > 0){
+            foreach($raw['data']['photo'] as $photoData){
+                if(empty($photoData)) continue;
+                $photo = new AdvertisementPhoto();
+                $photo->setUrl($photoData);
+                $advertisement->addPhoto($photo);
+            }
+        }
+    }
+
+    /**
+     * @param Advertisement $advertisement
+     * @param \DateTime $created
+     * @return AdvertisementPublish|null
+     */
+    public function findPublish(Advertisement $advertisement, \DateTime $created)
+    {
+        /** @var AdvertisementRepository $repo */
+        $repo = $this->em->getRepository('HouseFinderCoreBundle:Advertisement');
+        return $repo->findAdvertisementPublish($advertisement, $created);
+    }
+
+    /**
+     * @param Advertisement $advertisement
+     * @param Advertisement $source
+     * @return AdvertisementPublish
+     */
+    public function createPublish(Advertisement $advertisement, Advertisement $source)
+    {
+        $publish = new AdvertisementPublish();
+        $publish->setAdvertisement($advertisement);
+        $publish->setPrice($source->getPrice());
+        $publish->setCurrency($source->getCurrency());
+        $publish->setCreated($source->getCreated());
+        $this->em->persist($publish);
+        $this->em->flush($publish);
+        return $publish;
+    }
 }

@@ -2,7 +2,7 @@ api_advertisement:
     resource: HouseFinder\APIBundle\Controller\AdvertisementController
     type:     annotation
     defaults: {_format: json}
-    prefix:   /api/advertisements/
+    prefix:   /api/advertisement/
 
 api_address:
     resource: HouseFinder\APIBundle\Controller\AddressController

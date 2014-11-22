@@ -159,6 +159,10 @@ class Advertisement
      */
     protected $contentChanged;
 
+    /**
+     * @ORM\OneToMany(targetEntity="AdvertisementPublish", mappedBy="advertisement", cascade={"all"}, orphanRemoval=true)
+     */
+    protected $publishes;
 
     /**
      * Constructor
@@ -166,6 +170,7 @@ class Advertisement
     public function __construct()
     {
         $this->photos = new ArrayCollection();
+        $this->publishes = new ArrayCollection();
         $this->rooms = new ArrayCollection();
     }
     
@@ -606,14 +611,15 @@ class Advertisement
     }
 
     /**
-     * Add photos
+     * Add photo
      *
-     * @param AdvertisementPhoto $photos
+     * @param AdvertisementPhoto $photo
      * @return Advertisement
      */
-    public function addPhoto(AdvertisementPhoto $photos)
+    public function addPhoto(AdvertisementPhoto $photo)
     {
-        $this->photos[] = $photos;
+        $photo->setAdvertisement($this);
+        $this->photos[] = $photo;
     
         return $this;
     }
@@ -641,13 +647,14 @@ class Advertisement
     /**
      * Add rooms
      *
-     * @param Room $rooms
+     * @param Room $room
      * @return Advertisement
      */
-    public function addRoom(Room $rooms)
+    public function addRoom(Room $room)
     {
-        $this->rooms[] = $rooms;
-    
+        $room->setAdvertisement($this);
+        $this->rooms[] = $room;
+
         return $this;
     }
 
@@ -804,4 +811,8 @@ class Advertisement
         $this->house = $house;
     }
 
+    public function isRent()
+    {
+        return $this->getType() == Advertisement::TYPE_RENT;
+    }
 }

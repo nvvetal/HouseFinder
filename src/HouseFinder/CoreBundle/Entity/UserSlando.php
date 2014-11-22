@@ -4,7 +4,7 @@ namespace HouseFinder\CoreBundle\Entity;
 use HouseFinder\CoreBundle\Entity\User as User;
 use Doctrine\ORM\Mapping as ORM;
 /**
- * @ORM\Entity
+ * @ORM\Entity(repositoryClass="HouseFinder\CoreBundle\Entity\UserSlandoRepository")
  */
 class UserSlando extends User
 {

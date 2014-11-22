@@ -36,6 +36,13 @@
                         data: {
                             headerType: 'default',
                             footerType: 'default'
+                        },
+                        resolve: {
+                            advertisement: function($stateParams, AdvertisementService){
+                                return AdvertisementService.getAdvertisement($stateParams.id).then(function(data){
+                                    return data;
+                                });
+                            }
                         }
                     }).state('notfound', {
                         url: "/notfound",

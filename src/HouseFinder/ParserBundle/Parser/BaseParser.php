@@ -4,6 +4,8 @@ namespace HouseFinder\ParserBundle\Parser;
 
 use Buzz\Message\MessageInterface;
 use HouseFinder\CoreBundle\Entity\Advertisement;
+use HouseFinder\CoreBundle\Service\LoggerService;
+use HouseFinder\ParserBundle\Entity\BaseParserEntity;
 use HouseFinder\ParserBundle\Service\BaseService;
 use Symfony\Component\DependencyInjection\Container;
 use Symfony\Component\DomCrawler\Crawler;
@@ -13,19 +15,22 @@ abstract class BaseParser
 {
     protected $container;
     protected $service;
+    /** @var LoggerService $logger */
+    protected $logger;
     protected $advertisementType;
 
     public function __construct(Container $container, BaseService $service)
     {
         $this->container = $container;
         $this->service = $service;
+        $this->logger = $container->get('housefinder.service.logger');
     }
 
     /**
      * @param Crawler $crawler
      * @return mixed
      */
-    abstract protected function parseListDomCrawler(Crawler $crawler);
+    abstract protected function fetchLinks(Crawler $crawler);
 
     /**
      * @param Crawler $crawler
@@ -34,7 +39,15 @@ abstract class BaseParser
     abstract protected function parsePageDomCrawler(Crawler $crawler);
 
     /**
-     * @param string|string $raw
+     * @param array $link
+     * @return mixed
+     */
+    abstract protected function fetchPageByLink(array $link);
+
+
+
+    /**
+     * @param BaseParserEntity $raw
      * @return Advertisement;
      */
     abstract protected function getEntityByRAW($raw);
@@ -47,22 +60,20 @@ abstract class BaseParser
     public function getEntities(Crawler $crawler, $type = Advertisement::TYPE_RENT )
     {
         $this->advertisementType = $type;
-        $rows = $this->parseListDomCrawler($crawler);
-        if(count($rows) == 0) return NULL;
+        $links = $this->fetchLinks($crawler);
+        if(count($links) == 0) return NULL;
         $entities = array();
-        foreach ($rows as $row)
+        foreach ($links as $link)
         {
-            $entity = $this->getEntityByRAW($row);
-            if(empty($entity)) continue;
+            if(!is_array($link)) continue;
+            $res = $this->fetchPageByLink($link);
+            if($res['res'] != 'ok' && $res['res'] != 'exist') continue;
+            $entity = $this->getEntityByRAW($res['entity']);
+            if(is_null($entity)) continue;
             $this->postParseText($entity);
             $entities[] = $entity;
+
         }
-        /*
-        header('Content-Type: text/html; charset=utf-8');
-        echo "<pre>";
-        var_dump($entities);
-        exit;
-        */
         $this->advertisementType = NULL;
         return $entities;
     }

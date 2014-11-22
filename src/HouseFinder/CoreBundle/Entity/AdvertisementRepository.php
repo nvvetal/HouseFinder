@@ -122,6 +122,7 @@ class AdvertisementRepository extends EntityRepository
     public function findByFresh(DataContainer $params)
     {
         $em = $this->getEntityManager();
+        $data = null;
         try {
             $q = $em->getRepository('HouseFinderCoreBundle:Advertisement')->createQueryBuilder('a');
             $q->innerJoin('a.address', 'address');
@@ -161,5 +162,21 @@ class AdvertisementRepository extends EntityRepository
         }catch(\Exception $e){
         }
         return $data;
+    }
+
+    /**
+     * @param Advertisement $advertisement
+     * @param \DateTime $created
+     * @return mixed
+     */
+    public function findAdvertisementPublish(Advertisement $advertisement, \DateTime $created)
+    {
+        $q = $this->getEntityManager()->getRepository('HouseFinderCoreBundle:AdvertisementPublish')->createQueryBuilder('p');
+        $q->andWhere('p.advertisement = :advertisement AND p.created = :created');
+        $q->setParameters(array(
+            ':advertisement' => $advertisement,
+            ':created' => $created,
+        ));
+        return $q->getQuery()->getOneOrNullResult();
     }
 }

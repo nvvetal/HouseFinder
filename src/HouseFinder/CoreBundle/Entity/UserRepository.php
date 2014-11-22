@@ -12,6 +12,11 @@ use FOS\UserBundle\Model\UserManagerInterface;
  */
 class UserRepository extends EntityRepository
 {
+    /**
+     * @param User $currentUser
+     * @param User $mergedUser
+     * @param UserManagerInterface $userManager
+     */
     public function mergeUsers(User $currentUser, User $mergedUser, UserManagerInterface $userManager)
     {
         //TODO: merge users

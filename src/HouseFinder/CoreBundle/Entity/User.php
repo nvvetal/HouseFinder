@@ -11,6 +11,7 @@ namespace HouseFinder\CoreBundle\Entity;
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
 use FOS\UserBundle\Model\User as BaseUser;
+use Gedmo\Mapping\Annotation as Gedmo;
 use Doctrine\ORM\Mapping as ORM;
 
 
@@ -55,6 +56,29 @@ class User extends BaseUser implements UserInterface
      * @ORM\OneToMany(targetEntity="UserPhone", mappedBy="user", cascade={"all"})
      */
     protected $phones;
+
+    /**
+     * @var \DateTime $created
+     *
+     * @Gedmo\Timestampable(on="create")
+     * @ORM\Column(type="datetime")
+     */
+    protected $created;
+
+    /**
+     * @var \DateTime $updated
+     *
+     * @Gedmo\Timestampable(on="update")
+     * @ORM\Column(type="datetime", nullable=true)
+     */
+    protected $updated;
+
+    /**
+     * @var \DateTime $phoneUpdated
+     *
+     * @ORM\Column(type="datetime", nullable=true)
+     */
+    protected $phoneUpdated;
 
     /**
      * @param mixed $type
@@ -257,5 +281,53 @@ class User extends BaseUser implements UserInterface
         $username = $this->getUsername();
         if(preg_match("/^([^\@]+)\@/i", $username, $m)) return $m[1];
         return NULL;
+    }
+
+    /**
+     * @return \DateTime
+     */
+    public function getUpdated()
+    {
+        return $this->updated;
+    }
+
+    /**
+     * @param \DateTime $updated
+     */
+    public function setUpdated($updated)
+    {
+        $this->updated = $updated;
+    }
+
+    /**
+     * @return \DateTime
+     */
+    public function getPhoneUpdated()
+    {
+        return $this->phoneUpdated;
+    }
+
+    /**
+     * @param \DateTime $phoneUpdated
+     */
+    public function setPhoneUpdated($phoneUpdated)
+    {
+        $this->phoneUpdated = $phoneUpdated;
+    }
+
+    /**
+     * @return \DateTime
+     */
+    public function getCreated()
+    {
+        return $this->created;
+    }
+
+    /**
+     * @param \DateTime $created
+     */
+    public function setCreated($created)
+    {
+        $this->created = $created;
     }
 }

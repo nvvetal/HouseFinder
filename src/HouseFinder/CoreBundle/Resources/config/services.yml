@@ -20,6 +20,11 @@ services:
       class: HouseFinder\CoreBundle\Service\AdvertisementService
       arguments: [@service_container]
 
+    housefinder.service.slando.advertisement:
+      class: HouseFinder\CoreBundle\Service\Slando\AdvertisementSlandoService
+      arguments: [@service_container]
+
+
     housefinder.service.address:
       class: HouseFinder\CoreBundle\Service\AddressService
       arguments: [@doctrine.orm.entity_manager]
@@ -28,6 +33,10 @@ services:
       class: HouseFinder\CoreBundle\Service\UserService
       arguments: []
 
+    housefinder.service.slando.user:
+      class: HouseFinder\CoreBundle\Service\Slando\UserSlandoService
+      arguments: [@service_container]
+
     housefinder.service.house:
       class: HouseFinder\CoreBundle\Service\HouseService
       arguments: [@service_container]
@@ -35,6 +44,8 @@ services:
     housefinder.service.organization:
       class: HouseFinder\CoreBundle\Service\OrganizationService
       arguments: [@service_container]
+
+
 
 #event listener
     housefinder.event_listener.house.address.create:

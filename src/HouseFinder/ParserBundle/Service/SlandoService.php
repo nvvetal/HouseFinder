@@ -2,9 +2,14 @@
 
 namespace HouseFinder\ParserBundle\Service;
 
+use Doctrine\ORM\EntityManager;
 use HouseFinder\CoreBundle\Entity\Advertisement;
 use HouseFinder\CoreBundle\Entity\AdvertisementExternal;
 use HouseFinder\CoreBundle\Entity\AdvertisementPhoto;
+use HouseFinder\CoreBundle\Entity\AdvertisementSlando;
+use HouseFinder\CoreBundle\Service\AdvertisementService;
+use HouseFinder\CoreBundle\Service\Slando\AdvertisementSlandoService;
+use HouseFinder\ParserBundle\Parser\SlandoParser;
 use HouseFinder\StorageBundle\Service\ImageService;
 
 class SlandoService extends BaseAdvertisementService
@@ -19,10 +24,11 @@ class SlandoService extends BaseAdvertisementService
     {
         /** @var $em EntityManager */
         $em = $this->container->get('Doctrine')->getManager();
+        /** @var AdvertisementSlandoService $advertisementService */
+        $advertisementSlandoService = $this->container->get('housefinder.service.slando.advertisement');
         try {
             /** @var $oldEntity AdvertisementSlando */
-            $oldEntity = $em->getRepository('HouseFinderCoreBundle:AdvertisementSlando')
-                ->findOneBy(array('sourceHash' => $entity->getSourceHash()));
+            $oldEntity = $advertisementSlandoService->getAdvertisementBySourceHash($entity->getSourceHash());
             $currentEntity = $oldEntity;
             if(is_null($oldEntity)){
                 $currentEntity = $entity;
@@ -30,7 +36,10 @@ class SlandoService extends BaseAdvertisementService
                 $em->flush();
             }elseif( $oldEntity->getName() == $entity->getName()
                 && $oldEntity->getDescription() == $entity->getDescription()
+                && $oldEntity->getPrice() == $entity->getPrice()
             ){
+                echo $oldEntity->getId()." - ".$oldEntity->getCreated()->format('Y-m-d H:i:s')." - ".$oldEntity->getSourceURL()." - ".$entity->getSourceURL()."\n";
+                $this->fillPublish($oldEntity, $entity);
                 return self::SAVE_ENTITY_BREAK;
             }else{
                 //TODO: full merge, update time
@@ -40,14 +49,15 @@ class SlandoService extends BaseAdvertisementService
                 $oldEntity->setContentChanged(new \DateTime());
                 $em->flush();
             }
+
+            if(!is_null($oldEntity)){
+                $this->fillPublish($oldEntity, $entity);
+            }
+
             foreach($currentEntity->getPhotos() as $photo){
-                /**
-                 * @var $imageService ImageService
-                 */
+                /** @var $imageService ImageService */
                 $imageService = $this->container->get('housefinder.storage.service.image.advertisement.photo');
-                /**
-                 * @var $photo AdvertisementPhoto
-                 */
+                /** @var $photo AdvertisementPhoto */
                 if($imageService->isFilled($photo)) continue;
                 $imageService->saveFileByURL($photo->getUrl(), $photo);
             }
@@ -57,6 +67,20 @@ class SlandoService extends BaseAdvertisementService
             return self::SAVE_ENTITY_FAIL;
         }
         return self::SAVE_ENTITY_SUCCESS;
+    }
+
+    /**
+     * @param Advertisement $advertisement
+     * @param Advertisement $source
+     */
+    private function fillPublish(Advertisement $advertisement, Advertisement $source)
+    {
+        /** @var AdvertisementService $advertisementService */
+        $advertisementService = $this->container->get('housefinder.service.advertisement');
+        $publish = $advertisementService->findPublish($advertisement, $source->getCreated());
+        if(is_null($publish)){
+            $advertisementService->createPublish($advertisement, $source);
+        }
     }
 
     /**
@@ -70,18 +94,18 @@ class SlandoService extends BaseAdvertisementService
         /** @var $parser SlandoParser */
         $parser = $this->container->get('housefinder.parser.parser.slando');
         $entities = $parser->getEntities($domCrawler, $type);
-        $filledCnt = 0;
+        $successCnt = 0;
         $breakCnt = 0;
         $failCnt = 0;
         foreach ($entities as $entity){
             $res = $this->saveAdvertisementEntity($entity);
             if($res == self::SAVE_ENTITY_BREAK) $breakCnt++;
-            if($res == self::SAVE_ENTITY_SUCCESS) $filledCnt++;
+            if($res == self::SAVE_ENTITY_SUCCESS) $successCnt++;
             if($res == self::SAVE_ENTITY_FAIL) $failCnt++;
             //if($breakCnt >= 3) break;
         }
         return array(
-            'success' => $filledCnt,
+            'success' => $successCnt,
             'break' => $breakCnt,
             'fail' => $failCnt,
         );
