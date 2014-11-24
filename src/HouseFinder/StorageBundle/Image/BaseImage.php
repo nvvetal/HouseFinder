@@ -124,4 +124,14 @@ abstract class BaseImage implements ImageInterface
         $ext = $entity->getExt();
         return !empty($path) && !empty($ext) ? true : false;
     }
+
+    public function getFilename($entity)
+    {
+        $filename = NULL;
+        $data = $this->getFile($entity);
+        if(empty($data['path'])) return $filename;
+        $path = $this->container->getParameter('housefinder.storage.path');
+        $filename = $path.'/'.$data['context'].'/'.$data['path'].'/'.$entity->getId().'.'.$data['ext'];
+        return $filename;
+    }
 }

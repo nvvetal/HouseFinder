@@ -15,17 +15,29 @@ class ImageService
     protected $image;
     protected $container;
 
+    /**
+     * @param BaseImage $image
+     * @param $container
+     */
     public function __construct(BaseImage $image, $container)
     {
         $this->image = $image;
         $this->container = $container;
     }
 
+    /**
+     * @param $entity
+     * @return array
+     */
     public function getFileData($entity)
     {
         return $this->image->getFile($entity);
     }
 
+    /**
+     * @param $entity
+     * @return string
+     */
     public function getURL($entity){
         $data = $this->getFileData($entity);
         if(empty($data['path'])) return '';
@@ -40,7 +52,20 @@ class ImageService
         return $url;
     }
 
+    /**
+     * @param $entity
+     * @return null|string
+     */
+    public function getFilename($entity)
+    {
+        return $this->image->getFilename($entity);
+    }
 
+    /**
+     * @param $url
+     * @param $entity
+     * @return bool
+     */
     public function saveFileByURL($url, $entity)
     {
         try {
@@ -52,6 +77,10 @@ class ImageService
         return true;
     }
 
+    /**
+     * @param $entity
+     * @return bool
+     */
     public function isFilled($entity)
     {
         return $this->image->isFilled($entity);

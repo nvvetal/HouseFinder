@@ -45,6 +45,8 @@ services:
       class: HouseFinder\CoreBundle\Service\OrganizationService
       arguments: [@service_container]
 
+    housefinder.service.exif:
+      class: HouseFinder\CoreBundle\Service\ExifService
 
 
 #event listener

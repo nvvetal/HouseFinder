@@ -8,6 +8,7 @@ use HouseFinder\CoreBundle\Entity\AdvertisementExternal;
 use HouseFinder\CoreBundle\Entity\AdvertisementPhoto;
 use HouseFinder\CoreBundle\Entity\AdvertisementSlando;
 use HouseFinder\CoreBundle\Service\AdvertisementService;
+use HouseFinder\CoreBundle\Service\ExifService;
 use HouseFinder\CoreBundle\Service\Slando\AdvertisementSlandoService;
 use HouseFinder\ParserBundle\Parser\SlandoParser;
 use HouseFinder\StorageBundle\Service\ImageService;
@@ -60,6 +61,18 @@ class SlandoService extends BaseAdvertisementService
                 /** @var $photo AdvertisementPhoto */
                 if($imageService->isFilled($photo)) continue;
                 $imageService->saveFileByURL($photo->getUrl(), $photo);
+
+/* TODO: store location by gps if exists
+                $filename = $imageService->getFilename($photo);
+                */
+                /** @var $exifService ExifService */
+                /*
+                $exifService = $this->container->get('housefinder.service.exif');
+                $coords = $exifService->getCoordsByFile($filename);
+                if(!is_null($coords)){
+                    var_dump($coords, $photo->getAdvertisement()->getId());
+                }
+                */
             }
 
         }catch(\Exception $e){

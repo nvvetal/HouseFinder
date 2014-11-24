@@ -4,6 +4,7 @@ namespace HouseFinder\StorageBundle\Controller;
 
 use Doctrine\ORM\EntityManager;
 use Doctrine\ORM\EntityNotFoundException;
+use HouseFinder\CoreBundle\Entity\AdvertisementPhoto;
 use HouseFinder\StorageBundle\Service\ImageService;
 use Symfony\Bundle\FrameworkBundle\Controller\Controller;
 use Symfony\Component\HttpFoundation\JsonResponse;
