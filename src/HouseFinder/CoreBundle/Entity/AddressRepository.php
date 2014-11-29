@@ -59,7 +59,8 @@ class AddressRepository extends EntityRepository
         $q->setParameter(':lat', $lat);
         $q->setParameter(':long', $long);
         $q->setMaxResults(1);
-        return $q->getQuery()->getOneOrNullResult();
+        $data = $q->getQuery()->getOneOrNullResult();
+        return is_null($data) ? NULL : $data[0];
     }
 
     /**

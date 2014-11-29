@@ -1,7 +1,6 @@
 parameters:
-#    house_finder_api.example.class: HouseFinder\APIBundle\Example
 
 services:
-#    house_finder_api.example:
-#        class: %house_finder_api.example.class%
-#        arguments: [@service_id, "plain_value", %parameter%]
+  housefinder.api.service.response:
+    class: HouseFinder\APIBundle\Service\ResponseService
+    arguments: [@service_container]

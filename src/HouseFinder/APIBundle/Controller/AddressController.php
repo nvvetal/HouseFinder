@@ -5,6 +5,10 @@ namespace HouseFinder\APIBundle\Controller;
 
 use FOS\RestBundle\Request\ParamFetcher;
 use FOS\RestBundle\Routing\ClassResourceInterface;
+use FOS\RestBundle\Util\Codes;
+use HouseFinder\APIBundle\Exception\City\ApiCitiesNotFoundException;
+use HouseFinder\APIBundle\Exception\City\ApiCityNotFoundException;
+use HouseFinder\APIBundle\Service\ResponseService;
 use HouseFinder\CoreBundle\Entity\Advertisement;
 use HouseFinder\CoreBundle\Entity\AdvertisementRepository;
 use HouseFinder\CoreBundle\Entity\DataContainer;
@@ -50,7 +54,7 @@ class AddressController extends FOSRestController
      *      500="The API token authentication expired"
      *  },
      *  output={
-     *    "class"   = "HouseFinder\APIBundle\Entity\Output",
+     *    "class"   = "HouseFinder\APIBundle\Entity\ApiResponse\ApiCityResponse",
      *    "parsers" = {
      *      "Nelmio\ApiDocBundle\Parser\JmsMetadataParser",
      *      "Nelmio\ApiDocBundle\Parser\ValidationParser"
@@ -61,24 +65,18 @@ class AddressController extends FOSRestController
     public function getCityByNameAction($name)
     {
         $request = $this->getRequest();
-        try {
-            /** @var AddressService $addressService */
-            $addressService = $this->container->get('housefinder.service.address');
-            $address = $addressService->getAddressByCityNameREST($name);
-            if(is_null($address)) throw new \Exception('City not found', 404);
-            return $this->view(array(
-                'code'      => HTTP::HTTP_SUCCESS,
-                'message'   => 'ok',
-                'data'      => $address,
-            ), HTTP::HTTP_SUCCESS);
+        /** @var AddressService $addressService */
+        $addressService = $this->container->get('housefinder.service.address');
+        /** @var ResponseService $responseService */
+        $responseService = $this->container->get('housefinder.api.service.response');
 
+        try {
+            $address = $addressService->getAddressByCityName($name);
+            if(is_null($address)) throw new ApiCityNotFoundException;
+            return $this->view($responseService->getCity($address), Codes::HTTP_OK);
         }catch(\Exception $e){
             $this->get('housefinder.service.logger')->write('[res error][error '.$e->getMessage().'][code '.$e->getCode().'][data '.print_r($request->getContent(),true).']', 'api_address_city_by_name');
-            return $this->view(array(
-                'code'      => $e->getCode(),
-                'message'   => $e->getMessage(),
-                'data'      => array(),
-            ), $e->getCode());
+            return $this->view($responseService->getErrorResponse($e), $e->getCode());
         }
     }
 
@@ -98,7 +96,7 @@ class AddressController extends FOSRestController
      *      500="The API token authentication expired"
      *  },
      *  output={
-     *    "class"   = "HouseFinder\APIBundle\Entity\Output",
+     *    "class"   = "HouseFinder\APIBundle\Entity\ApiResponse\ApiCityResponse",
      *    "parsers" = {
      *      "Nelmio\ApiDocBundle\Parser\JmsMetadataParser",
      *      "Nelmio\ApiDocBundle\Parser\ValidationParser"
@@ -108,25 +106,19 @@ class AddressController extends FOSRestController
      */
     public function getCityNear($lat, $long)
     {
+        /** @var ResponseService $responseService */
+        $responseService = $this->container->get('housefinder.api.service.response');
         $request = $this->getRequest();
+        /** @var AddressService $addressService */
+        $addressService = $this->container->get('housefinder.service.address');
         try {
-            /** @var AddressService $addressService */
-            $addressService = $this->container->get('housefinder.service.address');
-            $address = $addressService->getAddressCityNearCoordsREST($lat, $long);
-            if(is_null($address)) throw new \Exception('City not found', 404);
-            return $this->view(array(
-                'code'      => HTTP::HTTP_SUCCESS,
-                'message'   => 'ok',
-                'data'      => $address,
-            ), HTTP::HTTP_SUCCESS);
+            $address = $addressService->getAddressCityNearCoords($lat, $long);
+            if(is_null($address)) throw new ApiCityNotFoundException;
+            return $this->view($responseService->getCity($address), Codes::HTTP_OK);
 
         }catch(\Exception $e){
             $this->get('housefinder.service.logger')->write('[res error][error '.$e->getMessage().'][code '.$e->getCode().'][data '.print_r($request->getContent(),true).']', 'api_address_city_by_name');
-            return $this->view(array(
-                'code'      => $e->getCode(),
-                'message'   => $e->getMessage(),
-                'data'      => array(),
-            ), $e->getCode());
+            return $this->view($responseService->getErrorResponse($e), $e->getCode());
         }
     }
 
@@ -146,7 +138,7 @@ class AddressController extends FOSRestController
      *      500="The API token authentication expired"
      *  },
      *  output={
-     *    "class"   = "HouseFinder\APIBundle\Entity\Output",
+     *    "class"   = "HouseFinder\APIBundle\Entity\ApiResponse\ApiCitiesResponse",
      *    "parsers" = {
      *      "Nelmio\ApiDocBundle\Parser\JmsMetadataParser",
      *      "Nelmio\ApiDocBundle\Parser\ValidationParser"
@@ -157,24 +149,18 @@ class AddressController extends FOSRestController
     public function cgetCities()
     {
         $request = $this->getRequest();
+        /** @var ResponseService $responseService */
+        $responseService = $this->container->get('housefinder.api.service.response');
+        /** @var AddressService $addressService */
+        $addressService = $this->container->get('housefinder.service.address');
         try {
-            /** @var AddressService $addressService */
-            $addressService = $this->container->get('housefinder.service.address');
-            $addresses = $addressService->getAddressCitiesREST();
-            if(count($addresses) == 0) throw new \Exception('Cities not found', 404);
-            return $this->view(array(
-                'code'      => HTTP::HTTP_SUCCESS,
-                'message'   => 'ok',
-                'data'      => $addresses,
-            ), HTTP::HTTP_SUCCESS);
+            $addresses = $addressService->getCities();
+            if(count($addresses) == 0) throw new ApiCitiesNotFoundException;
+            return $this->view($responseService->getCities($addresses), Codes::HTTP_OK);
 
         }catch(\Exception $e){
             $this->get('housefinder.service.logger')->write('[res error][error '.$e->getMessage().'][code '.$e->getCode().'][data '.print_r($request->getContent(),true).']', 'api_address_city_by_name');
-            return $this->view(array(
-                'code'      => $e->getCode(),
-                'message'   => $e->getMessage(),
-                'data'      => array(),
-            ), $e->getCode());
+            return $this->view($responseService->getErrorResponse($e), $e->getCode());
         }
     }
 }

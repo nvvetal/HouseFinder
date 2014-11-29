@@ -7,18 +7,23 @@ use HouseFinder\CoreBundle\Entity\AdvertisementPhoto;
 use HouseFinder\CoreBundle\Entity\AdvertisementPublish;
 use HouseFinder\CoreBundle\Entity\AdvertisementRepository;
 use HouseFinder\CoreBundle\Entity\DataContainer;
+use HouseFinder\CoreBundle\Entity\Pager\AdvertisementPager;
 use HouseFinder\CoreBundle\Entity\Room;
+use HouseFinder\StorageBundle\Service\ImageService;
 
 class AdvertisementService
 {
     protected $container;
     /** @var  EntityManager $em */
     protected $em;
+    /** @var  AdvertisementRepository $repo */
+    protected $repo;
 
     public function __construct($container)
     {
         $this->container = $container;
         $this->em = $this->container->get('Doctrine')->getManager();
+        $this->repo = $this->em->getRepository('HouseFinderCoreBundle:Advertisement');
     }
 
     /**
@@ -36,6 +41,20 @@ class AdvertisementService
             $urls[] = $imageService->getURL($photo);
         }
         return $urls;
+    }
+
+    /**
+     * @param Advertisement $advertisement
+     * @return string
+     */
+    public function getFirstPhotoUrl(Advertisement $advertisement)
+    {
+        $urls = $this->getPhotoURLs($advertisement);
+        $url = '';
+        if (!is_null($urls) && count($urls) > 0) {
+            $url = $urls[0];
+        }
+        return $url;
     }
 
     /**
@@ -60,106 +79,20 @@ class AdvertisementService
 
     /**
      * @param DataContainer $class
-     * @return array
+     * @return AdvertisementPager
      */
-    public function getAdvertisementsREST(DataContainer $class)
+    public function searchAdvertisements(DataContainer $class)
     {
-        /** @var AdvertisementRepository $advertisementsRepo */
-        $advertisementsRepo = $this->em->getRepository('HouseFinderCoreBundle:Advertisement');
-        /** @var AddressService $addressService */
-        $addressService = $this->container->get('housefinder.service.address');
-        $advertisements = $advertisementsRepo->search($class);
-        $data = array(
-            'pages' => $advertisements['pages'],
-            'count' => $advertisements['count'],
-        );
-        foreach ($advertisements['items'] as $advertisement) {
-            $data['items'][] = $this->getAdvertisementREST($advertisement);
-        }
-        return $data;
+        return $this->repo->search($class);
     }
 
     /**
      * @param DataContainer $class
      * @return array
      */
-    public function getAdvertisementsForMapREST(DataContainer $class)
+    public function getAdvertisementsForMap(DataContainer $class)
     {
-        /** @var AdvertisementRepository $advertisementsRepo */
-        $advertisementsRepo = $this->em->getRepository('HouseFinderCoreBundle:Advertisement');
-        /** @var AddressService $addressService */
-        $addressService = $this->container->get('housefinder.service.address');
-        $advertisements = $advertisementsRepo->findByFresh($class);
-        $data = array();
-        foreach ($advertisements as $advertisement) {
-            $data['items'][] = $this->getAdvertisementREST($advertisement);
-        }
-        return $data;
-    }
-
-    public function getAdvertisementREST(Advertisement $advertisement)
-    {
-        $photoUrls = $this->getPhotoURLs($advertisement);
-        $photoUrl = '';
-        if (!is_null($photoUrls) && count($photoUrls) > 0) {
-            $photoUrl = $photoUrls[0];
-        }
-        /** @var AddressService $addressService */
-        $addressService = $this->container->get('housefinder.service.address');
-        return array(
-            'id' => $advertisement->getId(),
-            'userId' => $advertisement->getUser()->getId(),
-            'name' => $advertisement->getName(),
-            'description' => mb_substr(iconv('UTF-8', 'UTF-8//IGNORE', $advertisement->getDescription()),0,170,'UTF-8').'...',
-            'price' => $advertisement->getPrice(),
-            'currency' => $advertisement->getCurrency(),
-            'photo' => $photoUrl,
-            'lastDate' => $advertisement->getLastUpdated()->format('Y-m-d H:i'),
-            'address' => $addressService->getAddressREST($advertisement->getAddress()),
-            'addressLine' => $addressService->formatAddressLineREST($advertisement->getAddress()),
-        );
-    }
-
-    /**
-     * @param Advertisement $advertisement
-     * @return array
-     */
-    public function getAdvertisementFullREST(Advertisement $advertisement)
-    {
-        /** @var AddressService $addressService */
-        $addressService = $this->container->get('housefinder.service.address');
-        /** @var UserService $userService */
-        $userService = $this->container->get('housefinder.service.user');
-        /** @var HouseService $houseService */
-        $houseService = $this->container->get('housefinder.service.house');
-
-        $data = array(
-            'id'            => $advertisement->getId(),
-            'name'          => $advertisement->getName(),
-            'description'   => trim($advertisement->getDescription()),
-            'type'          => $advertisement->getType(),
-            'rentType'      => $advertisement->getRentType(),
-            'rentStartDate' => is_null($advertisement->getRentStartDate()) ? null : $advertisement->getRentStartDate()->format('Y-m-d'),
-            'houseType'     => $advertisement->getHouseType(),
-            'price'         => $advertisement->getPrice(),
-            'currency'      => $advertisement->getCurrency(),
-            'fullSpace'     => $advertisement->getFullSpace(),
-            'livingSpace'   => $advertisement->getLivingSpace(),
-            'level'         => $advertisement->getLevel(),
-            'maxLevels'     => $advertisement->getMaxLevels(),
-            'wallType'      => $advertisement->getWallType(),
-            'brickType'     => $advertisement->getBrickType(),
-            'heatingType'   => $advertisement->getHeatingType(),
-            'special'       => $advertisement->getSpecial(),
-            'created'       => $advertisement->getCreated()->format('d/m/Y H:i:s'),
-            'owner'         => $userService->getUserREST($advertisement->getUser()),
-            'address'       => $addressService->getAddressREST($advertisement->getAddress()),
-            'house'         => $houseService->getHouseByAddressREST($advertisement->getAddress()),
-            'photos'        => $this->getPhotoURLs($advertisement),
-            'rooms'         => $this->getRooms($advertisement),
-            'roomsLiving'   => count($advertisement->getLivingRooms()),
-        );
-        return $data;
+       return $this->repo->findByFresh($class);
     }
 
     /**
@@ -185,9 +118,7 @@ class AdvertisementService
      */
     public function findPublish(Advertisement $advertisement, \DateTime $created)
     {
-        /** @var AdvertisementRepository $repo */
-        $repo = $this->em->getRepository('HouseFinderCoreBundle:Advertisement');
-        return $repo->findAdvertisementPublish($advertisement, $created);
+        return $this->repo->findAdvertisementPublish($advertisement, $created);
     }
 
     /**

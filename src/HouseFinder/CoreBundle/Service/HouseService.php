@@ -15,7 +15,6 @@ class HouseService
         $this->container = $container;
     }
 
-
     /**
      * @param Address $address
      * @return House
@@ -45,22 +44,5 @@ class HouseService
         return $house;
     }
 
-    /**
-     * @param Address $address
-     * @return array|null
-     */
-    public function getHouseByAddressREST(Address $address)
-    {
-        $house = $this->getHouseByAddress($address);
-        if(is_null($house)) return null;
-        $data = array(
-            'id'        => $house->getId(),
-            'addressId' => $house->getAddress()->getId(),
-            'brickType' => $house->getBrickType(),
-            'maxLevels' => $house->getMaxLevels(),
-            'wallType'  => $house->getWallType(),
-        );
-        return $data;
-    }
 
 }

@@ -4,9 +4,14 @@ namespace HouseFinder\CoreBundle\Entity;
 
 use Doctrine\ORM\EntityRepository;
 use Doctrine\ORM\Tools\Pagination\Paginator;
+use HouseFinder\CoreBundle\Entity\Pager\AdvertisementPager;
 
 class AdvertisementRepository extends EntityRepository
 {
+    /**
+     * @param DataContainer $params
+     * @return AdvertisementPager
+     */
     public function search(DataContainer $params)
     {
         $page = isset($params->page) ? (int) $params->page : 0;
@@ -112,11 +117,14 @@ class AdvertisementRepository extends EntityRepository
         $q->setMaxResults($limit);
         $paginator = new Paginator($q, $fetchJoinCollection = true);
         $c = count($paginator);
-        return array(
-            'items' => $paginator,
-            'pages' => ceil($c / $limit),
-            'count' => $c
-        );
+        $response = new AdvertisementPager();
+        $response->setCount($c);
+        $response->setPages(ceil($c / $limit));
+        if($paginator->count() == 0) return $response;
+        foreach($paginator as $advertisement){
+            $response->addItem($advertisement);
+        }
+        return $response;
     }
 
     public function findByFresh(DataContainer $params)
