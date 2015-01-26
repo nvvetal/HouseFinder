@@ -5,7 +5,17 @@ angular.module('app.welcome', [])
 
         $scope.$on('searchFilterCityChange', function(e, dt){
             AddressService.getCity(dt.cityId).then(function(city){
-                MapService.show('map', city.latitude, city.longitude);
+                var latitude = 50.44985, longitude = 30.523151; //KIEV
+                if (city.longitude === undefined || city.latitude === undefined) {
+                    if (UserService.location.longitude !== undefined && UserService.location.latitude !== undefined) {
+                        latitude = UserService.location.latitude;
+                        longitude = UserService.location.longitude;
+                    }
+                } else {
+                    latitude = city.latitude;
+                    longitude = city.longitude;
+                }
+                MapService.show('map', latitude, longitude);
             });
         });
 
