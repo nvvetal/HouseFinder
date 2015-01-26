@@ -124,15 +124,16 @@ class AdvertisementService
     /**
      * @param Advertisement $advertisement
      * @param Advertisement $source
+     * @param \DateTime $created
      * @return AdvertisementPublish
      */
-    public function createPublish(Advertisement $advertisement, Advertisement $source)
+    public function createPublish(Advertisement $advertisement, Advertisement $source, \DateTime $created)
     {
         $publish = new AdvertisementPublish();
         $publish->setAdvertisement($advertisement);
         $publish->setPrice($source->getPrice());
         $publish->setCurrency($source->getCurrency());
-        $publish->setCreated($source->getCreated());
+        $publish->setCreated($created);
         $this->em->persist($publish);
         $this->em->flush($publish);
         return $publish;

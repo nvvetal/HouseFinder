@@ -89,14 +89,13 @@ class AdvertisementSlandoService
         $entity->setFullSpace($raw->getFullSpace());
         $entity->setLivingSpace($raw->getLivingSpace());
         $entity->setLevel($raw->getLevel());
+        $entity->setParams($raw->getParams());
         if(is_null($entity->getHouse())){
             $entity->setMaxLevels($raw->getMaxLevels());
             $entity->setWallType($raw->getWallType());
             $entity->setHouseType($raw->getHouseType());
         }
         $this->fillPhotosByRaw($entity, $raw);
-        //$this->em->persist($entity);
-        //$this->em->flush();
         return $entity;
     }
 

@@ -255,6 +255,7 @@ abstract class BaseParser
     {
         if(mb_stripos($text, 'саузел совместно', 0, 'UTF-8') !== false) return true;
         if(mb_stripos($text, 'с\у совместный', 0, 'UTF-8') !== false) return true;
+        if(mb_stripos($text, 'санузел совместный', 0, 'UTF-8') !== false) return true;
         if(mb_stripos($text, 'с/у/см', 0, 'UTF-8') !== false) return true;
         return false;
     }
@@ -383,5 +384,62 @@ abstract class BaseParser
     {
         if(mb_stripos($text, 'вытяжка', 0, 'UTF-8') !== false) return true;
         return false;
+    }
+
+    protected function getCurrencyBySign($sign)
+    {
+        $sign = mb_strtolower($sign, 'UTF-8');
+        $currency = '';
+        switch($sign)
+        {
+            case "грн.":
+                $currency = Advertisement::CURRENCY_UAH;
+                break;
+            case "$":
+                $currency = Advertisement::CURRENCY_USD;
+                break;
+            case "€":
+                $currency = Advertisement::CURRENCY_EUR;
+                break;
+        }
+        return $currency;
+    }
+
+    protected function getPriceData($content)
+    {
+        $priceData = array(
+            'price' => 0,
+            'currency' => Advertisement::CURRENCY_UAH
+        );
+        $content = str_replace(" ", "", $content);
+        $priceData = array(
+            'price'     => substr($content, 1),
+            'currency'  => $this->getCurrencyBySign($content[0]),
+        );
+        return $priceData;
+    }
+
+    /**
+     * @param $text
+     * @return mixed
+     */
+    protected function normalizePhone($text)
+    {
+        $text = trim($text);
+        if(empty($text)) return NULL;
+        $text = str_replace(' ', '', $text);
+        $text = str_replace('(', '', $text);
+        $text = str_replace(')', '', $text);
+        $text = str_replace('-', '', $text);
+        $text = str_replace('+', '', $text);
+        if(mb_substr($text, 0, 2) != '38'){
+            if(mb_substr($text, 0, 1) != '0'){
+                $text = '0'.$text;
+            }
+            $text = '+38'.$text;
+        }else{
+            $text = '+'.$text;
+        }
+        return $text;
     }
 }

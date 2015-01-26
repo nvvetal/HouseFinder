@@ -9,35 +9,9 @@ use Doctrine\ORM\Mapping as ORM;
 class UserSlando extends User
 {
     /** @ORM\Column(type="string", nullable=true) */
-    protected $sourceHash;
-
-    /** @ORM\Column(type="string", nullable=true) */
     protected $sourceURL;
 
-    /**
-     * Set sourceHash
-     *
-     * @param string $sourceHash
-     * @return UserSlando
-     */
-    public function setSourceHash($sourceHash)
-    {
-        $this->sourceHash = $sourceHash;
-    
-        return $this;
-    }
-
-    /**
-     * Get sourceHash
-     *
-     * @return string 
-     */
-    public function getSourceHash()
-    {
-        return $this->sourceHash;
-    }
-
-    /**
+     /**
      * Set sourceURL
      *
      * @param string $sourceURL

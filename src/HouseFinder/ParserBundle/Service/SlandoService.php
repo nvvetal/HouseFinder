@@ -25,7 +25,7 @@ class SlandoService extends BaseAdvertisementService
     {
         /** @var $em EntityManager */
         $em = $this->container->get('Doctrine')->getManager();
-        /** @var AdvertisementSlandoService $advertisementService */
+        /** @var AdvertisementSlandoService $advertisementSlandoService */
         $advertisementSlandoService = $this->container->get('housefinder.service.slando.advertisement');
         try {
             /** @var $oldEntity AdvertisementSlando */
@@ -61,18 +61,6 @@ class SlandoService extends BaseAdvertisementService
                 /** @var $photo AdvertisementPhoto */
                 if($imageService->isFilled($photo)) continue;
                 $imageService->saveFileByURL($photo->getUrl(), $photo);
-
-/* TODO: store location by gps if exists
-                $filename = $imageService->getFilename($photo);
-                */
-                /** @var $exifService ExifService */
-                /*
-                $exifService = $this->container->get('housefinder.service.exif');
-                $coords = $exifService->getCoordsByFile($filename);
-                if(!is_null($coords)){
-                    var_dump($coords, $photo->getAdvertisement()->getId());
-                }
-                */
             }
 
         }catch(\Exception $e){
@@ -92,7 +80,7 @@ class SlandoService extends BaseAdvertisementService
         $advertisementService = $this->container->get('housefinder.service.advertisement');
         $publish = $advertisementService->findPublish($advertisement, $source->getCreated());
         if(is_null($publish)){
-            $advertisementService->createPublish($advertisement, $source);
+            $advertisementService->createPublish($advertisement, $source, $source->getCreated());
         }
     }
 

@@ -24,6 +24,9 @@ services:
       class: HouseFinder\CoreBundle\Service\Slando\AdvertisementSlandoService
       arguments: [@service_container]
 
+    housefinder.service.kvartira_zhitomir_ua.advertisement:
+      class: HouseFinder\CoreBundle\Service\KvartiraZhitomirUa\AdvertisementKvartiraZhitomirUaService
+      arguments: [@service_container]
 
     housefinder.service.address:
       class: HouseFinder\CoreBundle\Service\AddressService
@@ -31,10 +34,14 @@ services:
 
     housefinder.service.user:
       class: HouseFinder\CoreBundle\Service\UserService
-      arguments: []
+      arguments: [@service_container]
 
     housefinder.service.slando.user:
       class: HouseFinder\CoreBundle\Service\Slando\UserSlandoService
+      arguments: [@service_container]
+
+    housefinder.service.kvartira_zhitomir_ua.user:
+      class: HouseFinder\CoreBundle\Service\KvartiraZhitomirUa\UserKvartiraZhitomirUaService
       arguments: [@service_container]
 
     housefinder.service.house:

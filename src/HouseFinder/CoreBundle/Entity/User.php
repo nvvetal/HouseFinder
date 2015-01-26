@@ -19,7 +19,12 @@ use Doctrine\ORM\Mapping as ORM;
  * @ORM\Table()
  * @ORM\Entity(repositoryClass="HouseFinder\CoreBundle\Entity\UserRepository")
  * @ORM\InheritanceType("SINGLE_TABLE")
- * @ORM\DiscriminatorMap({"base" = "User", "internal" = "UserInternal", "slando" = "UserSlando"})
+ * @ORM\DiscriminatorMap({
+ *      "base" = "User",
+ *      "internal" = "UserInternal",
+ *      "slando" = "UserSlando",
+ *      "kvartira_zhitomir_ua" = "UserKvartiraZhitomirUa"
+ * })
  * @ORM\HasLifecycleCallbacks
  */
 class User extends BaseUser implements UserInterface
@@ -79,6 +84,9 @@ class User extends BaseUser implements UserInterface
      * @ORM\Column(type="datetime", nullable=true)
      */
     protected $phoneUpdated;
+
+    /** @ORM\Column(type="string", nullable=true) */
+    protected $sourceHash;
 
     /**
      * @param mixed $type
@@ -329,5 +337,28 @@ class User extends BaseUser implements UserInterface
     public function setCreated($created)
     {
         $this->created = $created;
+    }
+
+    /**
+     * Set sourceHash
+     *
+     * @param string $sourceHash
+     * @return UserSlando
+     */
+    public function setSourceHash($sourceHash)
+    {
+        $this->sourceHash = $sourceHash;
+
+        return $this;
+    }
+
+    /**
+     * Get sourceHash
+     *
+     * @return string
+     */
+    public function getSourceHash()
+    {
+        return $this->sourceHash;
     }
 }

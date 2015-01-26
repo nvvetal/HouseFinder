@@ -12,6 +12,10 @@ services:
     class: HouseFinder\ParserBundle\Service\KomunalService
     arguments: [@service_container]
 
+  housefinder.parser.service.kvartira_zhitomir_ua:
+    class: HouseFinder\ParserBundle\Service\KvartiraZhitomirUaService
+    arguments: [@service_container]
+
   housefinder.parser.parser.slando:
     class: HouseFinder\ParserBundle\Parser\SlandoParser
     arguments: [@service_container, @housefinder.parser.service.slando]
@@ -19,6 +23,10 @@ services:
   housefinder.parser.parser.komunal:
     class: HouseFinder\ParserBundle\Parser\KomunalParser
     arguments: [@service_container]
+
+  housefinder.parser.parser.kvartira_zhitomir_ua:
+    class: HouseFinder\ParserBundle\Parser\KvartiraZhitomirUaParser
+    arguments: [@service_container, @housefinder.parser.service.kvartira_zhitomir_ua]
 
   housefinder.parser.service.address:
     class: HouseFinder\ParserBundle\Service\AddressService

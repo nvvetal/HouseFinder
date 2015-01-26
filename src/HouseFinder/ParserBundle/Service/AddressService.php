@@ -35,7 +35,6 @@ class AddressService
 
     /**
      * @param $addressOrig
-     * @internal param string $address String representation of address
      * @return Address
      */
     public function getAddress($addressOrig)

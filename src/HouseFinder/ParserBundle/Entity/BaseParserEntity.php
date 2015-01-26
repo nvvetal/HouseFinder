@@ -65,6 +65,9 @@ class BaseParserEntity
     /** @var  \DateTime $createdDateTime */
     protected $createdDateTime;
 
+    /** @var  \DateTime $createdDateTime */
+    protected $updatedDateTime;
+
     /**
      * @param string $address
      */
@@ -338,6 +341,15 @@ class BaseParserEntity
     }
 
     /**
+     * @param string $name
+     * @return null|array|string
+     */
+    public function getParamByName($name)
+    {
+        return isset($this->params[$name]) ? $this->params[$name] : null;
+    }
+
+    /**
      * @return array
      */
     public function getPhones()
@@ -388,5 +400,21 @@ class BaseParserEntity
     public function addRoom(Room $room)
     {
         $this->rooms[] = $room;
+    }
+
+    /**
+     * @return \DateTime
+     */
+    public function getUpdatedDateTime()
+    {
+        return $this->updatedDateTime;
+    }
+
+    /**
+     * @param \DateTime $updatedDateTime
+     */
+    public function setUpdatedDateTime($updatedDateTime)
+    {
+        $this->updatedDateTime = $updatedDateTime;
     }
 }

@@ -23,4 +23,15 @@ class UserRepository extends EntityRepository
         $currentUser->addEmails($mergedUser->getEmails());
         $userManager->deleteUser($mergedUser);
     }
+
+    /**
+     * @param $hash
+     * @return User|null
+     */
+    public function fetchByHash($hash)
+    {
+        return $this->findOneBy(array(
+            'sourceHash' => $hash,
+        ));
+    }
 }

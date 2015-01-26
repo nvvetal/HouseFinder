@@ -14,7 +14,13 @@ use HouseFinder\CoreBundle\Entity\User;
 /**
  * @ORM\Table()
  * @ORM\InheritanceType("SINGLE_TABLE")
- * @ORM\DiscriminatorMap({"base" = "Advertisement", "internal" = "AdvertisementInternal", "external" = "AdvertisementExternal","slando" = "AdvertisementSlando"})
+ * @ORM\DiscriminatorMap({
+ *      "base" = "Advertisement",
+ *      "internal" = "AdvertisementInternal",
+ *      "external" = "AdvertisementExternal",
+ *      "slando" = "AdvertisementSlando",
+ *      "kvartira_zhitomir_ua" = "AdvertisementKvartiraZhitomirUa"
+ * })
  * @ORM\Entity(repositoryClass="HouseFinder\CoreBundle\Entity\AdvertisementRepository")
  */
 class Advertisement
@@ -163,6 +169,9 @@ class Advertisement
      * @ORM\OneToMany(targetEntity="AdvertisementPublish", mappedBy="advertisement", cascade={"all"}, orphanRemoval=true)
      */
     protected $publishes;
+
+    /** @ORM\Column(type="text", nullable=true) */
+    protected $params;
 
     /**
      * Constructor
@@ -776,7 +785,6 @@ class Advertisement
     /**
      * @param $key
      * @param $val
-     * @internal param mixed $special
      */
     public function setSpecial($key, $val)
     {
@@ -814,5 +822,21 @@ class Advertisement
     public function isRent()
     {
         return $this->getType() == Advertisement::TYPE_RENT;
+    }
+
+    /**
+     * @return mixed
+     */
+    public function getParams()
+    {
+        return is_null($this->params) ? array() : json_decode($this->params, true);
+    }
+
+    /**
+     * @param mixed $params
+     */
+    public function setParams($params)
+    {
+        $this->params = json_encode($params);
     }
 }

@@ -8,6 +8,7 @@ use HouseFinder\CoreBundle\Entity\AdvertisementSlando;
 use HouseFinder\CoreBundle\Entity\UserSlando;
 use HouseFinder\CoreBundle\Service\Slando\AdvertisementSlandoService;
 use HouseFinder\CoreBundle\Service\Slando\UserSlandoService;
+use HouseFinder\CoreBundle\Service\UserService;
 use HouseFinder\ParserBundle\Entity\Slando\SlandoParserEntity;
 use HouseFinder\ParserBundle\Service\SlandoService;
 use phpOCR\cOCR;
@@ -50,17 +51,8 @@ class SlandoParser extends BaseParser
      * @return SlandoParserEntity|mixed
      */
     protected function fetchPageByLink(array $link){
-        /**
-         * @var $em EntityManager
-         */
-        $em = $this->container->get('Doctrine')->getManager();
-        $find = $em->getRepository('HouseFinderCoreBundle:AdvertisementSlando')->findOneBy(array('sourceHash' => $link['sourceHash']));
-//        if(!is_null($find)) {
-//            return array(
-//              'res'     => 'exist',
-//              'entity'  => $find,
-//            );
-//        }
+
+        /** @var SlandoService $service */
         $service = $this->container->get('housefinder.parser.service.slando');
         $crawlerPage = $service->getPageCrawler($link['url']);
         try {
@@ -87,8 +79,10 @@ class SlandoParser extends BaseParser
      */
     protected function parsePageDomCrawler(Crawler $crawler)
     {
-        /** @var UserSlandoService $userService */
-        $userService = $this->container->get('housefinder.service.slando.user');
+        /** @var UserService $userService */
+        $userService = $this->container->get('housefinder.service.user');
+        /** @var UserSlandoService $userSlandoService */
+        $userSlandoService = $this->container->get('housefinder.service.slando.user');
         $slandoParserEntity = new SlandoParserEntity();
         $slandoParserEntity->setType($this->advertisementType);
         $slandoParserEntity->setParams($this->getParams($crawler));
@@ -123,7 +117,7 @@ class SlandoParser extends BaseParser
         $this->fillHouseType($slandoParserEntity);
 
         //please do that at end
-        $user = $userService->getUserByRaw($slandoParserEntity);
+        $user = $userService->getUserByRaw($userSlandoService->getUserHash($slandoParserEntity), $slandoParserEntity);
         if(is_null($user) || is_null($user->getPhoneUpdated()) || $user->getPhoneUpdated()->getTimestamp() + 15*24*3600 < time()){
             $h = is_null($user) ? $slandoParserEntity->getOwnerHash() : $user->getId();
             $slandoParserEntity->setPhones($this->getPhones($h, $crawler));
@@ -170,7 +164,7 @@ class SlandoParser extends BaseParser
     private function getPhones($userHash, Crawler $crawler)
     {
         $phones = array();
-
+        $self = &$this;
         $res = $crawler->filter("li[data-rel=phone]")->eq(0)->extract(array('class'));
         if (isset($res[0]) && preg_match("/\{.*\}/", $res[0], $matches)) {
 
@@ -185,14 +179,8 @@ class SlandoParser extends BaseParser
                 $phoneContent = implode('', json_decode($service->getPageContent($phoneURL), true));
                 $cr = new Crawler();
                 $cr->addHtmlContent($phoneContent);
-                $phones = $cr->filter('span.block')->each(function (Crawler $node, $i) {
-                    $text = $node->text();
-                    $text = str_replace(' ', '', $text);
-                    $text = str_replace('(', '', $text);
-                    $text = str_replace(')', '', $text);
-                    $text = str_replace('-', '', $text);
-                    $text = str_replace('+', '', $text);
-                    return $text;
+                $phones = $cr->filter('span.block')->each(function (Crawler $node, $i) use ($self) {
+                    return $self->normalizePhone($node->text());
                 });
                 /*
                  * Used when numbers is in IMAGE
@@ -418,41 +406,6 @@ class SlandoParser extends BaseParser
         return sprintf("%02d", $keys[0]+1);
     }
 
-    private function getPriceData($content)
-    {
-        $priceData = array(
-            'price' => 0,
-            'currency' => Advertisement::CURRENCY_UAH
-        );
-        $content = str_replace(" ", "", $content);
-        if(preg_match("~^([\d\s]+)(.*?)\s*$~", $content, $matches)){
-            $priceData = array(
-                'price'     => str_replace(" ", '', $matches[1]),
-                'currency'  => $this->getCurrencyBySlando($matches[2]),
-            );
-        }
-        return $priceData;
-    }
-
-    private function getCurrencyBySlando($slandoCurrency)
-    {
-        $slandoCurrency = mb_strtolower($slandoCurrency, 'UTF-8');
-        $currency = '';
-        switch($slandoCurrency)
-        {
-            case "грн.":
-                $currency = Advertisement::CURRENCY_UAH;
-                break;
-            case "$":
-                $currency = Advertisement::CURRENCY_USD;
-                break;
-            case "€":
-                $currency = Advertisement::CURRENCY_EUR;
-                break;
-        }
-        return $currency;
-    }
-
     private function getRentType($content)
     {
         $rentType = '';
@@ -551,5 +504,21 @@ class SlandoParser extends BaseParser
         if($this->parseTextKitchenHood($txt)) $entity->setSpecial('kitchenHood', true);
         if($this->parseTextRoomsAdjacent($txt)) $entity->setSpecial('roomsAdjacent', true);
 
+    }
+
+    protected function getPriceData($content)
+    {
+        $priceData = array(
+            'price' => 0,
+            'currency' => Advertisement::CURRENCY_UAH
+        );
+        $content = str_replace(" ", "", $content);
+        if(preg_match("~^([\d\s]+)(.*?)\s*$~", $content, $matches)){
+            $priceData = array(
+                'price'     => str_replace(" ", '', $matches[1]),
+                'currency'  => $this->getCurrencyBySign($matches[2]),
+            );
+        }
+        return $priceData;
     }
 }

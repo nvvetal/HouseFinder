@@ -10,16 +10,7 @@ use FOS\UserBundle\Model\UserManagerInterface;
  * Date: 26.12.13
  * Time: 15:25
  */
-class UserSlandoRepository extends EntityRepository
+class UserSlandoRepository extends UserRepository
 {
-    /**
-     * @param $hash
-     * @return UserSlando
-     */
-    public function findUserByHash($hash)
-    {
-        return $this->findOneBy(array(
-            'sourceHash' => $hash,
-        ));
-    }
+
 }
