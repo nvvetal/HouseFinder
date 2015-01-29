@@ -8,9 +8,29 @@
     top:100px;
     z-index: 8;
 }
-.carousel img.thumbnail.no-caption {
-    margin-bottom: 0 !important;
+/*carousel thumbnail*/
+#carousel-small .carousel-control .glyphicon {
+    top: initial;
+    bottom: 1px;
+    position: absolute;
 }
 .carousel .active > img.thumbnail {
     background-color: #C09853;
 }
+.carousel img.thumbnail {
+    cursor: pointer;
+}
+#carousel-small .carousel-control.center {
+    right: 0;
+    margin: 0 auto;
+    top: initial;
+    background: radial-gradient(circle farthest-side, rgba(0, 0, 0, .5), rgba(0, 0, 0, .0001));
+    width: 50%;
+    height: 20px;
+}
+#carousel-small .row {
+    margin-right: 0;
+}
+
+
+
