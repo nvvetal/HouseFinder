@@ -8,3 +8,9 @@
     top:100px;
     z-index: 8;
 }
+.carousel img.thumbnail.no-caption {
+    margin-bottom: 0 !important;
+}
+.carousel .active > img.thumbnail {
+    background-color: #C09853;
+}

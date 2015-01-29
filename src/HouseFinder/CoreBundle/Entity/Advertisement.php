@@ -740,11 +740,11 @@ class Advertisement
         return $kitchens;
     }
 
-    public function &getLivingRooms()
+    public function getLivingRooms()
     {
-        $rooms = &$this->getRooms();
+        $rooms = $this->getRooms();
         $lRooms = array();
-        if(count($rooms) == 0) return NULL;
+        if($rooms->count() == 0) return NULL;
         foreach($rooms as &$room)
         {
             /* @var $room Room */

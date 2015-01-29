@@ -1,0 +1,36 @@
+{% verbatim %}
+<script type="text/ng-template" id="app/directives/carouselPhotos.html">
+    <div class="carousel-container">
+        <div id="carousel-main" class="carousel slide" data-ride="carousel" data-interval="false">
+            <div class="carousel-inner">
+                <div ng-repeat="ph in photos" ng-class="isPhotoActive($index) ? 'active' : ''" class="item">
+                    <img src="{{ ph }}" class="center-block">
+                </div>
+            </div>
+            <a class="left carousel-control" href="" data-slide="prev" ng-click="carouselPrev($event)">
+                <span class="glyphicon glyphicon-chevron-left"></span>
+            </a>
+            <a class="right carousel-control" href="" data-slide="next" ng-click="carouselNext($event)">
+                <span class="glyphicon glyphicon-chevron-right"></span>
+            </a>
+        </div>
+        <div id="carousel-small" class="carousel slide" data-ride="carousel" data-interval="false">
+            <div class="carousel-inner">
+                <div ng-repeat="ph in photosSmall" ng-class="isThumbnailActive($index) ? 'active' : ''" class="item">
+                    <div class="row">
+                        <div ng-repeat="phSmall in ph" ng-class="isThumbnailPhotoActive(phSmall) ? 'active' : ''" class="col-sm-{{ smallClass }} thumbnail-item" ng-click="changeActive($event)">
+                            <img src="{{ phSmall }}" class="thumbnail no-caption">
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <a class="left carousel-control" href="" data-slide="prev" ng-click="carouselThumbnailPrev($event)">
+                <span class="glyphicon glyphicon-chevron-left"></span>
+            </a>
+            <a class="right carousel-control" href="" data-slide="next" ng-click="carouselThumbnailNext($event)">
+                <span class="glyphicon glyphicon-chevron-right"></span>
+            </a>
+        </div>
+    </div>
+</script>
+{% endverbatim %}
